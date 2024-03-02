@@ -474,6 +474,7 @@
             <form class="mt-4" action="{{url('userregister')}}" method="POST">
               <!-- Email -->
               @csrf
+              
               <div class="mb-3 input-group-lg">
                 <input type="text" name="name" class="form-control" placeholder="Enter User Name">
                 <small class="text-danger">@error("name"){{$message}}@enderror</small>

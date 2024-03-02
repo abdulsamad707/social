@@ -10,7 +10,19 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
+        {
+
+
+
+
+
+           
+    
+
+     
+
+
+
           //Create friend_ship_status table
           Schema::create('friendship_status', function (Blueprint $table) {
             $table->id();
@@ -30,7 +42,6 @@ return new class extends Migration
             $table->unsignedBigInteger('friend_ship_status');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('friend_id')->references('id')->on('users')->onDelete('cascade');
-         //   $table->foreign('friend_ship_status')->references('friend_ship_status_id')->on('friendship_status')->onDelete('cascade');
             $table->timestamps();
         });
 
@@ -41,6 +52,7 @@ return new class extends Migration
             $table->string("group_name")->nullable();
             $table->text("group_logo")->nullable();
             $table->string("group_status")->nullable();
+            $table->string("group_type")->nullable();
             $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
       
             $table->timestamps();
