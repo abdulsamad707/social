@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\authenticate\authenticate;
+use App\Http\Controllers\FrontController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,9 +23,8 @@ Route::view("forgotpassword","authenticate.sendlink");
 Route::post("login",[authenticate::class,"logined"]);
 Route::get("signout",[authenticate::class,"signout"]);
 Route::middleware(['isuserlogin'])->group(function () {
-    Route::get('/', function () {
-        return view('index');
-    });
+    Route::get("/",[FrontController::class,"index"]);
+ 
 });
 Route::get('login', function () {
     return view('authenticate.signin');

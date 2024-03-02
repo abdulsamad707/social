@@ -17,7 +17,9 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
-    
+ 
+      "twillio_sid"=>"AC0c4aa1c0a4971ae46aa41dad027c9dec",
+      "twillio_token"=>"78d6bc6605aac960b46c45d73f180d23",
     /*
     |--------------------------------------------------------------------------
     | Application Environment

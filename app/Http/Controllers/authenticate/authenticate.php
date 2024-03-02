@@ -65,7 +65,9 @@ class authenticate extends Controller
     public function sendMsg($number_mobile,$msg){
       
       $sid ="AC0c4aa1c0a4971ae46aa41dad027c9dec";
-      $token ="78d6bc6605aac960b46c45d73f180d23";
+      
+     $token ="2d936783c24bfb4616f8a99db4f4cfb1";
+ 
       $client = new Client($sid, $token);
    
   
@@ -95,6 +97,7 @@ class authenticate extends Controller
     }
     public function sendlink(SendLink $req){
       try{
+      
           $validated=$req->validated();
           extract($validated);
         $tokenData=DB::table('password_reset_tokens')->where("email",$email);
@@ -122,18 +125,18 @@ class authenticate extends Controller
       $username=$userData->name;
       $subject="Password Reset Link";
       $view_name="mail.sendlink";
-      $this->sendEmail($data,$email,$subject,$view_name);
+     $this->sendEmail($data,$email,$subject,$view_name);
   
        // https://maps.googleapis.com/maps/api/geocode/json
      //  AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg
 
       $number_mobile='+92'.$userData->mobile;
       $msg="Your Password Reset Otp:".$otp;
-    $this->sendMsg($number_mobile,$msg);
+   $this->sendMsg($number_mobile,$msg);
       $mobile="0".$userData->mobile;
       return redirect()->back()->with("success","Reset Password Link Send To ${email} And Otp To ${mobile} ")->withInput();
       }catch(\Exception $e){
-        return redirect()->back()->with("error","Something Went Wrong")->withInput();
+        return redirect()->back()->with("error","Something Went Wrong".$e->getMessage())->withInput();
       }
   
        

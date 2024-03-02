@@ -351,7 +351,7 @@ Header START -->
 			   <li class="nav-item dropdown ms-2">
 				<a class="nav-link bg-light icon-md btn btn-light p-0" href="#" id="addperson" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
 				
-					<i class="bi bi-person-fill fs-6"> </i>
+					<i class="bi bi-person-fill-add fs-6"> </i>
 				</a>
 				<div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0" aria-labelledby="addperson">
 					<div class="card">
@@ -394,7 +394,7 @@ Header START -->
 
 				<li class="nav-item ms-2 dropdown">
 					<a class="nav-link btn icon-md p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
-						<img class="avatar-img rounded-2" src="assets/images/avatar/07.jpg" alt="">
+						<img class="avatar-img rounded-2" src="assets/images/avatar/{{$profileimage}}" alt="">
 					</a>
 					<ul class="dropdown-menu dropdown-animation dropdown-menu-end pt-3 small me-md-n3" aria-labelledby="profileDropdown">
 						<!-- Profile info -->
@@ -402,11 +402,11 @@ Header START -->
 							<div class="d-flex align-items-center position-relative">
 								<!-- Avatar -->
 								<div class="avatar me-3">
-									<img class="avatar-img rounded-circle" src="assets/images/avatar/07.jpg" alt="avatar">
+									<img class="avatar-img rounded-circle" src="assets/images/avatar/{{$profileimage}}" alt="avatar">
 								</div>
 								<div>
 									<a class="h6 stretched-link" href="#">{{Auth::user()->name}}</a>
-									<p class="small m-0">Web Developer</p>
+									<p class="small m-0">{{$job_title}}</p>
 								</div>
 							</div>
 							<a class="dropdown-item btn btn-primary-soft btn-sm my-2 text-center" href="my-profile.html">View profile</a>
@@ -503,32 +503,32 @@ Header END -->
 										<div class="text-center">
 										<!-- Avatar -->
 										<div class="avatar avatar-lg mt-n5 mb-3">
-											<a href="#!"><img class="avatar-img rounded border border-white border-3" src="assets/images/avatar/07.jpg" alt=""></a>
+											<a href="#!"><img class="avatar-img rounded border border-white border-3" src="assets/images/avatar/{{$profileimage}}" alt=""></a>
 										</div>
 										<!-- Info -->
 										<h5 class="mb-0"> <a href="#!">{{Auth::user()->name}} </a> </h5>
-										<small>Web Developer at Webestica</small>
-										<p class="mt-3">I'd love to change the world, but they won’t give me the source code.</p>
+										<small>{{$job_title}}</small>
+										<p class="mt-3">{{$bio}}</p>
 
 										<!-- User stat START -->
 										<div class="hstack gap-2 gap-xl-3 justify-content-center">
 											<!-- User stat item -->
 											<div>
-												<h6 class="mb-0">256</h6>
+												<h6 class="mb-0">{{$posts}}</h6>
 												<small>Post</small>
 											</div>
 											<!-- Divider -->
 											<div class="vr"></div>
 											<!-- User stat item -->
 											<div>
-												<h6 class="mb-0">2.5K</h6>
+												<h6 class="mb-0">{{$followers}}</h6>
 												<small>Followers</small>
 											</div>
 											<!-- Divider -->
 											<div class="vr"></div>
 											<!-- User stat item -->
 											<div>
-												<h6 class="mb-0">365</h6>
+												<h6 class="mb-0">{{$followings}}</h6>
 												<small>Following</small>
 											</div>
 										</div>
@@ -627,7 +627,7 @@ Header END -->
 					<div class="d-flex mb-3">
 						<!-- Avatar -->
 						<div class="avatar avatar-xs me-2">
-							<a href="#"> <img class="avatar-img rounded-circle" src="assets/images/avatar/03.jpg" alt=""> </a>
+							<a href="#"> <img class="avatar-img rounded-circle" src="assets/images/avatar/{{$profileimage}}" alt=""> </a>
 						</div>
 						<!-- Post input -->
 						<form class="w-100">
@@ -677,7 +677,7 @@ Header END -->
 							<div class="d-flex align-items-center">
 								<!-- Avatar -->
 								<div class="avatar avatar-story me-2">
-									<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/04.jpg" alt=""> </a>
+									<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/07.jpg" alt=""> </a>
 								</div>
 								<!-- Info -->
 								<div>
@@ -743,7 +743,7 @@ Header END -->
 						<div class="d-flex mb-3">
 							<!-- Avatar -->
 							<div class="avatar avatar-xs me-2">
-								<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/12.jpg" alt=""> </a>
+								<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/{{$profileimage}}" alt=""> </a>
 							</div>
 							<!-- Comment box  -->
 							<form class="nav nav-item w-100 position-relative">
@@ -2070,83 +2070,36 @@ Header END -->
 							<!-- Card header END -->
 							<!-- Card body START -->
 							<div class="card-body">
+								@foreach($users_to_follow as $user)
 								<!-- Connection item START -->
 								<div class="hstack gap-2 mb-3">
 									<!-- Avatar -->
 									<div class="avatar">
-										<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/avatar/04.jpg" alt=""></a>
+										<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/avatar/{{$user->profileImage}}" alt=""></a>
 									</div>
 									<!-- Title -->
 									<div class="overflow-hidden">
-										<a class="h6 mb-0" href="#!">Judy Nguyen </a>
-										<p class="mb-0 small text-truncate">News anchor</p>
+										<a class="h6 mb-0" href="#!">{{$user->name}} </a>
+										<p class="mb-0 small text-truncate">{{$user->job_title}}</p>
 									</div>
 									<!-- Button -->
-									<a class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></a>
+									<a class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="{{$user->userid}}"><i class="fa-solid fa-plus"> </i></a>
 								</div>
+								@endforeach
 								<!-- Connection item END -->
-								<!-- Connection item START -->
-									<div class="hstack gap-2 mb-3">
-										<!-- Avatar -->
-										<div class="avatar avatar-story">
-											<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/05.jpg" alt=""> </a>
-										</div>
-										<!-- Title -->
-										<div class="overflow-hidden">
-											<a class="h6 mb-0" href="#!">Amanda Reed </a>
-											<p class="mb-0 small text-truncate">Web Developer</p>
-										</div>
-										<!-- Button -->
-										<a class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></a>
-								</div>
+							
 								<!-- Connection item END -->
 
 								<!-- Connection item START -->
-								<div class="hstack gap-2 mb-3">
-									<!-- Avatar -->
-									<div class="avatar">
-										<a href="#"> <img class="avatar-img rounded-circle" src="assets/images/avatar/11.jpg" alt=""> </a>
-									</div>
-									<!-- Title -->
-									<div class="overflow-hidden">
-										<a class="h6 mb-0" href="#!">Billy Vasquez </a>
-										<p class="mb-0 small text-truncate">News anchor</p>
-									</div>
-									<!-- Button -->
-									<a class="btn btn-primary rounded-circle icon-md ms-auto" href="#"><i class="bi bi-person-check-fill"> </i></a>
-								</div>
+							
 								<!-- Connection item END -->
 								
 								<!-- Connection item START -->
-								<div class="hstack gap-2 mb-3">
-									<!-- Avatar -->
-									<div class="avatar">
-										<a href="#"> <img class="avatar-img rounded-circle" src="assets/images/avatar/01.jpg" alt=""> </a>
-									</div>
-									<!-- Title -->
-									<div class="overflow-hidden">
-										<a class="h6 mb-0" href="#!">Lori Ferguson </a>
-										<p class="mb-0 small text-truncate">Web Developer at Webestica</p>
-									</div>
-									<!-- Button -->
-									<a class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></a>
-								</div>
+							
 								<!-- Connection item END -->
 
 								<!-- Connection item START -->
-								<div class="hstack gap-2 mb-3">
-									<!-- Avatar -->
-									<div class="avatar">
-										<a href="#"> <img class="avatar-img rounded-circle" src="assets/images/avatar/placeholder.jpg" alt=""> </a>
-									</div>
-									<!-- Title -->
-									<div class="overflow-hidden">
-										<a class="h6 mb-0" href="#!">Carolyn Ortiz </a>
-										<p class="mb-0 small text-truncate">News anchor</p>
-									</div>
-									<!-- Button -->
-									<a class="btn btn-primary-soft rounded-circle icon-md ms-auto" href="#"><i class="fa-solid fa-plus"> </i></a>
-								</div>
+						
 								<!-- Connection item END -->
 
 								<!-- View more button -->
@@ -2164,40 +2117,32 @@ Header END -->
 						<div class="card">
 							<!-- Card header START -->
 							<div class="card-header pb-0 border-0">
-								<h5 class="card-title mb-0">Today’s news</h5>
+								<h5 class="card-title mb-0">Latest news</h5>
 							</div>
 							<!-- Card header END -->
 							<!-- Card body START -->
 							<div class="card-body">
 								<!-- News item -->
+								@foreach($news as $new)
+								@php
+						
+								@endphp
 								<div class="mb-3">
-									<h6 class="mb-0"><a href="blog-details.html">Ten questions you should answer truthfully</a></h6>
-									<small>2hr</small>
+								<h5>	<a href="{{$new->url}}">{{$new->author}}</a><h5>
+									<h6 class="mb-0"><a href="{{$new->url}}">{{$new->title}}</a></h6>
+									<p>	<small>{{TimeDiff($new->publishedAt,now())}}	</small></p>
+								
+									<small>{{date("d-F-Y h:i a",strtotime($new->publishedAt))}}</small>
 								</div>
 								<!-- News item -->
-								<div class="mb-3">
-									<h6 class="mb-0"><a href="blog-details.html">Five unbelievable facts about money</a></h6>
-									<small>3hr</small>
-								</div>
+								
+								@endforeach
 								<!-- News item -->
-								<div class="mb-3">
-									<h6 class="mb-0"><a href="blog-details.html">Best Pinterest Boards for learning about business</a></h6>
-									<small>4hr</small>
-								</div>
+								
 								<!-- News item -->
-								<div class="mb-3">
-									<h6 class="mb-0"><a href="blog-details.html">Skills that you can learn from business</a></h6>
-									<small>6hr</small>
-								</div>
+							
 								<!-- Load more comments -->
-								<a href="#!" role="button" class="btn btn-link btn-link-loader btn-sm text-secondary d-flex align-items-center" data-bs-toggle="button" aria-pressed="true">
-									<div class="spinner-dots me-2">
-										<span class="spinner-dot"></span>
-										<span class="spinner-dot"></span>
-										<span class="spinner-dot"></span>
-									</div>
-									View all latest news
-								</a>
+							
 							</div>
 							<!-- Card body END -->
 						</div>
@@ -2792,7 +2737,7 @@ Header END -->
 				 <div class="d-flex mb-3">
 					<!-- Avatar -->
 					<div class="avatar avatar-xs me-2">
-						<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/03.jpg')}}" alt="">
+						<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$profileimage)}}" alt="">
 					</div>
 					<!-- Feed box  -->
 					<form class="w-100">
@@ -2846,7 +2791,7 @@ Header END -->
 				<div class="d-flex mb-3">
 					<!-- Avatar -->
 					<div class="avatar avatar-xs me-2">
-						<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/03.jpg')}}" alt="">
+						<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$profileimage)}}" alt="">
 					</div>
 					<!-- Feed box  -->
 					<form class="w-100">
@@ -2898,7 +2843,7 @@ Header END -->
 			 <div class="d-flex mb-3">
 				<!-- Avatar -->
 				<div class="avatar avatar-xs me-2">
-					<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/03.jpg')}}" alt="">
+					<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$profileimage)}}" alt="">
 				</div>
 				<!-- Feed box  -->
 				<form class="w-100">
