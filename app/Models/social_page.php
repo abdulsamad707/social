@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserDetail extends Model
+class social_page extends Model
 {
     use HasFactory;
-    public function user()
+  
+    public function posts()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Post::class);
     }
-
 }

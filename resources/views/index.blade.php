@@ -544,7 +544,7 @@ Header END -->
 											<a class="nav-link" href="my-profile.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/home-outline-filled.svg" alt=""><span>Feed </span></a>
 										</li>
 										<li class="nav-item">
-											<a class="nav-link" href="my-profile-connections.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/person-outline-filled.svg" alt=""><span>Connections </span></a>
+											<a class="nav-link" href="{{url("my_profile")}}"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/person-outline-filled.svg" alt=""><span>Connections </span></a>
 										</li>
 										<li class="nav-item">
 											<a class="nav-link" href="blog.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/earth-outline-filled.svg" alt=""><span>Latest News </span></a>
@@ -670,6 +670,8 @@ Header END -->
 				<!-- Share feed END -->
 
 				<!-- Card feed item START -->
+
+				@foreach($user_posts as $user_post)
 				<div class="card">
 					<!-- Card header START -->
 					<div class="card-header border-0 pb-0">
@@ -677,15 +679,46 @@ Header END -->
 							<div class="d-flex align-items-center">
 								<!-- Avatar -->
 								<div class="avatar avatar-story me-2">
-									<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/07.jpg" alt=""> </a>
+								
+									@if($user_post->user->user_detail!=null)
+									      @if(count($user_post->user->user_detail)>0)
+									<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/{{$user_post->user->user_detail[0]->profileImage}}" alt=""> </a>
+									      @else
+										  <a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/placeholder.jpg" alt=""> </a>
+                                            @endif
+								    @else
+									<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/placeholder.jpg" alt=""> </a>
+									@endif
+								
 								</div>
 								<!-- Info -->
 								<div>
 									<div class="nav nav-divider">
-										<h6 class="nav-item card-title mb-0"> <a href="#!"> Lori Ferguson </a></h6>
-										<span class="nav-item small"> 2hr</span>
+										<h6 class="nav-item card-title mb-0"> <a href="#!"> 
+											@if($user_post->user_id!=null)
+											   @if(Auth::user()->id!==$user_post->user_id)
+											{{$user_post->user->name}}
+											    @else
+												Me 
+												@endif
+											@endif
+										</a></h6>
+										<span class="nav-item small"> {{TimeDiff($user_post->created_at,now())}} ago</span>
 									</div>
-									<p class="mb-0 small">Web Developer at Webestica</p>
+									@if($user_post->user_id!=null)
+									
+									
+											@if($user_post->user->user_detail!=null)
+											  @if(count($user_post->user->user_detail)>0)
+											  @if(Auth::user()->id!==$user_post->user_id)
+											  <p class="mb-0 small">{{$user_post->user->user_detail[0]->job_title}}</p>
+										    
+
+											   @endif
+											  @endif
+											@endif
+									   @endif
+									
 								</div>
 							</div>
 							<!-- Card feed action dropdown START -->
@@ -710,26 +743,33 @@ Header END -->
 					<!-- Card body START -->
 					<div class="card-body">
 						<div class="player-wrapper overflow-hidden">
-							<video class="player-html" controls crossorigin="anonymous" poster="assets/images/videos/poster.jpg">
-								<source src="assets/images/videos/video-feed.mp4" type="video/mp4">
+							@if($user_post->video!=null)
+							<video class="player-html" controls crossorigin="anonymous">
+								<source src="assets/images/videos/{{$user_post->video}}" type="video/mp4">
 							</video>
+							@endif
 						</div>
-						<p>I'm thrilled to share that I've completed a graduate certificate course in project management with the president's honor roll.</p>
+						<p>{{$user_post->content}}</p>
 						<!-- Card img -->
-						<img class="card-img" src="assets/images/post/01.jpg" alt="Post">
+						@if($user_post->image!=null)
+						<img class="card-img" src="assets/images/post/{{$user_post->image}}" alt="Post">
+						@endif
 						<!-- Feed react START -->
 						<ul class="nav nav-stack py-3 small">
 							<li class="nav-item">
-								<a class="nav-link active" href="#!" data-bs-container="body" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-custom-class="tooltip-text-start" data-bs-title="Frances Guerrero<br> Lori Stevens<br> Billy Vasquez<br> Judy Nguyen<br> Larry Lawson<br> Amanda Reed<br> Louis Crawford"> <i class="bi bi-hand-thumbs-up-fill pe-1"></i>Liked (56)</a>
+
+								<a class="nav-link active" href="#!" data-bs-container="body" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-custom-class="tooltip-text-start" @if($user_post->likes_count >0)
+									
+									data-bs-title="@foreach($user_post->likes as $like){{$like->name}}<br>@endforeach"
+									
+									@endif> <i class="bi bi-hand-thumbs-up-fill pe-1"></i>Liked ({{$user_post->likes_count}})</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link" href="#!"> <i class="bi bi-chat-fill pe-1"></i>Comments (12)</a>
+								<a class="nav-link" href="#!"> <i class="bi bi-chat-fill pe-1"></i>Comments ({{$user_post->comments_count}})</a>
 							</li>
 							<!-- Card share action START -->
 							<li class="nav-item dropdown ms-sm-auto">
-								<a class="nav-link mb-0" href="#" id="cardShareAction" data-bs-toggle="dropdown" aria-expanded="false">
-									<i class="bi bi-reply-fill flip-horizontal ps-1"></i>Share (3)
-								</a>
+							
 								<!-- Card share action dropdown menu -->
 								<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cardShareAction">
 									<li><a class="dropdown-item" href="#"> <i class="bi bi-envelope fa-fw pe-2"></i>Send via Direct Message</a></li>
@@ -758,8 +798,11 @@ Header END -->
 							</form>
 						</div>
 						<!-- Comment wrap START -->
+						@if($user_post->comments_count > 0)
 						<ul class="comment-wrap list-unstyled">
 							<!-- Comment item START -->
+							@foreach($user_post->comments as $comment)
+							
 							<li class="comment-item">
 								<div class="d-flex position-relative">
 									<!-- Avatar -->
@@ -770,10 +813,10 @@ Header END -->
 										<!-- Comment by -->
 										<div class="bg-light rounded-start-top-0 p-3 rounded">
 											<div class="d-flex justify-content-between">
-												<h6 class="mb-1"> <a href="#!"> Frances Guerrero </a></h6>
-												<small class="ms-2">5hr</small>
+												<h6 class="mb-1"> <a href="#!"> {{$comment->name}} </a></h6>
+												<small class="ms-2">{{TimeDiff($comment->created_at,now())}}</small>
 											</div>
-											<p class="small mb-0">Removed demands expense account in outward tedious do. Particular way thoroughly unaffected projection.</p>
+											<p class="small mb-0">{{$comment->comment_content}}</p>
 										</div>
 										<!-- Comment react -->
 									
@@ -785,13 +828,14 @@ Header END -->
 							
 								<!-- Comment item nested END -->
 							</li>
-						
+						@endforeach
 
 							<!-- Comment item END -->
 							<!-- Comment item START -->
 							
 							<!-- Comment item END -->
 						</ul>
+						@endif
 						<!-- Comment wrap END -->
 					</div>
 					<!-- Card body END -->
@@ -799,6 +843,7 @@ Header END -->
 			
 					<!-- Card footer END -->
 				</div>
+				@endforeach
 				<!-- Card feed item END -->
 
 				
@@ -807,6 +852,7 @@ Header END -->
 				<!-- Card feed item START -->
 				
 				<!-- Card feed item START -->
+				@foreach($user_pages_posts as $user_pages_post)
 				<div class="card">
 					<!-- Card header START -->
 					<div class="card-header border-0 pb-0">
@@ -814,12 +860,12 @@ Header END -->
 							<div class="d-flex align-items-center">
 								<!-- Avatar -->
 								<div class="avatar me-2">
-									<a href="#"> <img class="avatar-img rounded-circle" src="assets/images/logo/13.svg" alt=""> </a>
+									<a href="#"> <img class="avatar-img rounded-circle" src="assets/images/logo/{{$user_pages_post->social_page->page_logo}}" alt=""> </a>
 								</div>
 								<!-- Title -->
 								<div>
-									<h6 class="card-title mb-0"> <a href="#!"> Apple Education </a></h6>
-									<p class="mb-0 small">9 November at 23:29</p>
+									<h6 class="card-title mb-0"> <a href="#!"> {{$user_pages_post->social_page->page_name}}</a></h6>
+									<p class="mb-0 small">{{date("d-F-Y",strtotime($user_pages_post->created_at))}} at  {{date("H:i a",strtotime($user_pages_post->created_at))}}</p>
 								</div>
 							</div>
 							<!-- Card share action menu -->
@@ -842,7 +888,7 @@ Header END -->
 
 					<!-- Card body START -->
 					<div class="card-body pb-0">
-						<p>Find out how you can save time in the classroom this year. Earn recognition while you learn new skills on iPad and Mac. Start  recognition your first Apple Teacher badge today!</p>
+						<p>{{$user_pages_post->content}}</p>
 						<!-- Feed react START -->
 					
 						<!-- Feed react END -->
@@ -853,7 +899,7 @@ Header END -->
 						<!-- Feed react START -->
 						<ul class="nav nav-fill nav-stack small">
 							<li class="nav-item">
-								<a class="nav-link mb-0 active" href="#!"> <i class="bi bi-heart pe-1"></i>Liked (56)</a>
+								<a class="nav-link mb-0 active" href="#!"> <i class="bi bi-heart pe-1"></i>Liked ({{$user_pages_post->likes_count}})</a>
 							</li>
 							<!-- Card share action dropdown START -->
 							<li class="nav-item dropdown">
@@ -868,98 +914,13 @@ Header END -->
 					<!-- Card Footer END -->
 				</div>
 				<!-- Card feed item END -->
+				@endforeach
 
 				<!-- Card feed item START -->
-				<div class="card">
-					<!-- Card header START -->
-					<div class="card-header d-flex justify-content-between align-items-center border-0 pb-0">
-						<h6 class="card-title mb-0">People you may know</h6>
-						<button class="btn btn-sm btn-primary-soft"> See all </button>
-					</div>      
+			  
 					<!-- Card header START -->
 
-					<!-- Card body START -->
-					<div class="card-body">
-						<div class="tiny-slider arrow-hover">
-							<div class="tiny-slider-inner ms-n4" data-arrow="true" data-dots="false" data-items-xl="3" data-items-lg="2" data-items-md="2" data-items-sm="2" data-items-xs="1" data-gutter="12" data-edge="30">
-								<!-- Slider items -->
-								<div> 
-									<!-- Card add friend item START -->
-									<div class="card shadow-none text-center">
-										<!-- Card body -->
-										<div class="card-body p-2 pb-0">
-											<div class="avatar avatar-xl">
-												<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/avatar/09.jpg" alt=""></a>
-											</div>
-											<h6 class="card-title mb-1 mt-3"> <a href="#!"> Amanda Reed </a></h6>
-											<p class="mb-0 small lh-sm">50 mutual connections</p>
-										</div>
-										<!-- Card footer -->
-										<div class="card-footer p-2 border-0">
-											<button class="btn btn-sm btn-primary-soft w-100"> Add friend </button>
-										</div>
-									</div>
-									<!-- Card add friend item END -->
-								</div>
-								<div>
-									<!-- Card add friend item START -->
-									<div class="card shadow-none text-center">
-										<!-- Card body -->
-										<div class="card-body p-2 pb-0">
-											<div class="avatar avatar-story avatar-xl">
-												<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/avatar/10.jpg" alt=""></a>
-											</div>
-											<h6 class="card-title mb-1 mt-3"> <a href="#!"> Larry Lawson </a></h6>
-											<p class="mb-0 small lh-sm">33 mutual connections</p>
-										</div>
-										<!-- Card footer -->
-										<div class="card-footer p-2 border-0">
-											<button class="btn btn-sm btn-primary-soft w-100"> Add friend </button>
-										</div>
-									</div>
-									<!-- Card add friend item END -->
-								</div>
-								<div>
-									<!-- Card add friend item START -->
-									<div class="card shadow-none text-center">
-										<!-- Card body -->
-										<div class="card-body p-2 pb-0">
-											<div class="avatar avatar-xl">
-												<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/avatar/11.jpg" alt=""></a>
-											</div>
-											<h6 class="card-title mb-1 mt-3"> <a href="#!"> Louis Crawford </a></h6>
-											<p class="mb-0 small lh-sm">45 mutual connections</p>
-										</div>
-										<!-- Card footer -->
-										<div class="card-footer p-2 border-0">
-											<button class="btn btn-sm btn-primary-soft w-100"> Add friend </button>
-										</div>
-									</div>
-									<!-- Card add friend item END -->
-								</div>
-								<div>
-									<!-- Card add friend item START -->
-									<div class="card shadow-none text-center">
-										<!-- Card body -->
-										<div class="card-body p-2 pb-0">
-											<div class="avatar avatar-xl">
-												<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/avatar/12.jpg" alt=""></a>
-											</div>
-											<h6 class="card-title mb-1 mt-3"> <a href="#!"> Dennis Barrett </a></h6>
-											<p class="mb-0 small lh-sm">21 mutual connections</p>
-										</div>
-										<!-- Card footer -->
-										<div class="card-footer p-2 border-0">
-											<button class="btn btn-sm btn-primary-soft w-100"> Add friend </button>
-										</div>
-									</div>
-									<!-- Card add friend item END -->
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- Card body END -->
-				</div>
+					
 				<!-- Card feed item END -->
 
 				<!-- Card feed item START -->

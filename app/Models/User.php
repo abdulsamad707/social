@@ -12,6 +12,18 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+
+
+
+
+
+
+ 
+
+
+
+
+
     /**
      * The attributes that are mass assignable.
      *
@@ -46,4 +58,35 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+    public function user_detail()
+    {
+        return $this->hasMany(user_detail::class);
+    }
+    public function comments()
+    {
+        return $this->hasMany(comment::class);
+    }
+  
+
+    /**
+     * 
+     * Define the "mutualFriends" relationship.
+     */
+    public function friends()
+    {
+        return $this->belongsToMany(User::class, 'friendships', 'friend_id');
+    }
+
+    /**
+     * Define the "mutualFriends" relationship.
+     */
+    public function mutualFriends()
+    {
+        return $this->friends()->with('friends');
+    }
+    
 }
