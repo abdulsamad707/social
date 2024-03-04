@@ -187,6 +187,8 @@ $news_data = json_decode(json_encode($news_data));
 //dd($data);
 //  dd(  $data["news"]);
 $my_friend_id_find=["4"];
+
+
 $myfriendsData=DB::table('friendships')->where("user_id",$user_id)
 
 ->get();
@@ -222,7 +224,33 @@ $my_friend_records=User::whereIn("users.id",$my_friend_id_find)
                      $user_join_date=date("M d,Y",strtotime($user_data->created_at));
                      $dateofbirth=date("F d,Y",strtotime($user_data->dateofbirth));
         $user_details=DB::table("user_details")->where("user_id",$user_id)->first();
+        $my_friends=DB::table('friendships')
+        ->where("friend_id",$user_id)
+        ->get();
+        $my_friend_ids= $my_friends->pluck("user_id");
+        $my_friend_array_id=$my_friend_ids->toArray();
+       //   print_r($my_friend_array_id);
+        $my_friend_array_id=array_unique($my_friend_array_id);
+
+        $my_friends_second=DB::table('friendships')
+        ->where("user_id",$user_id)
+        ->get();
+        $my_friend_ids_second= $my_friends_second->pluck("friend_id");
+        $my_friend_array_id_second=$my_friend_ids_second->toArray();
+        $my_friend_array_id_second=array_unique($my_friend_array_id_second);
+        $my_friend_array_id=array_merge($my_friend_array_id_second,$my_friend_array_id);
         
+      //  $my_friend_array_id=array_unique($my_friend_array_id);
+     $my_friend_data= User::whereIn("users.id",$my_friend_array_id)
+      ->withCount("mutualFriends")
+       ->withCount("friends")
+      ->with("user_detail")
+      ->get();
+
+     //  $my_friend_array_id=array_unique($my_friend_array_id);
+  //  $my_friend_data=$my_friend_data->toArray();
+        //  dd($my_friend_data);
+       // dd($my_friend_array_id);
         if($user_details){
          if($user_details->profileImage==null){
               $profile_image="placeholder.jpg";
@@ -250,9 +278,14 @@ $my_friend_records=User::whereIn("users.id",$my_friend_id_find)
         $data["user_email"]=$user_email;
         $data["dateofbirth"]=$dateofbirth;
         $data["bio"]=  $profile_bio;
+
+
         $data["user_join_date"]=$user_join_date;
         $data["loginEdUserData"]=$loginEdUserData;
-        // dd($data);
+        $data["my_friend_data"]=$my_friend_data;
+        $data["my_friend_count"]=count($my_friend_data);
+        $data["user_id"]=$id;
+      // dd($data);
       return view("my_profile",$data);
     }
 }

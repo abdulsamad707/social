@@ -28,7 +28,7 @@ Route::middleware(['isuserlogin'])->group(function () {
 });
 Route::get('login', function () {
     return view('authenticate.signin');
-});
+})->name("login");
 Route::get('signup', function () {
     return view('authenticate.signup');
 });
