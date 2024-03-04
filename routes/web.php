@@ -24,7 +24,7 @@ Route::post("login",[authenticate::class,"logined"]);
 Route::get("signout",[authenticate::class,"signout"]);
 Route::middleware(['isuserlogin'])->group(function () {
     Route::get("/",[FrontController::class,"index"]);
- 
+    Route::get("user_profile/{id?}",[FrontController::class,"user_profile"]);
 });
 Route::get('login', function () {
     return view('authenticate.signin');

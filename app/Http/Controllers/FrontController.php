@@ -42,27 +42,34 @@ class FrontController extends Controller
     $no_of_followers =   DB::table("followers")->where("user_id",$user_id)->count("follower_id");
     $no_of_followings =   DB::table("followings")->where("user_id",$user_id)->count("follower_id");
     $friends=DB::table('friendships')->where("user_id",$user_id)->get();
+      
   $friend_id = $friends->pluck('friend_id')->toArray();
+  $friends_two=DB::table('friendships')->where("friend_id",$user_id)->get();
+  $friend_id_two = $friends_two->pluck('user_id')->toArray();
+
   $user_pages=DB::table('social_page_followers')->where("user_id",$user_id)->get();
    //  dd($user_pages);
   $page_id = $user_pages->pluck('social_page_id')->toArray();
    //  dd($page_id);
    $user_ids=[];
-   $post_user_ids=array_merge($friend_id,$follower_ids_array);
+   $post_user_ids=array_merge($friend_id,$follower_ids_array,$friend_id_two);
    $post_user_ids=array_unique($post_user_ids);
+
+    //  dd( $post_user_ids);
   $user_posts = Post::withCount(['likes',"comments"])
   ->with(["user","comments"=>function($query){
-    $query->select("comments.user_id","comments.post_id","comments.comment_content","users.name","comments.created_at");
+    $query->select( "user_details.profileImage","comments.user_id","comments.post_id","comments.comment_content","users.name","comments.created_at");
     $query->join("users","users.id","=","comments.user_id");
+    $query->leftJoin("user_details","user_details.user_id","=","comments.user_id");
   },"social_page","likes"=>function($query)
   {
     $query->select("likes.user_id","likes.post_id","users.name");
     $query->join("users","users.id","=","likes.user_id");
   }
   ])
-    
+  
   ->whereIn("posts.user_id",$post_user_ids)
-   ->orwhere("posts.user_id",$user_id)
+  ->orWhere("posts.user_id",$user_id)
   // ->orwhereIn("social_page_id",$page_id)
   ->get();
 
@@ -91,20 +98,29 @@ $user_ids=array_unique($user_ids);
 
     $frineds_my=DB::table('friendships')->where("user_id",$user_id)->get();
     $my_friend_id =  $frineds_my->pluck('friend_id')->toArray();
-   
+ //   $my_friend_id=array_merge( $my_friend_id, $friend_id_two);
+    $my_friend_id=array_unique($my_friend_id);
+      //dd($my_friend_id);
  
     $frineds_my_friends=DB::table('friendships')->whereIn("user_id",  $my_friend_id )->get();
     $my_friend_fr_id =  $frineds_my_friends->pluck('friend_id')->toArray();
-
+   //   $follower_ids_array
+   $frineds_my_follwings=DB::table('friendships')->whereIn("user_id", $follower_ids_array )->get();
+    $my_friend_fr_id_followings =  $frineds_my_follwings->pluck('friend_id')->toArray();
 // Get the user's friends and their mutual friends
-
+$combine_id=array_merge($my_friend_id,$my_friend_fr_id,$follower_ids_array,$my_friend_fr_id_followings);
+$combine_id=array_unique($combine_id);
+  // dd($combine_id);
     $myfriend_fr=User::whereIn("users.id",   $my_friend_fr_id)
-    ->whereNotIn("users.id",$my_friend_id)
-    ->withCount("mutualFriends")
     
+    ->whereNotIn("users.id",$my_friend_id)
+  
+  
+    ->withCount("mutualFriends")
+    ->with("user_detail")
     ->get();
     
-     // dd(  $myfriend_fr->toArray());
+    //dd(  $myfriend_fr->toArray());
 // Loop through each friend and their mutual friends
 
 
@@ -170,7 +186,73 @@ $news_data = json_decode(json_encode($news_data));
     */
 //dd($data);
 //  dd(  $data["news"]);
-   
+$my_friend_id_find=["4"];
+$myfriendsData=DB::table('friendships')->where("user_id",$user_id)
+
+->get();
+
+$my_friend_id_find=$myfriendsData->pluck('friend_id')->toArray();
+$myfriendsDatas=DB::table('friendships')->where("friend_id",$user_id)
+
+->get();
+$my_friend_id_finds=$myfriendsDatas->pluck('user_id')->toArray();
+$my_friend_id_find=array_merge($my_friend_id_finds,$my_friend_id_find);
+$my_friend_id_find=array_unique($my_friend_id_find);
+//->withCount("mutualFriends")
+$my_friend_records=User::whereIn("users.id",$my_friend_id_find)
+->with("user_detail")
+->get();
+//dd($my_friend_records->toArray());
+  $data["my_friend_records"]=$my_friend_records;
+     
         return view("index",$data);
+    }
+    public function user_profile($id=null){
+                if($id==null){
+      $user_id=Auth::user()->id;
+                }else{
+                  $user_id=$id;
+                }
+              $loginEdUserData=Auth::user()->with("user_detail")->where("id",Auth::id())->get();
+           
+                $loginprofileimage;
+                     $user_data=User::where("id",$user_id)->first();
+                     $user_name=   $user_data->name;
+                     $user_email=   $user_data->email;
+                     $user_join_date=date("M d,Y",strtotime($user_data->created_at));
+                     $dateofbirth=date("F d,Y",strtotime($user_data->dateofbirth));
+        $user_details=DB::table("user_details")->where("user_id",$user_id)->first();
+        
+        if($user_details){
+         if($user_details->profileImage==null){
+              $profile_image="placeholder.jpg";
+         }else{
+            $profile_image=$user_details->profileImage;
+         }
+         if($user_details->job_title==null){
+            $profile_job="Web Developer";
+       }else{
+          $profile_job=$user_details->job_title;
+       }
+       if($user_details->bio==null){
+        $profile_bio="I am Web Developer";
+   }else{
+      $profile_bio=$user_details->bio;
+   }
+        }else{
+            $profile_image="placeholder.jpg";
+            $profile_job=null;
+            $profile_bio=null;
+        }
+        $data["profileimage"]=$profile_image;
+        $data["job_title"]= $profile_job;
+        $data["user_name"]=$user_name;
+        $data["user_email"]=$user_email;
+        $data["dateofbirth"]=$dateofbirth;
+        $data["bio"]=  $profile_bio;
+        $data["user_join_date"]=$user_join_date;
+        $data["loginEdUserData"]=$loginEdUserData;
+        // dd($data);
+      return view("my_profile",$data);
     }
 }

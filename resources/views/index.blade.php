@@ -77,7 +77,7 @@
 	<!-- Google Font -->
 	<link rel="preconnect" href="https://fonts.googleapis.com/">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
-
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
 	<!-- Plugins CSS -->
 	<link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/font-awesome/css/all.min.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/bootstrap-icons/bootstrap-icons.css')}}">
@@ -409,7 +409,7 @@ Header START -->
 									<p class="small m-0">{{$job_title}}</p>
 								</div>
 							</div>
-							<a class="dropdown-item btn btn-primary-soft btn-sm my-2 text-center" href="my-profile.html">View profile</a>
+							<a class="dropdown-item btn btn-primary-soft btn-sm my-2 text-center" href="{{url('user_profile')}}">View profile</a>
 						</li>
 						<!-- Links -->
 						<li><a class="dropdown-item" href="settings.html"><i class="bi bi-gear fa-fw me-2"></i>Settings & Privacy</a></li>
@@ -803,11 +803,18 @@ Header END -->
 							<!-- Comment item START -->
 							@foreach($user_post->comments as $comment)
 							
-							<li class="comment-item">
+							<li class="comment-item mt-2">
 								<div class="d-flex position-relative">
 									<!-- Avatar -->
 									<div class="avatar avatar-xs">
-										<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/avatar/05.jpg" alt=""></a>
+    
+	@if($comment->profileImage!=null)
+										<a href="#!"><img class="avatar-img rounded-circle" 
+											src="assets/images/avatar/{{$comment->profileImage}}" alt=""></a>
+										@else
+										<a href="#!"><img class="avatar-img rounded-circle" 
+											src="assets/images/avatar/placeholder.jpg" alt=""></a>
+										@endif
 									</div>
 									<div class="ms-2">
 										<!-- Comment by -->
@@ -915,15 +922,115 @@ Header END -->
 				</div>
 				<!-- Card feed item END -->
 				@endforeach
-
-				<!-- Card feed item START -->
-			  
+				@if(count($to_be_friends) > 0)
+				<div class="card">
 					<!-- Card header START -->
+					<div class="card-header d-flex justify-content-between align-items-center border-0 pb-0">
+						<h6 class="card-title mb-0">People you may know</h6>
 
+					</div>     
+					<!-- Card header START -->
+					<div class="card-body">
+						<div class="row">
+					   	@foreach($to_be_friends as $to_be_friend)
+						<div class="col-12 col-md-6">
+						   <div class="card shadow-none text-center mb-2">
+							<!-- Card body -->
+							<div class="card-body p-2  pb-0">
+								<div class="avatar avatar-xl">
+									@if(count($to_be_friend->user_detail) > 0)
+									<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/avatar/{{$to_be_friend->user_detail[0]->profileImage}}" alt=""></a>
+								    @else
+									<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/avatar/placeholder.jpg" alt=""></a>
+									@endif
+								</div>
+								<h6 class="card-title mb-1 mt-3"> <a href="#!"> {{$to_be_friend->name}} </a></h6>
+								<p class="mb-0 small lh-sm">{{$to_be_friend->mutual_friends_count}} mutual connections</p>
+							</div>
+							<!-- Card footer -->
+							<div class="card-footer p-2 border-0">
+								<button class="btn btn-sm btn-primary-soft w-100"> Add friend </button>
+							</div>
+						</div>
+						
+
+						</div>
+					
+					 @endforeach
+					  
+							<!-- Card body -->
+							<!-- Card body -->
+						</div>
+					</div>
+				</div>
+			@endif
+					<!-- Card body START -->
+				
+						
+								
+								
+								
+									<!-- Card add friend item START -->
+									
+									<!-- Card add friend item END -->
+							
+								
+									<!-- Card add friend item START -->
+									
+									<!-- Card add friend item END -->
+								
 					
 				<!-- Card feed item END -->
 
-				<!-- Card feed item START -->
+
+
+				
+					<!-- Card header START -->
+
+					<!-- Card body START -->
+		
+				
+									<!-- Card add friend item START -->
+						
+					
+				<!-- Card feed item END -->
+
+				
+		
+
+										<!-- Card body -->
+							
+									<!-- Card add friend item END -->
+								
+							
+									<!-- Card add friend item START -->
+							
+									<!-- Card add friend item END -->
+					
+							
+								
+									<!-- Card add friend item END -->
+							
+							
+							
+								
+
+			
+			
+				<!-- Card feed item END -->
+
+					<!-- Card header START -->
+
+				
+
+								
+								
+									
+									<!-- Card add friend item END -->
+				
+				<!-- Card feed item END -->
+
+
 				<div class="card">
 					<!-- Card header START -->
 					<div class="card-header border-0 pb-0">
@@ -1379,199 +1486,60 @@ Header END -->
 			</form>
 			<!-- Search contact END -->
 			<ul class="list-unstyled">
-
+				@foreach($my_friend_records  as $my_friend_record)
 				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative toast-btn" data-target="chatToast">
+				<li class="mt-3 hstack gap-3 align-items-center position-relative toast-btn" data-target="chatToast{{$my_friend_record->id}}">
 					<!-- Avatar -->
-					<div class="avatar status-online">
-						<img class="avatar-img rounded-circle" src="assets/images/avatar/01.jpg" alt="">
+
+					
+					   @php
+					   if($my_friend_record->loginAt!=null){
+						$status_online="status-online";
+					   }else{
+						$status_online="";
+					   }
+					 
+					   
+					   @endphp
+					
+					
+					   
+					   
+
+					
+					<div class="avatar  {{	$status_online}}">
+						@if(count($my_friend_record->user_detail) > 0)
+						<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$my_friend_record->user_detail[0]->profileImage)}}" alt="">
+					
+					@else
+					<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/placeholder.jpg')}}" alt="">
+
+						@endif
 					</div>
 					<!-- Info -->
 					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">Frances Guerrero </a>
-						<div class="small text-secondary text-truncate">Frances sent a photo.</div>
+						<a class="h6 mb-0 stretched-link" href="#!">{{$my_friend_record->name}} </a>
+
 					</div>
 					<!-- Chat time -->
 					<div class="small ms-auto text-nowrap"> Just now </div>
 				</li>
+				@endforeach
 
 				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative toast-btn" data-target="chatToast2">
-					<!-- Avatar -->
-					<div class="avatar status-online">
-						<img class="avatar-img rounded-circle" src="assets/images/avatar/02.jpg" alt="">
-					</div>
-					<!-- Info -->
-					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">Lori Ferguson </a>
-						<div class="small text-secondary text-truncate">You missed a call form Carolyn🤙</div>
-					</div>
-					<!-- Chat time -->
-					<div class="small ms-auto text-nowrap"> 1min </div>
-				</li>
+				
+				
 
 				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative">
-					<!-- Avatar -->
-					<div class="avatar status-offline">
-						<img class="avatar-img rounded-circle" src="assets/images/avatar/placeholder.jpg" alt="">
-					</div>
-					<!-- Info -->
-					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">Samuel Bishop </a>
-						<div class="small text-secondary text-truncate">Day sweetness why cordially 😊</div>
-					</div>
-					<!-- Chat time -->
-					<div class="small ms-auto text-nowrap"> 2min </div>
-				</li>
+				
+				<!-- Contact item -->
+				
 
 				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative">
-					<!-- Avatar -->
-					<div class="avatar">
-						<img class="avatar-img rounded-circle" src="assets/images/avatar/04.jpg" alt="">
-					</div>
-					<!-- Info -->
-					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">Dennis Barrett </a>
-						<div class="small text-secondary text-truncate">Happy birthday🎂</div>
-					</div>
-					<!-- Chat time -->
-					<div class="small ms-auto text-nowrap"> 10min </div>
-				</li>
+			
 
 				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative">
-					<!-- Avatar -->
-					<div class="avatar avatar-story status-online">
-						<img class="avatar-img rounded-circle" src="assets/images/avatar/05.jpg" alt="">
-					</div>
-					<!-- Info -->
-					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">Judy Nguyen </a>
-						<div class="small text-secondary text-truncate">Thank you!</div>
-					</div>
-					<!-- Chat time -->
-					<div class="small ms-auto text-nowrap"> 2hrs </div>
-				</li>
-
-				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative">
-					<!-- Avatar -->
-					<div class="avatar status-online">
-						<img class="avatar-img rounded-circle" src="assets/images/avatar/06.jpg" alt="">
-					</div>
-					<!-- Info -->
-					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">Carolyn Ortiz </a>
-						<div class="small text-secondary text-truncate">Greetings from Webestica.</div>
-					</div>
-					<!-- Chat time -->
-					<div class="small ms-auto text-nowrap"> 1 day </div>
-				</li>
-
-				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative">
-					<!-- Avatar -->
-					<div class="flex-shrink-0 avatar">
-						<ul class="avatar-group avatar-group-four">
-							<li class="avatar avatar-xxs">
-								<img class="avatar-img rounded-circle" src="assets/images/avatar/06.jpg" alt="avatar">
-							</li>
-							<li class="avatar avatar-xxs">
-								<img class="avatar-img rounded-circle" src="assets/images/avatar/07.jpg" alt="avatar">
-							</li>
-							<li class="avatar avatar-xxs">
-								<img class="avatar-img rounded-circle" src="assets/images/avatar/08.jpg" alt="avatar">
-							</li>
-							<li class="avatar avatar-xxs">
-								<img class="avatar-img rounded-circle" src="assets/images/avatar/09.jpg" alt="avatar">
-							</li>
-						</ul>
-					</div>
-					<!-- Info -->
-					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link text-truncate d-inline-block" href="#!">Frances, Lori, Amanda, Lawson </a>
-						<div class="small text-secondary text-truncate">Btw are you looking for job change?</div>
-					</div>
-					<!-- Chat time -->
-					<div class="small ms-auto text-nowrap"> 4 day </div>
-				</li>
-
-				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative">
-					<!-- Avatar -->
-					<div class="avatar status-offline">
-						<img class="avatar-img rounded-circle" src="assets/images/avatar/08.jpg" alt="">
-					</div>
-					<!-- Info -->
-					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">Bryan Knight </a>
-						<div class="small text-secondary text-truncate">if you are available to discuss🙄</div>
-					</div>
-					<!-- Chat time -->
-					<div class="small ms-auto text-nowrap"> 6 day </div>
-				</li>
-
-				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative">
-					<!-- Avatar -->
-					<div class="avatar">
-						<img class="avatar-img rounded-circle" src="assets/images/avatar/09.jpg" alt="">
-					</div>
-					<!-- Info -->
-					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">Louis Crawford </a>
-						<div class="small text-secondary text-truncate">🙌Congrats on your work anniversary!</div>
-					</div>
-					<!-- Chat time -->
-					<div class="small ms-auto text-nowrap"> 1 day </div>
-				</li>
-
-				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative">
-					<!-- Avatar -->
-					<div class="avatar status-online">
-						<img class="avatar-img rounded-circle" src="assets/images/avatar/10.jpg" alt="">
-					</div>
-					<!-- Info -->
-					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">Jacqueline Miller </a>
-						<div class="small text-secondary text-truncate">No sorry, Thanks.</div>
-					</div>
-					<!-- Chat time -->
-					<div class="small ms-auto text-nowrap"> 15, dec </div>
-				</li>
-
-				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative">
-					<!-- Avatar -->
-					<div class="avatar">
-						<img class="avatar-img rounded-circle" src="assets/images/avatar/11.jpg" alt="">
-					</div>
-					<!-- Info -->
-					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">Amanda Reed </a>
-						<div class="small text-secondary text-truncate">Interested can share CV at.</div>
-					</div>
-					<!-- Chat time -->
-					<div class="small ms-auto text-nowrap"> 18, dec </div>
-				</li>
-
-				<!-- Contact item -->
-				<li class="mt-3 hstack gap-3 align-items-center position-relative">
-					<!-- Avatar -->
-					<div class="avatar status-online">
-						<img class="avatar-img rounded-circle" src="assets/images/avatar/12.jpg" alt="">
-					</div>
-					<!-- Info -->
-					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">Larry Lawson </a>
-						<div class="small text-secondary text-truncate">Hope you're doing well and Safe.</div>
-					</div>
-					<!-- Chat time -->
-					<div class="small ms-auto text-nowrap"> 20, dec </div>
-				</li>
+				
 				<!-- Button -->
 				<li class="mt-3 d-grid">
 					<a class="btn btn-primary-soft" href="messaging.html"> See all in messaging </a>
@@ -1590,17 +1558,27 @@ Header END -->
 		<div class="toast-container toast-chat d-flex gap-3 align-items-end">
 
 			<!-- Chat toast START -->
-			<div id="chatToast" class="toast mb-0 bg-mode" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+			@foreach($my_friend_records  as $my_friend_record)
+			<div id="chatToast{{$my_friend_record->id}}" class="toast mb-0 bg-mode" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
 				<div class="toast-header bg-mode">
 					<!-- Top avatar and status START -->
 					<div class="d-flex justify-content-between align-items-center w-100">
 						<div class="d-flex">
+						
 							<div class="flex-shrink-0 avatar me-2">
-								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/01.jpg')}}" alt="">
+								@if(count($my_friend_record->user_detail) > 0)
+							
+								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$my_friend_record->user_detail[0]->profileImage)}}" alt="">
+							     @else
+								 <img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/placeholder.jpg')}}" alt="">
+
+								@endif
 							</div>
 							<div class="flex-grow-1">
-								<h6 class="mb-0 mt-1">Frances Guerrero</h6>
+								<h6 class="mb-0 mt-1">{{$my_friend_record->name}}</h6>
+								@if($my_friend_record->loginAt!=null)
 								<div class="small text-secondary"><i class="fa-solid fa-circle text-success me-1"></i>Online</div>
+								@endif
 							</div>
 						</div>
 						<div class="d-flex">
@@ -1734,6 +1712,7 @@ Header END -->
 					<!-- Chat bottom START -->
 				</div>
 			</div>
+			@endforeach
 			<!-- Chat toast END -->
 
 			<!-- Chat toast 2 START -->
@@ -2167,9 +2146,9 @@ JS libraries, plugins and custom scripts -->
 <script src="assets/vendor/flatpickr/dist/flatpickr.min.js"></script>
 <script src="assets/vendor/plyr/plyr.js"></script>
 <script src="assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
-<script src="assets/vendor/zuck.js/dist/zuck.min.js"></script>
-<script src="assets/js/zuck-stories.js"></script>
-
+<!--<script src="assets/vendor/zuck.js/dist/zuck.min.js"></script>-->
+<!--<script src="assets/js/zuck-stories.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
 <!-- Theme Functions -->
 <script src="assets/js/functions.js"></script>
 
