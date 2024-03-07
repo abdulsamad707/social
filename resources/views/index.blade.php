@@ -1559,7 +1559,7 @@ Header END -->
 
 			<!-- Chat toast START -->
 			@foreach($my_friend_records  as $my_friend_record)
-			<div id="chatToast{{$my_friend_record->id}}" class="toast mb-0 bg-mode" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+			<div id="chatToast{{$my_friend_record->id}}"   class="toast mb-0 bg-mode" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
 				<div class="toast-header bg-mode">
 					<!-- Top avatar and status START -->
 					<div class="d-flex justify-content-between align-items-center w-100">
@@ -1606,11 +1606,11 @@ Header END -->
 				</div>
 				<div class="toast-body collapse show" id="collapseChat">
 					<!-- Chat conversation START -->
-					<div class="chat-conversation-content custom-scrollbar h-200px">
+					<div class="chat-conversation-content custom-scrollbar h-200px" id="chats">
 						<!-- Chat time -->
 						<div class="text-center small my-2">Jul 16, 2022, 06:15 am</div>
 						<!-- Chat message left -->
-						
+						   
 						<div class="d-flex mb-1">
 							<div class="flex-shrink-0 avatar avatar-xs me-2">
 								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/01.jpg')}}" alt="">
@@ -1649,6 +1649,7 @@ Header END -->
 							</div>
 						</div>
 						<!-- Chat message left -->
+
 						<div class="d-flex mb-1">
 							<div class="flex-shrink-0 avatar avatar-xs me-2">
 								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/01.jpg')}}" alt="">
@@ -1663,6 +1664,7 @@ Header END -->
 							</div>
 						</div>
 						<!-- Chat message right -->
+						
 						<div class="d-flex justify-content-end text-end mb-1">
 							<div class="w-100">
 								<div class="d-flex flex-column align-items-end">
@@ -1676,38 +1678,25 @@ Header END -->
 							</div>
 						</div>
 						<!-- Chat time -->
-						<div class="text-center small my-2">2 New Messages</div>
+					
 						<!-- Chat Typing -->
-						<div class="d-flex mb-1">
-							<div class="flex-shrink-0 avatar avatar-xs me-2">
-								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/01.jpg')}}" alt="">
-							</div>
-							<div class="flex-grow-1">
-								<div class="w-100">
-									<div class="d-flex flex-column align-items-start">
-										<div class="bg-light text-secondary p-3 rounded-2">
-											<div class="typing d-flex align-items-center">
-												<div class="dot"></div>
-												<div class="dot"></div>
-												<div class="dot"></div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+						
 					</div>
 					<!-- Chat conversation END -->
 					<!-- Chat bottom START -->
 					<div class="mt-2">
 						<!-- Chat textarea -->
-						<textarea class="form-control mb-sm-0 mb-3" placeholder="Type a message" rows="1"></textarea>
+						<form id="chatform">
+						<input class="form-control mb-sm-0 mb-3" name="msg" value="" id="messageUser" placeholder="Type a message" >
 						<!-- Button -->
 						<div class="d-sm-flex align-items-end mt-2">
 							<button class="btn btn-sm btn-danger-soft me-2"><i class="fa-solid fa-face-smile fs-6"></i></button>
 							<button class="btn btn-sm btn-secondary-soft me-2"><i class="fa-solid fa-paperclip fs-6"></i></button>
 							<button class="btn btn-sm btn-success-soft me-2"> Gif </button>
-							<button class="btn btn-sm btn-primary ms-auto"> Send </button>
+							<input type="hidden" name="receiver_id" value="{{$my_friend_record->id}}">
+							<button class="btn btn-sm btn-primary ms-auto" id="sendBtn" type="submit"  > Send </button>
+					@csrf
+						</form>
 						</div>
 					</div>
 					<!-- Chat bottom START -->
@@ -1717,150 +1706,7 @@ Header END -->
 			<!-- Chat toast END -->
 
 			<!-- Chat toast 2 START -->
-			<div id="chatToast2" class="toast mb-0 bg-mode" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
-				<div class="toast-header bg-mode">
-					<!-- Top avatar and status START -->
-					<div class="d-flex justify-content-between align-items-center w-100">
-						<div class="d-flex">
-							<div class="flex-shrink-0 avatar me-2">
-								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/02.jpg')}}" alt="">
-							</div>
-							<div class="flex-grow-1">
-								<h6 class="mb-0 mt-1">Lori Ferguson</h6>
-								<div class="small text-secondary"><i class="fa-solid fa-circle text-success me-1"></i>Online</div>
-							</div>
-						</div>
-						<div class="d-flex">
-						<!-- Call button -->
-						<div class="dropdown">
-							<a class="btn btn-secondary-soft-hover py-1 px-2" href="#" id="chatcoversationDropdown2" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></a>               
-							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="chatcoversationDropdown2">
-								<li><a class="dropdown-item" href="#"><i class="bi bi-camera-video me-2 fw-icon"></i>Video call</a></li>
-								<li><a class="dropdown-item" href="#"><i class="bi bi-telephone me-2 fw-icon"></i>Audio call</a></li>
-								<li><a class="dropdown-item" href="#"><i class="bi bi-trash me-2 fw-icon"></i>Delete </a></li>
-								<li><a class="dropdown-item" href="#"><i class="bi bi-chat-square-text me-2 fw-icon"></i>Mark as unread</a></li>
-								<li><a class="dropdown-item" href="#"><i class="bi bi-volume-up me-2 fw-icon"></i>Muted</a></li>
-								<li><a class="dropdown-item" href="#"><i class="bi bi-archive me-2 fw-icon"></i>Archive</a></li>
-								<li class="dropdown-divider"></li>
-								<li><a class="dropdown-item" href="#"><i class="bi bi-flag me-2 fw-icon"></i>Report</a></li>
-							</ul>
-						</div>
-						<!-- Card action END -->
-						<a class="btn btn-secondary-soft-hover py-1 px-2" data-bs-toggle="collapse" href="#collapseChat2" role="button" aria-expanded="false" aria-controls="collapseChat2"><i class="bi bi-dash-lg"></i></a>        
-						<button class="btn btn-secondary-soft-hover py-1 px-2" data-bs-dismiss="toast" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-					</div>
-				</div>
-				<!-- Top avatar and status END -->
-					
-				</div>
-				<div class="toast-body collapse show" id="collapseChat2">
-					<!-- Chat conversation START -->
-					<div class="chat-conversation-content custom-scrollbar h-200px">
-						<!-- Chat time -->
-						<div class="text-center small my-2">Jul 16, 2022, 06:15 am</div>
-						<!-- Chat message left -->
-						<div class="d-flex mb-1">
-							<div class="flex-shrink-0 avatar avatar-xs me-2">
-								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/02.jpg')}}" alt="">
-							</div>
-							<div class="flex-grow-1">
-								<div class="w-100">
-									<div class="d-flex flex-column align-items-start">
-										<div class="bg-light text-secondary p-2 px-3 rounded-2">Applauded no discovery😊</div>
-										<div class="small my-2">6:15 AM</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- Chat message right -->
-						<div class="d-flex justify-content-end text-end mb-1">
-							<div class="w-100">
-								<div class="d-flex flex-column align-items-end">
-									<div class="bg-primary text-white p-2 px-3 rounded-2">With pleasure</div>
-								</div>
-							</div>
-						</div>
-						<!-- Chat message left -->
-						<div class="d-flex mb-1">
-							<div class="flex-shrink-0 avatar avatar-xs me-2">
-								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/02.jpg')}}" alt="">
-							</div>
-							<div class="flex-grow-1">
-								<div class="w-100">
-									<div class="d-flex flex-column align-items-start">
-										<div class="bg-light text-secondary p-2 px-3 rounded-2">Please find the attached</div>
-										<!-- Files START -->
-										<!-- Files END -->
-										<div class="small my-2">12:16 PM</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- Chat message left -->
-						<div class="d-flex mb-1">
-							<div class="flex-shrink-0 avatar avatar-xs me-2">
-								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/02.jpg')}}" alt="">
-							</div>
-							<div class="flex-grow-1">
-								<div class="w-100">
-									<div class="d-flex flex-column align-items-start">
-										<div class="bg-light text-secondary p-2 px-3 rounded-2">How promotion excellent curiosity😮</div>
-										<div class="small my-2">3:22 PM</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- Chat message right -->
-						<div class="d-flex justify-content-end text-end mb-1">
-							<div class="w-100">
-								<div class="d-flex flex-column align-items-end">
-									<div class="bg-primary text-white p-2 px-3 rounded-2">And sir dare view.</div>
-									<!-- Images -->
-									<div class="d-flex my-2">
-										<div class="small text-secondary">5:35 PM</div>
-										<div class="small ms-2"><i class="fa-solid fa-check"></i></div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- Chat time -->
-						<div class="text-center small my-2">2 New Messages</div>
-						<!-- Chat Typing -->
-						<div class="d-flex mb-1">
-							<div class="flex-shrink-0 avatar avatar-xs me-2">
-								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/02.jpg')}}" alt="">
-							</div>
-							<div class="flex-grow-1">
-								<div class="w-100">
-									<div class="d-flex flex-column align-items-start">
-										<div class="bg-light text-secondary p-3 rounded-2">
-											<div class="typing d-flex align-items-center">
-												<div class="dot"></div>
-												<div class="dot"></div>
-												<div class="dot"></div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- Chat conversation END -->
-					<!-- Chat bottom START -->
-					<div class="mt-2">
-						<!-- Chat textarea -->
-						<textarea class="form-control mb-sm-0 mb-3" placeholder="Type a message" rows="1"></textarea>
-						<!-- Button -->
-						<div class="d-sm-flex align-items-end mt-2">
-							<button class="btn btn-sm btn-danger-soft me-2"><i class="fa-solid fa-face-smile fs-6"></i></button>
-							<button class="btn btn-sm btn-secondary-soft me-2"><i class="fa-solid fa-paperclip fs-6"></i></button>
-							<button class="btn btn-sm btn-success-soft me-2"> Gif </button>
-							<button class="btn btn-sm btn-primary ms-auto"> Send </button>
-						</div>
-					</div>
-					<!-- Chat bottom START -->
-				</div>
-			</div>
+			
 			<!-- Chat toast 2 END -->
 
 		</div>
@@ -2140,6 +1986,10 @@ JS libraries, plugins and custom scripts -->
 <script src="assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Vendors -->
+<script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
 <script src="assets/vendor/tiny-slider/dist/tiny-slider.js"></script>
 <script src="assets/vendor/OverlayScrollbars-master/js/OverlayScrollbars.min.js"></script>
 <script src="assets/vendor/choices.js/public/assets/scripts/choices.min.js"></script>
@@ -2152,6 +2002,31 @@ JS libraries, plugins and custom scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
 <!-- Theme Functions -->
 <script src="assets/js/functions.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+		//document.getElementById("message").value="hi";
+	
+   // $("#message").val();
+   $(document).on("submit", "#chatform", function(e) {
+    e.preventDefault(); // Prevent default form submission behavior
+    
+    var formData = $(this).serialize(); // Serialize form data
+    
+    console.log(formData); // Log the serialized form data
+    
+    $.ajax({
+		method:"post",
+		url:"{{url('chats')}}",
+		data:formData,
+		success:function(res){
+			console.log(res);
+		}
+	});
+});
+ 
+
+</script>
 
 
 </body>

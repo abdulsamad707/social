@@ -8,10 +8,29 @@ use DB;
 use Http;
 use App\Models\User;
 use App\Models\Post;
+use App\Models\social_chat;
+use App\Events\UserMessage;
 class FrontController extends Controller
 {
-    public function index(){
 
+
+ public function chats (Request $req){
+  try{
+social_chat::create([
+  "sender_id"=>Auth::user()->id,
+  'receiver_id'=>$req->post("receiver_id"),
+  "msg"=>$req->post("msg")
+
+]);
+event(new UserMessage());
+  }catch(\Exception $e){
+    echo $e->getMessage();
+  }
+return  "dd";
+ }
+    public function index(){
+       
+       
         $user_id=Auth::user()->id;
         $user_details=DB::table("user_details")->where("user_id",$user_id)->first();
         
