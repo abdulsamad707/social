@@ -92,7 +92,7 @@ return new class extends Migration
         Schema::create('social_chats', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sender_id');
-         
+            $table->string("msg");
       
             $table->unsignedBigInteger('receiver_id');
             $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');

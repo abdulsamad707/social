@@ -1479,11 +1479,11 @@ Header END -->
 		</div>
 		<!-- Offcanvas body START -->
 		<div class="offcanvas-body pt-0 custom-scrollbar">
-			<!-- Search contact START -->
+			<!-- Search contact START 
 			<form class="rounded position-relative">
 				<input class="form-control ps-5 bg-light" type="search" placeholder="Search..." aria-label="Search">
 				<button class="btn bg-transparent px-3 py-0 position-absolute top-50 start-0 translate-middle-y" type="submit"><i class="bi bi-search fs-5"> </i></button>
-			</form>
+			</form>-->
 			<!-- Search contact END -->
 			<ul class="list-unstyled">
 				@foreach($my_friend_records  as $my_friend_record)
@@ -1610,6 +1610,7 @@ Header END -->
 						<!-- Chat time -->
 						<div class="text-center small my-2">Jul 16, 2022, 06:15 am</div>
 						<!-- Chat message left -->
+						
 						<div class="d-flex mb-1">
 							<div class="flex-shrink-0 avatar avatar-xs me-2">
 								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/01.jpg')}}" alt="">
