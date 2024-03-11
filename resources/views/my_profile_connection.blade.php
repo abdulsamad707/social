@@ -15,16 +15,22 @@
     <!-- Card body START -->
     <div class="card-body">
       <!-- Connections Item -->
+      @foreach($my_friend_data as $friend )
       <div class="d-md-flex align-items-center mb-4">
         <!-- Avatar -->
         <div class="avatar me-3 mb-3 mb-md-0">
-          <a href="#!"> <img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/01.jpg')}}" alt=""> </a>
+          @if(count($friend->user_detail)>0)
+          <a href="{{url('user_profile/'.$friend->id)}}"><img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$friend->user_detail[0]->profileImage)}}" alt=""></a>
+          @else
+          <a href="{{url('user_profile/'.$friend->id)}}"><img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/placeholder.jpg')}}" alt=""></a>
+          @endif
+          
         </div>
         <!-- Info -->
         <div class="w-100">
           <div class="d-sm-flex align-items-start">
-            <h6 class="mb-0"><a href="#!">Lori Ferguson </a></h6>
-            <p class="small ms-sm-2 mb-0">Full Stack Web Developer</p>
+            <h6 class="mb-0"><a href="{{url('user_profile/'.$friend->id)}}">{{$friend->name}} </a></h6>
+          
         </div>
         <!-- Connections START -->
        
@@ -32,13 +38,13 @@
       </div>
       <!-- Button -->
       <div class="ms-md-auto d-flex">
-        <button class="btn btn-danger-soft btn-sm mb-0 me-2"> Remove </button>
-        <button class="btn btn-primary-soft btn-sm mb-0"> Message </button>
+        <a class="btn btn-danger-soft btn-sm mb-0 me-2"> Remove </a>
+    
       </div>
     </div>
 
     <!-- Connections Item -->
- 
+ @endforeach
 
     <!-- Connections Item -->
    

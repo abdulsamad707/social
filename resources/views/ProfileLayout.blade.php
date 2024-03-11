@@ -62,14 +62,52 @@
               <!-- Card body END -->
               <div class="card-footer mt-3 pt-2 pb-0">
                 <!-- Nav profile pages -->
+               
                 <ul class="nav nav-bottom-line align-items-center justify-content-center justify-content-md-start mb-0 border-0">
+                  @if(request()->path()=="user_profile/".$user_id)
                   <li class="nav-item"> <a class="nav-link active" href="{{url('user_profile/'.$user_id)}}"> Posts </a> </li>
-                  <li class="nav-item"> <a class="nav-link" href="my-profile-about.html"> About </a> </li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_about/'.$user_id)}}"> About </a> </li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_connections/'.$user_id)}}"> Connections <span class="badge bg-success bg-opacity-10 text-success small">{{$my_friend_count}}</span> </a> </li>
-                  <li class="nav-item"> <a class="nav-link" href="my-profile-media.html"> Media</a> </li>
-                  <li class="nav-item"> <a class="nav-link" href="my-profile-videos.html"> Videos</a> </li>
-                  <li class="nav-item"> <a class="nav-link" href="my-profile-events.html"> Events</a> </li>
-                  <li class="nav-item"> <a class="nav-link" href="my-profile-activity.html"> Activity</a> </li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_Video/'.$user_id)}}">Media</a> </li>
+            
+                  <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_event/'.$user_id)}}"> Events</a> </li>
+                  @elseif(request()->path()=="user_profile_about/".$user_id)
+                  <li class="nav-item"> <a class="nav-link" href="{{url('user_profile/'.$user_id)}}"> Posts </a> </li>
+                  <li class="nav-item"> <a class="nav-link active" href="{{url('user_profile_about/'.$user_id)}}"> About </a> </li>
+
+
+                  <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_connections/'.$user_id)}}"> Connections <span class="badge bg-success bg-opacity-10 text-success small">{{$my_friend_count}}</span> </a> </li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_Video/'.$user_id)}}">Media</a> </li>
+            
+                  <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_event/'.$user_id)}}"> Events</a> </li>
+                  @elseif(request()->path()=="user_profile_connections/".$user_id)
+                  <li class="nav-item"> <a class="nav-link" href="{{url('user_profile/'.$user_id)}}"> Posts </a> </li>
+                  <li class="nav-item"> <a class="nav-link " href="{{url('user_profile_about/'.$user_id)}}"> About </a> </li>
+
+
+                  <li class="nav-item"> <a class="nav-link active" href="{{url('user_profile_connections/'.$user_id)}}"> Connections <span class="badge bg-success bg-opacity-10 text-success small">{{$my_friend_count}}</span> </a> </li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_Video/'.$user_id)}}">Media</a> </li>
+            
+                  <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_event/'.$user_id)}}"> Events</a> </li>
+                @elseif(request()->path()=="user_profile_Video/".$user_id)
+                <li class="nav-item"> <a class="nav-link" href="{{url('user_profile/'.$user_id)}}"> Posts </a> </li>
+                <li class="nav-item"> <a class="nav-link " href="{{url('user_profile_about/'.$user_id)}}"> About </a> </li>
+
+
+                <li class="nav-item"> <a class="nav-link " href="{{url('user_profile_connections/'.$user_id)}}"> Connections <span class="badge bg-success bg-opacity-10 text-success small">{{$my_friend_count}}</span> </a> </li>
+                <li class="nav-item"> <a class="nav-link active" href="{{url('user_profile_Video/'.$user_id)}}"> Media</a> </li>
+          
+                <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_event/'.$user_id)}}"> Events</a> </li>
+                @elseif(request()->path()=="user_profile_event/".$user_id)
+                <li class="nav-item"> <a class="nav-link" href="{{url('user_profile/'.$user_id)}}"> Posts </a> </li>
+                <li class="nav-item"> <a class="nav-link " href="{{url('user_profile_about/'.$user_id)}}"> About </a> </li>
+
+
+                <li class="nav-item"> <a class="nav-link " href="{{url('user_profile_connections/'.$user_id)}}"> Connections <span class="badge bg-success bg-opacity-10 text-success small">{{$my_friend_count}}</span> </a> </li>
+                <li class="nav-item"> <a class="nav-link " href="{{url('user_profile_Video/'.$user_id)}}">Media</a> </li>
+          
+                <li class="nav-item"> <a class="nav-link active" href="{{url('user_profile_event/'.$user_id)}}"> Events</a> </li>
+                  @endif
                 </ul>
               </div>
             </div>
@@ -128,19 +166,24 @@
                 <!-- Card body START -->
                 <div class="card-body position-relative pt-0">
                   <!-- Experience item START -->
+                  @if(count($user_pages) > 0)
+                  @foreach($user_pages as $user_page)
                   <div class="d-flex">
                     <!-- Avatar -->
                     <div class="avatar me-3">
-                      <a href="#!"> <img class="avatar-img rounded-circle" src="{{asset('assets/images/logo/09.svg')}}" alt=""> </a>
+                      <a href="#!"> <img class="avatar-img rounded-circle" src="{{asset('assets/images/logo/'.$user_page->page_logo)}}" alt=""> </a>
                     </div>
                     <!-- Info -->
                     <div>
-                      <h6 class="card-title mb-0"><a href="#!"> Apple Computer, Inc. </a></h6>
+                      <h6 class="card-title mb-0"><a href="#!"> {{$user_page->page_name}} </a></h6>
                       
                     </div>
                   </div>
                   <!-- Experience item END -->
-  
+                  @endforeach
+                  @else
+                  <p class="text-center">No Page</p>
+                  @endif
                   <!-- Experience item START -->
               
                   <!-- Experience item END -->
@@ -206,7 +249,7 @@
                 <!-- Card header START -->
                 <div class="card-header d-sm-flex justify-content-between align-items-center border-0">
                   <h5 class="card-title">Friends <span class="badge bg-danger bg-opacity-10 text-danger">{{$my_friend_count}}</span></h5>
-                  <a class="btn btn-primary-soft btn-sm" href="#!"> See all friends</a>
+                
                 </div>
                 <!-- Card header END -->
                 <!-- Card body START -->

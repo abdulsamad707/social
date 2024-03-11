@@ -23,6 +23,7 @@ return new class extends Migration
      $table->dateTime("dateofbirth")->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->string("cover_photo")->nullable();
             
             $table->timestamps();
         });

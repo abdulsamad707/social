@@ -31,6 +31,9 @@ Route::middleware(['isuserlogin'])->group(function () {
     Route::get("makeFolder",[FrontController::class,"makeFolder"]);
     Route::get("addfriend/{id}",[FrontController::class,"addfriend"]);
     Route::get("user_profile_connections/{id?}",[FrontController::class,"user_profile_connections"]);
+    Route::get("user_profile_about/{id?}",[FrontController::class,"user_about"]);
+    Route::get("user_profile_Video/{id?}",[FrontController::class,"user_videos"]);
+    Route::get("user_profile_event/{id?}",[FrontController::class,"user_profile_event"]);
 });
 Route::get('login', function () {
     return view('authenticate.signin');

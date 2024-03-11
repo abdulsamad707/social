@@ -297,89 +297,7 @@ $data["Humidity"]=$humidity."%";
         return view("index",$data);
     }
     public function user_profile($id=null){
-                if($id==null){
-      $user_id=Auth::user()->id;
-                }else{
-                  $user_id=$id;
-                }
-              $loginEdUserData=Auth::user()->with("user_detail")->where("id",Auth::id())->get();
-           
-                $loginprofileimage;
-                     $user_data=User::where("id",$user_id)->first();
-                     $user_name=   $user_data->name;
-                     $user_email=   $user_data->email;
-                     $user_join_date=date("M d,Y",strtotime($user_data->created_at));
-                     $dateofbirth=date("F d,Y",strtotime($user_data->dateofbirth));
-        $user_details=DB::table("user_details")->where("user_id",$user_id)->first();
-        $my_friends=DB::table('friendships')
-        ->where("friend_id",$user_id)
-        ->get();
-        $my_friend_ids= $my_friends->pluck("user_id");
-        $my_friend_array_id=$my_friend_ids->toArray();
-       //   print_r($my_friend_array_id);
-        $my_friend_array_id=array_unique($my_friend_array_id);
-
-        $my_friends_second=DB::table('friendships')
-        ->where("user_id",$user_id)
-        ->get();
-        $my_friend_ids_second= $my_friends_second->pluck("friend_id");
-        $my_friend_array_id_second=$my_friend_ids_second->toArray();
-        $my_friend_array_id_second=array_unique($my_friend_array_id_second);
-        $my_friend_array_id=array_merge($my_friend_array_id_second,$my_friend_array_id);
-        
-        $my_friend_array_id=array_unique($my_friend_array_id);
- 
-
-     //  $my_friend_array_id=array_unique($my_friend_array_id);
-  //  $my_friend_data=$my_friend_data->toArray();
-        //  dd($my_friend_data);
-       // dd($my_friend_array_id);
-        if($user_details){
-         if($user_details->profileImage==null){
-              $profile_image="placeholder.jpg";
-         }else{
-            $profile_image=$user_details->profileImage;
-         }
-         if($user_details->job_title==null){
-            $profile_job="Web Developer";
-       }else{
-          $profile_job=$user_details->job_title;
-       }
-       if($user_details->bio==null){
-        $profile_bio="I am Web Developer";
-   }else{
-      $profile_bio=$user_details->bio;
-   }
-        }else{
-            $profile_image="placeholder.jpg";
-            $profile_job=null;
-            $profile_bio=null;
-        }
-        $data["profileimage"]=$profile_image;
-        $data["job_title"]= $profile_job;
-        $data["user_name"]=$user_name;
-        $data["user_email"]=$user_email;
-        $data["dateofbirth"]=$dateofbirth;
-        $data["bio"]=  $profile_bio;
-        $data["my_friend_array_id"]= $my_friend_array_id;
-
-       if( !in_array(Auth::user()->id,$my_friend_array_id)){
-           $data["friends"]=0;
-       }else{
-        $data["friends"]=1;
-       }
-
-        $data["user_photos"]=DB::table('users_photo')->where("user_id",$user_id)->get();
-        $my_friend_data= User::whereIn("users.id",$my_friend_array_id)
-        ->withCount("mutualFriends")
-         ->withCount("friends")
-        ->with("user_detail")
-        ->get();
-        $data["user_join_date"]=$user_join_date;
-        $data["loginEdUserData"]=$loginEdUserData;
-      $data["my_friend_data"]=$my_friend_data;
-        $data["my_friend_count"]=count($my_friend_data);
-        $data["user_id"]=$id;
+      $data=$this-> userRecord($id);
      //  dd($data);
       return view("my_profile",$data);
     }
@@ -479,6 +397,28 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
     return redirect()->back();
    }
    public function user_profile_connections($id=null){
+    $data=$this-> userRecord($id);
+     //  dd($data);
+    return view("my_profile_connection",$data);
+   }
+ function  user_videos($id=null){
+  $data=$this->userRecord($id);
+ // dd($data);
+ return view("user_video",$data);
+ }
+function user_about($id=null){
+ $data=$this-> userRecord($id);
+ //dd($data);
+return view("user_profile_about",$data);
+ 
+
+
+}
+public function user_profile_event($id=null){
+  $data=$this-> userRecord($id);
+  return view("user_event",$data);
+}
+   function userRecord($id=null){
     $data["user_id"]=$id;
     if($id==null){
       $user_id=Auth::user()->id;
@@ -491,6 +431,8 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
                      $user_data=User::where("id",$user_id)->first();
                      $user_name=   $user_data->name;
                      $user_email=   $user_data->email;
+                     $data["city"]=$user_data->city;
+                     $data["maritual_status"]=$user_data->maritual_status;
                      $user_join_date=date("M d,Y",strtotime($user_data->created_at));
                      $dateofbirth=date("F d,Y",strtotime($user_data->dateofbirth));
         $user_details=DB::table("user_details")->where("user_id",$user_id)->first();
@@ -553,6 +495,11 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
        }
 
         $data["user_photos"]=DB::table('users_photo')->where("user_id",$user_id)->get();
+        $data["user_pages"]=DB::table("social_page_followers")->
+       select("page_logo","page_name","social_pages.id as page_id") ->
+        join("social_pages","social_pages.id","=","social_page_followers.social_page_id")->
+        where("social_page_followers.user_id",$user_id)->get();
+        $data["user_videos"]=DB::table('users_video')->where("user_id",$user_id)->get();
         $my_friend_data= User::whereIn("users.id",$my_friend_array_id)
         ->withCount("mutualFriends")
          ->withCount("friends")
@@ -563,7 +510,6 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
       $data["my_friend_data"]=$my_friend_data;
         $data["my_friend_count"]=count($my_friend_data);
         $data["user_id"]=$id;
-     //  dd($data);
-    return view("my_profile_connection",$data);
+        return $data;
    }
 }

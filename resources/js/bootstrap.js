@@ -28,4 +28,5 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
      wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
      forceTLS: false,
      enabledTransports: ['ws', 'wss'],
+     disableStats:true
  });

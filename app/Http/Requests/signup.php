@@ -26,7 +26,7 @@ class signup extends FormRequest
             "mobile"=>"required|digits:11",
             "password"=>"required|confirmed",
             "dateofbirth"=>"required",
-            "name"=>"required|string|alpha_dash",
+            "name"=>"required|string",
             "referalcode"=>"nullable|alpha_dash|exists:referals,referalCode"
         ];
     }
