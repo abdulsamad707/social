@@ -9,7 +9,10 @@ use Http;
 use App\Models\User;
 use App\Models\Post;
 use App\Models\social_chat;
+use Illuminate\Support\Facades\Cache;
 use App\Events\UserMessage;
+use OpenAI\Laravel\Facades\OpenAI;
+use Illuminate\Support\Facades\File;
 class FrontController extends Controller
 {
 
@@ -89,6 +92,7 @@ return  "dd";
   
   ->whereIn("posts.user_id",$post_user_ids)
   ->orWhere("posts.user_id",$user_id)
+  ->orderBy("created_at","desc")
   // ->orwhereIn("social_page_id",$page_id)
   ->get();
 
@@ -114,27 +118,31 @@ $user_ids=[];
 $user_ids=array_unique($user_ids);
 //dd($user_ids);
 
+$my_friends=DB::table('friendships')->
+where("user_id",$user_id)
 
-    $frineds_my=DB::table('friendships')->where("user_id",$user_id)->get();
-    $my_friend_id =  $frineds_my->pluck('friend_id')->toArray();
- //   $my_friend_id=array_merge( $my_friend_id, $friend_id_two);
-    $my_friend_id=array_unique($my_friend_id);
-      //dd($my_friend_id);
+->get();
+$my_friend_id=$my_friends->pluck("friend_id")->toArray();
+$my_friend_id=array_unique($my_friend_id);
  
-    $frineds_my_friends=DB::table('friendships')->whereIn("user_id",  $my_friend_id )->get();
-    $my_friend_fr_id =  $frineds_my_friends->pluck('friend_id')->toArray();
-   //   $follower_ids_array
-   $frineds_my_follwings=DB::table('friendships')->whereIn("user_id", $follower_ids_array )->get();
-    $my_friend_fr_id_followings =  $frineds_my_follwings->pluck('friend_id')->toArray();
-// Get the user's friends and their mutual friends
-$combine_id=array_merge($my_friend_id,$my_friend_fr_id,$follower_ids_array,$my_friend_fr_id_followings);
-$combine_id=array_unique($combine_id);
-  // dd($combine_id);
-    $myfriend_fr=User::whereIn("users.id",   $my_friend_fr_id)
+  
+$my_friends_two=DB::table('friendships')->
+where("friend_id",$user_id)
+
+->get();
+$my_friend_two=$my_friends_two->pluck("user_id")->toArray();
+$my_friend_id=array_unique(array_merge($my_friend_two,$my_friend_id));
+ 
+// dd($my_friend_fr_id);
+    $myfriend_fr=User::where("id","!=",Auth::user()->id)
     
-    ->whereNotIn("users.id",$my_friend_id)
+    ->where("users.city",Auth::user()->city)
   
-  
+
+    
+
+
+  ->whereNotIn("users.id",$my_friend_id)
     ->withCount("mutualFriends")
     ->with("user_detail")
     ->get();
@@ -165,13 +173,25 @@ $combine_id=array_unique($combine_id);
         //GET https://newsapi.org/v2/everything?q=apple&from=2024-02-29&to=2024-02-29&sortBy=popularity&apiKey=678ef3c38bfd4689b825ca92dbfe9e6c
         $today=date("Y-m-d");
       $from=date("Y-m-d",strtotime("-1 day"));
-     $news=   Http::get("https://newsapi.org/v2/everything?q=business&pageSize=10&from=".$from."&to=".$today."&sortBy=publishedAt&apiKey=678ef3c38bfd4689b825ca92dbfe9e6c");
-$news_data=$news->json();
-unset($news_data["source"]);
-unset($news_data["source"]);
+   //  $news=   Http::get("https://newsapi.org/v2/everything?q=business&pageSize=10&from=".$from."&to=".$today."&sortBy=publishedAt&apiKey=678ef3c38bfd4689b825ca92dbfe9e6c");
+     $cacheKey = 'business_news';
+     $cacheTime = 1440; // Cache time in minutes for one day
+     
+     // Attempt to retrieve news from cache
+     $news = Cache::remember($cacheKey, $cacheTime, function () use ($from, $today) {
+         // Fetch news from API if not found in cache
+      
+        });
+
+        $news= Http::get("https://newsapi.org/v2/everything?q=business&pageSize=10&from=".$from."&to=".$today."&sortBy=publishedAt&apiKey=678ef3c38bfd4689b825ca92dbfe9e6c");
+        $news_data=$news->json();
+        $news_data = json_decode(json_encode($news_data)); 
+ $data["news"]=$news_data->articles;
+  
+//unset($news_data["source"]);
+//unset($news_data["source"]);
 //publishedAt
-$news_data = json_decode(json_encode($news_data)); 
-  $data["news"]=$news_data->articles;
+
   /*
     foreach($user_posts as $user_post){
         echo "post_id ".$user_post->id."<br>";
@@ -223,9 +243,57 @@ $my_friend_id_find=array_unique($my_friend_id_find);
 $my_friend_records=User::whereIn("users.id",$my_friend_id_find)
 ->with("user_detail")
 ->get();
+
 //dd($my_friend_records->toArray());
-  $data["my_friend_records"]=$my_friend_records;
-     
+    $data["my_friend_records"]=$my_friend_records;
+    Cache::put('news',$news);
+    $locationUrl="http://ip-api.com/json";
+    $locationUrl = Http::get($locationUrl);
+   $locationData= $locationUrl->json();
+      $locationData=json_decode(json_encode($locationData),true);
+       $countryCode=$locationData["countryCode"];
+       $country=$locationData["country"];
+       $city=$locationData["city"];
+   // dd($locationUrl->json());
+    // Your API key from OpenWeatherMap
+$apiKey = 'ea5a30bfb37bbf5ee5752dec4842320f';
+
+// City and country code for which you want to fetch the weather
+//$city = 'London';
+//$countryCode = 'GB';
+
+// API URL to fetch current weather data
+$url = "http://api.openweathermap.org/data/2.5/weather?q=$city,$countryCode&appid=$apiKey&units=metric";
+
+// Make the API request
+$response = Http::get($url);
+   // dd($response->json());
+// Decode JSON response
+$datas = json_decode($response);
+//echo "<pre>";
+   //print_r($datas);
+// Check if data was retrieved successfully
+if ($datas && $datas->cod == 200) {
+    // Extract relevant weather information
+    $temperature = $datas->main->temp;
+    $windSpeed= $datas->wind->speed;
+    $humidity = $datas->main->humidity;
+    $description = $datas->weather[0]->description;
+    $sunset=date("h:i a",strtotime($datas->sys->sunrise));
+    // Output the weather information
+ 
+ 
+} else {
+    // Handle API error
+    echo "Failed to fetch weather data. Please try again later.\n";
+}
+$data["country"]=$country;
+$data["city"]=$city;
+$data["Temperature"]=$temperature." °C";
+$data["Humidity"]=$humidity."%";
+ $data["description"]=$description;
+    $data["windSpeed"]=$windSpeed." Km/h";
+   //dd($data);
         return view("index",$data);
     }
     public function user_profile($id=null){
@@ -259,12 +327,8 @@ $my_friend_records=User::whereIn("users.id",$my_friend_id_find)
         $my_friend_array_id_second=array_unique($my_friend_array_id_second);
         $my_friend_array_id=array_merge($my_friend_array_id_second,$my_friend_array_id);
         
-      //  $my_friend_array_id=array_unique($my_friend_array_id);
-     $my_friend_data= User::whereIn("users.id",$my_friend_array_id)
-      ->withCount("mutualFriends")
-       ->withCount("friends")
-      ->with("user_detail")
-      ->get();
+        $my_friend_array_id=array_unique($my_friend_array_id);
+ 
 
      //  $my_friend_array_id=array_unique($my_friend_array_id);
   //  $my_friend_data=$my_friend_data->toArray();
@@ -297,14 +361,209 @@ $my_friend_records=User::whereIn("users.id",$my_friend_id_find)
         $data["user_email"]=$user_email;
         $data["dateofbirth"]=$dateofbirth;
         $data["bio"]=  $profile_bio;
+        $data["my_friend_array_id"]= $my_friend_array_id;
 
+       if( !in_array(Auth::user()->id,$my_friend_array_id)){
+           $data["friends"]=0;
+       }else{
+        $data["friends"]=1;
+       }
 
+        $data["user_photos"]=DB::table('users_photo')->where("user_id",$user_id)->get();
+        $my_friend_data= User::whereIn("users.id",$my_friend_array_id)
+        ->withCount("mutualFriends")
+         ->withCount("friends")
+        ->with("user_detail")
+        ->get();
         $data["user_join_date"]=$user_join_date;
         $data["loginEdUserData"]=$loginEdUserData;
-        $data["my_friend_data"]=$my_friend_data;
+      $data["my_friend_data"]=$my_friend_data;
         $data["my_friend_count"]=count($my_friend_data);
         $data["user_id"]=$id;
-      // dd($data);
+     //  dd($data);
       return view("my_profile",$data);
     }
+    public function generateText($prompt)
+    {
+
+
+      $result = OpenAI::chat()->create([
+        'model' => 'gpt-3.5-turbo',
+        'messages' => [
+            ['role' => 'user', 'content' => 'ai post about technology'],
+        ],
+    ]);
+     
+    
+        
+        return  $result["choices"][0]["message"]["content"];
+    }
+    public function post_ai(){
+      try{
+      $prompt="ai post";
+  $postContent=  $this-> generateText($prompt);
+echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
+      }catch(\Exception $e){
+          echo $e->getMessage();
+      }
+    }
+    public function user_post(Request $req){
+      try{
+      $postData=  $req->validate([
+          "content"=>"required"
+      ]);
+      $user_id=Auth::user()->id;
+     $postData= array_merge($postData,["user_id"=>$user_id,"created_at"=>date("Y-m-d H:i:s"),
+    "visibility"=>"friends"
+    ]);
+    if($req->hasFile('file')) {
+      $file = $req->file('file');
+
+      // Get the file extension
+      $extension = $file->extension();
+      $customName=time().".".$extension;
+          if($extension=="mp4"){
+            $file->move(public_path('assets\images\videos'), $customName);
+            $postData=array_merge($postData,["video"=>$customName]);
+          }else{
+            $file->move(public_path('assets\images\post'), $customName);
+            $postData=array_merge($postData,["image"=>$customName]);
+          }
+      
+      
+        
+         
+    }
+    //$folderPath = public_path('your-folder-name');
+
+    // Create the directory if it doesn't exist
+   // File::makeDirectory($folderPath);  
+   /// print_r($postData); 
+     DB::table('posts')->insert($postData);
+    }catch(\Exception $e){
+      echo $e->getMessage();
+    }
+    }
+    public function makeFolder (){
+      $users=DB::table('users')->get();
+      foreach($users as $user){
+
+          DB::table('users_photo')->insert(
+            
+     
+         [
+          
+            "photos"=>"24.jpg","user_id"=>$user->id
+          
+         ]
+        );
+      }
+    // Create the directory if it doesn't exist
+   
+    }
+ ///   $originalFolder = public_path('oldFolderName');
+///$newFolder = public_path('newFolderName');
+
+///if (File::exists($originalFolder)) {
+   // File::move($originalFolder, $newFolder);
+    //echo "Folder renamed successfully.";
+//} else {
+   // echo "Folder does not exist.";
+//}
+   public function addfriend($id){
+    DB::table('friendships')->insert([
+"user_id"=>Auth::user()->id,
+"friend_id"=>$id,
+"friend_ship_status"=>1
+    ]);
+    return redirect()->back();
+   }
+   public function user_profile_connections($id=null){
+    $data["user_id"]=$id;
+    if($id==null){
+      $user_id=Auth::user()->id;
+                }else{
+                  $user_id=$id;
+                }
+              $loginEdUserData=Auth::user()->with("user_detail")->where("id",Auth::id())->get();
+           
+                $loginprofileimage;
+                     $user_data=User::where("id",$user_id)->first();
+                     $user_name=   $user_data->name;
+                     $user_email=   $user_data->email;
+                     $user_join_date=date("M d,Y",strtotime($user_data->created_at));
+                     $dateofbirth=date("F d,Y",strtotime($user_data->dateofbirth));
+        $user_details=DB::table("user_details")->where("user_id",$user_id)->first();
+        $my_friends=DB::table('friendships')
+        ->where("friend_id",$user_id)
+        ->get();
+        $my_friend_ids= $my_friends->pluck("user_id");
+        $my_friend_array_id=$my_friend_ids->toArray();
+       //   print_r($my_friend_array_id);
+        $my_friend_array_id=array_unique($my_friend_array_id);
+
+        $my_friends_second=DB::table('friendships')
+        ->where("user_id",$user_id)
+        ->get();
+        $my_friend_ids_second= $my_friends_second->pluck("friend_id");
+        $my_friend_array_id_second=$my_friend_ids_second->toArray();
+        $my_friend_array_id_second=array_unique($my_friend_array_id_second);
+        $my_friend_array_id=array_merge($my_friend_array_id_second,$my_friend_array_id);
+        
+        $my_friend_array_id=array_unique($my_friend_array_id);
+ 
+
+     //  $my_friend_array_id=array_unique($my_friend_array_id);
+  //  $my_friend_data=$my_friend_data->toArray();
+        //  dd($my_friend_data);
+       // dd($my_friend_array_id);
+        if($user_details){
+         if($user_details->profileImage==null){
+              $profile_image="placeholder.jpg";
+         }else{
+            $profile_image=$user_details->profileImage;
+         }
+         if($user_details->job_title==null){
+            $profile_job="Web Developer";
+       }else{
+          $profile_job=$user_details->job_title;
+       }
+       if($user_details->bio==null){
+        $profile_bio="I am Web Developer";
+   }else{
+      $profile_bio=$user_details->bio;
+   }
+        }else{
+            $profile_image="placeholder.jpg";
+            $profile_job=null;
+            $profile_bio=null;
+        }
+        $data["profileimage"]=$profile_image;
+        $data["job_title"]= $profile_job;
+        $data["user_name"]=$user_name;
+        $data["user_email"]=$user_email;
+        $data["dateofbirth"]=$dateofbirth;
+        $data["bio"]=  $profile_bio;
+        $data["my_friend_array_id"]= $my_friend_array_id;
+
+       if( !in_array(Auth::user()->id,$my_friend_array_id)){
+           $data["friends"]=0;
+       }else{
+        $data["friends"]=1;
+       }
+
+        $data["user_photos"]=DB::table('users_photo')->where("user_id",$user_id)->get();
+        $my_friend_data= User::whereIn("users.id",$my_friend_array_id)
+        ->withCount("mutualFriends")
+         ->withCount("friends")
+        ->with("user_detail")
+        ->get();
+        $data["user_join_date"]=$user_join_date;
+        $data["loginEdUserData"]=$loginEdUserData;
+      $data["my_friend_data"]=$my_friend_data;
+        $data["my_friend_count"]=count($my_friend_data);
+        $data["user_id"]=$id;
+     //  dd($data);
+    return view("my_profile_connection",$data);
+   }
 }

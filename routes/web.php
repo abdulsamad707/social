@@ -25,7 +25,12 @@ Route::get("signout",[authenticate::class,"signout"]);
 Route::middleware(['isuserlogin'])->group(function () {
     Route::get("/",[FrontController::class,"index"]);
     Route::post("chats",[FrontController::class,"chats"]);
+    Route::post("user_post",[FrontController::class,"user_post"]);
+    Route::get("post_ai",[FrontController::class,"post_ai"]);
     Route::get("user_profile/{id?}",[FrontController::class,"user_profile"]);
+    Route::get("makeFolder",[FrontController::class,"makeFolder"]);
+    Route::get("addfriend/{id}",[FrontController::class,"addfriend"]);
+    Route::get("user_profile_connections/{id?}",[FrontController::class,"user_profile_connections"]);
 });
 Route::get('login', function () {
     return view('authenticate.signin');

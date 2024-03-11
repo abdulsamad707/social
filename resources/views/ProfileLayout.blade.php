@@ -24,25 +24,31 @@
                   </div>
                   <div class="ms-sm-4 mt-sm-3">
                     <!-- Info -->
-                    <h1 class="mb-0 h5">{{$user_name}} <i class="bi bi-patch-check-fill text-success small"></i></h1>
+                    <h1 class="mb-0 h5">{{$user_name}} 
+                     
+                      <i class="bi bi-patch-check-fill text-success small"></i>
+                  
+                    </h1>
                     <p> {{$my_friend_count}} Connection</p>
                   </div>
                   <!-- Button -->
                   <div class="d-flex mt-3 justify-content-center ms-sm-auto">
-                    <button class="btn btn-danger-soft me-2" type="button"> <i class="bi bi-pencil-fill pe-1"></i> Edit profile </button>
+                    @if($user_id!=Auth::user()->id)
+                    @if(!in_array(Auth::user()->id,$my_friend_array_id))
+                    <a class="btn btn-primary-soft me-2" href="{{url('addfriend/'.$user_id)}}" > <i class="bi bi-patch-plus pe-1"></i> Add Friend </a>
+                    @else
+                    <a class="btn btn-danger-soft me-2" type="button">  Unfriend </a>
+                    @endif
+                    @else
+                    <a class="btn btn-primary-soft me-2" href="{{url('edit/'.$user_id)}}" > <i class="bi bi-pencil-fill pe-1"></i> Edit Profile </a>
+                    @endif
                     <div class="dropdown">
                       <!-- Card share action menu -->
                       <button class="icon-md btn btn-light" type="button" id="profileAction2" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-three-dots"></i>
                       </button>
                       <!-- Card share action dropdown menu -->
-                      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileAction2">
-                        <li><a class="dropdown-item" href="#"> <i class="bi bi-bookmark fa-fw pe-2"></i>Share profile in a message</a></li>
-                        <li><a class="dropdown-item" href="#"> <i class="bi bi-file-earmark-pdf fa-fw pe-2"></i>Save your profile to PDF</a></li>
-                        <li><a class="dropdown-item" href="#"> <i class="bi bi-lock fa-fw pe-2"></i>Lock profile</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#"> <i class="bi bi-gear fa-fw pe-2"></i>Profile settings</a></li>
-                      </ul>
+
                     </div>
                   </div>
                 </div>
@@ -57,9 +63,9 @@
               <div class="card-footer mt-3 pt-2 pb-0">
                 <!-- Nav profile pages -->
                 <ul class="nav nav-bottom-line align-items-center justify-content-center justify-content-md-start mb-0 border-0">
-                  <li class="nav-item"> <a class="nav-link active" href="my-profile.html"> Posts </a> </li>
+                  <li class="nav-item"> <a class="nav-link active" href="{{url('user_profile/'.$user_id)}}"> Posts </a> </li>
                   <li class="nav-item"> <a class="nav-link" href="my-profile-about.html"> About </a> </li>
-                  <li class="nav-item"> <a class="nav-link" href="my-profile-connections.html"> Connections <span class="badge bg-success bg-opacity-10 text-success small">{{$my_friend_count}}</span> </a> </li>
+                  <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_connections/'.$user_id)}}"> Connections <span class="badge bg-success bg-opacity-10 text-success small">{{$my_friend_count}}</span> </a> </li>
                   <li class="nav-item"> <a class="nav-link" href="my-profile-media.html"> Media</a> </li>
                   <li class="nav-item"> <a class="nav-link" href="my-profile-videos.html"> Videos</a> </li>
                   <li class="nav-item"> <a class="nav-link" href="my-profile-events.html"> Events</a> </li>
@@ -74,6 +80,7 @@
             <!-- Share feed END -->
             @section("pageContainer")
             @show  
+          </div>
             <!-- Card feed item START -->
          
             <!-- Card feed item END -->
@@ -114,8 +121,8 @@
               <div class="card">
                 <!-- Card header START -->
                 <div class="card-header d-flex justify-content-between border-0">
-                  <h5 class="card-title">Experience</h5>
-                  <a class="btn btn-primary-soft btn-sm" href="#!"> <i class="fa-solid fa-plus"></i> </a>
+                  <h5 class="card-title">Pages</h5>
+             
                 </div>
                 <!-- Card header END -->
                 <!-- Card body START -->
@@ -124,42 +131,22 @@
                   <div class="d-flex">
                     <!-- Avatar -->
                     <div class="avatar me-3">
-                      <a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/logo/08.svg" alt=""> </a>
+                      <a href="#!"> <img class="avatar-img rounded-circle" src="{{asset('assets/images/logo/09.svg')}}" alt=""> </a>
                     </div>
                     <!-- Info -->
                     <div>
                       <h6 class="card-title mb-0"><a href="#!"> Apple Computer, Inc. </a></h6>
-                      <p class="small">May 2015 – Present Employment Duration 8 mos <a class="btn btn-primary-soft btn-xs ms-2" href="#!">Edit </a></p>
+                      
                     </div>
                   </div>
                   <!-- Experience item END -->
   
                   <!-- Experience item START -->
-                  <div class="d-flex">
-                    <!-- Avatar -->
-                    <div class="avatar me-3">
-                      <a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/logo/09.svg" alt=""> </a>
-                    </div>
-                    <!-- Info -->
-                    <div>
-                      <h6 class="card-title mb-0"><a href="#!"> Microsoft Corporation </a></h6>
-                      <p class="small">May 2017 – Present Employment Duration 1 yrs 5 mos <a class="btn btn-primary-soft btn-xs ms-2" href="#!">Edit </a></p>
-                    </div>
-                  </div>
+              
                   <!-- Experience item END -->
   
                   <!-- Experience item START -->
-                  <div class="d-flex">
-                    <!-- Avatar -->
-                    <div class="avatar me-3">
-                      <a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/logo/10.svg" alt=""> </a>
-                    </div>
-                    <!-- Info -->
-                    <div>
-                      <h6 class="card-title mb-0"><a href="#!"> Tata Consultancy Services. </a></h6>
-                      <p class="small mb-0">May 2022 – Present Employment Duration 6 yrs 10 mos <a class="btn btn-primary-soft btn-xs ms-2" href="#!">Edit </a></p>
-                    </div>
-                  </div>
+                
                   <!-- Experience item END -->
   
                 </div>
@@ -173,45 +160,38 @@
               <div class="card">
                 <!-- Card header START -->
                 <div class="card-header d-sm-flex justify-content-between border-0">
-                  <h5 class="card-title">Photos</h5>
-                  <a class="btn btn-primary-soft btn-sm" href="#!"> See all photo</a>
+               
+                  <h5 class="card-title"> Photos <span class="badge bg-danger bg-opacity-10 text-danger">{{count($user_photos)}}</span></h5>
+                 
                 </div>
                 <!-- Card header END -->
                 <!-- Card body START -->
                 <div class="card-body position-relative pt-0">
+                  @if(count($user_photos)>0)
                   <div class="row g-2">
                     <!-- Photos item -->
+               
+                    <!-- Photos item -->
+              
+                    <!-- Photos item -->
+                
+                    <!-- Photos item -->
+                    
+                    @foreach($user_photos as $user_photo)
                     <div class="col-6">
-                      <a href="assets/images/albums/01.jpg" data-gallery="image-popup" data-glightbox="">
-                        <img class="rounded img-fluid" src="assets/images/albums/01.jpg" alt="">
+                      <a href="{{asset('assets/images/albums/'.$user_name.'/'.$user_photo->photos)}}" data-gallery="image-popup" data-glightbox="">
+                        <img class="rounded img-fluid" src="{{asset('assets/images/albums/'.$user_name.'/'.$user_photo->photos)}}" alt="">
                       </a>
                     </div>
+                    @endforeach
+                  
+              
                     <!-- Photos item -->
-                    <div class="col-6">
-                      <a href="assets/images/albums/02.jpg" data-gallery="image-popup" data-glightbox="">
-                        <img class="rounded img-fluid" src="assets/images/albums/02.jpg" alt="">
-                      </a>
-                    </div>
-                    <!-- Photos item -->
-                    <div class="col-4">
-                      <a href="assets/images/albums/03.jpg" data-gallery="image-popup" data-glightbox="">
-                        <img class="rounded img-fluid" src="assets/images/albums/03.jpg" alt="">
-                      </a>
-                    </div>
-                    <!-- Photos item -->
-                    <div class="col-4">
-                      <a href="assets/images/albums/04.jpg" data-gallery="image-popup" data-glightbox="">
-                        <img class="rounded img-fluid" src="assets/images/albums/04.jpg" alt="">
-                      </a>
-                    </div>
-                    <!-- Photos item -->
-                    <div class="col-4">
-                      <a href="assets/images/albums/05.jpg" data-gallery="image-popup" data-glightbox="">
-                        <img class="rounded img-fluid" src="assets/images/albums/05.jpg" alt="">
-                      </a>
-                      <!-- glightbox Albums left bar END  -->
-                    </div>
+               
                   </div>
+                  @else
+                <p class="text-center">  No Photo</p>
+                  @endif
                 </div>
                 <!-- Card body END -->
               </div>
@@ -219,6 +199,8 @@
             <!-- Card END -->
   
             <!-- Card START -->
+
+           
             <div class="col-md-6 col-lg-12">
               <div class="card">
                 <!-- Card header START -->
@@ -230,6 +212,7 @@
                 <!-- Card body START -->
                 <div class="card-body position-relative pt-0">
                   <div class="row g-3">
+                    @if($my_friend_count > 0)
                  @foreach($my_friend_data as $friend )
                     <div class="col-6">
                       <!-- Friends item START -->
@@ -256,7 +239,9 @@
                       <!-- Friends item END -->
                     </div>
                       @endforeach               
-  
+                    @else
+                   <p class="text-center"> No Friend</p>
+                    @endif
               
   
                   </div>
@@ -265,6 +250,7 @@
               </div>
             </div>
             <!-- Card END -->
+       
           </div>
   
         </div>

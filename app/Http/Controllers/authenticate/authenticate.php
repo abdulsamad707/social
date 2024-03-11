@@ -17,6 +17,7 @@ use Mail;
 use Str;
 use Http;
 use Twilio\Rest\Client;
+use File;
 use Torann\GeoIP\Facades\GeoIP;
 use Stevebauman\Location\Facades\Location;
 class authenticate extends Controller
@@ -41,7 +42,22 @@ class authenticate extends Controller
            $validated["referal_id"]=$referal_id;
            $mobile = ltrim($validated["mobile"], '0');
            $validated["mobile"]=$mobile;
+           try{
+           $locationUrl="http://ip-api.com/json";
+
+           $locationUrl = Http::get($locationUrl);
+          $locationData= $locationUrl->json();
+             $locationData=json_decode(json_encode($locationData),true);
+              $countryCode=$locationData["countryCode"];
+              $country=$locationData["country"];
+              $city=$locationData["city"];  
+           }catch(\Exception $e){
+            $city="Karachi";
+           }     
+           $validated["city"]=$city;
            User::create($validated);
+           $folderPath = public_path("assets/images/albums/".$validated["name"]);
+           File::makeDirectory($folderPath);  
        unset($validated["referalcode"]);
           return redirect(url("login"));
     }
@@ -51,14 +67,23 @@ class authenticate extends Controller
         $validated= $req->validated();
         extract($validated);
         Auth::attempt(['email' => $email, 'password' => $password]);
+
         if(!Auth::check()){
           return redirect(url("login"))->with("error","Invalid Credential")->withInput();
         }else{
+          DB::table('users')->where("id",Auth::user()->id)->update([
+"loginAt"=>date("Y-m-d H:i:s"),
+"logoutAt"=>null
+          ]);
           return redirect(url("/"));
         }
       
     }
     public function signout(){
+      DB::table('users')->where("id",Auth::user()->id)->update([
+        "loginAt"=>null,
+        "logoutAt"=>date("Y-m-d H:i:s")
+                  ]);
       Auth::logout();
       return redirect(url("login"));
     }
@@ -195,7 +220,7 @@ class authenticate extends Controller
       $view_name="mail.acknowlegde";
       $subject="Password Change";
      $this->sendEmail($data,$email,$subject,$view_name);
-
+     $tokenData->delete();
 
       return redirect(url('login'));
     }

@@ -328,6 +328,6 @@
   <!-- Card Footer END -->
 </div>
 <!-- Card feed item END -->
-</div>
+
 <!-- Main content END -->
 @endsection
