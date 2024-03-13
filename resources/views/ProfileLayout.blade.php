@@ -12,7 +12,8 @@
           <!-- My profile START -->
           <div class="card">
             <!-- Cover image -->
-            <div class="h-200px rounded-top" style="background-image:url({{asset('assets/images/bg/05.jpg')}}); background-position: center; background-size: cover; background-repeat: no-repeat;"></div>
+            <div class="h-200px rounded-top" style="background-image:url('{{$coverphoto}}'); background-position: center; background-size: cover; background-repeat: no-repeat;">
+            </div>
               <!-- Card body START -->
               <div class="card-body py-0">
                 <div class="d-sm-flex align-items-start text-center text-sm-start">

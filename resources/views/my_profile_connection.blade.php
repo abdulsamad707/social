@@ -20,7 +20,7 @@
         <!-- Avatar -->
         <div class="avatar me-3 mb-3 mb-md-0">
           @if(count($friend->user_detail)>0)
-          <a href="{{url('user_profile/'.$friend->id)}}"><img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$friend->user_detail[0]->profileImage)}}" alt=""></a>
+          <a href="{{url('user_profile/'.$friend->id)}}"><img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.$friend->name."/".$friend->user_detail[0]->profileImage)}}" alt=""></a>
           @else
           <a href="{{url('user_profile/'.$friend->id)}}"><img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/placeholder.jpg')}}" alt=""></a>
           @endif

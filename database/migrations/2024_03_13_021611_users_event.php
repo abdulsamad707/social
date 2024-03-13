@@ -20,7 +20,7 @@ return new class extends Migration
             $table->dateTime("end_time")->nullable();
             $table->dateTime("start_time")->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->string("event_ratings");
+         
             $table->timestamps();
         });
         Schema::create('events_attendees', function (Blueprint $table) {

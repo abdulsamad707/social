@@ -36,5 +36,7 @@ function TimeDiff($time1, $time2){
     }
     
     return  $timediff;
+
 }
+
 ?>

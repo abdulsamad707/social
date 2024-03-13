@@ -54,13 +54,26 @@ class authenticate extends Controller
         $city = "Karachi";
     }
 
-    $validated["city"] = $city;
+    $validated["city"] = strtolower($city);
 
     $userData = User::create($validated);
      User::where("id",$userData->id)->update([
 
-      "city"=>$city
+      "city"=>strtolower($city)
      ]);
+     if ($req->hasFile('coverphoto')) {
+      $file = $req->file('coverphoto');
+      $folderPaths = public_path("assets/images/coverphoto/".$validated["name"]);
+      if (!file_exists($folderPaths)) {
+          File::makeDirectory($folderPaths,0777,true,true);
+      }
+      $extension = $file->getClientOriginalExtension();
+      $customName = $validated["name"].".".$extension;
+      $file->move(public_path("assets/images/coverphoto/".$validated["name"]), $customName);  
+      DB::table('users')->where("id",$userData->id)->update([
+      "cover_photo"=> $customName
+      ]);
+    }
     if ($req->hasFile('profilepic')) {
         $file = $req->file('profilepic');
         

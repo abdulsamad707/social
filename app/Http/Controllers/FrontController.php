@@ -367,28 +367,19 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
     public function makeFolder (){
       $users=DB::table('users')->get();
       foreach($users as $user){
-        $folderPaths = public_path("assets/images/profilepic/".$user->name);
+        $folderPaths = public_path("assets/images/coverphoto/".$user->name);
         if (!file_exists($folderPaths)) {
             File::makeDirectory($folderPaths,0777,true,true);
         }
        $userPhotoDta= DB::table('users_photo')->where("user_id",$user->id)->first();
        $photos=   $userPhotoDta->photos;
-        $sourcePath = public_path("assets/images/albums/".$user->name)."/".$photos;
-        $destinationPath = public_path("assets/images/profilepic/".$user->name) ."/".$photos;
+        $sourcePath = public_path("assets/images/bg/".$user->name)."/".$photos;
+        $destinationPath = public_path("assets/images/coverphoto/".$user->name) .$user->name.".jpg";
         $userData= DB::table('user_details')->where("user_id",$user->id)->first();
-        if(!$userData){
-          DB::table('user_details')->insert([
-            "profileImage"=> $photos,
-            "user_id"=>$user->id
-          ]);
-        }else{
-          DB::table('user_details')->where("user_id",$user->id)->update([
-            "profileImage"=> $photos
-          ]);
-        }
-
-        // Copy the image from the source folder to the destination folder
-       File::copy($sourcePath, $destinationPath);
+   
+        DB::table('users')->where("id",$user->id)->update([
+          "cover_photo"=>"04.jpg"
+        ]);
          
       }
     // Create the directory if it doesn't exist
@@ -435,6 +426,7 @@ return view("user_profile_about",$data);
 }
 public function user_profile_event($id=null){
   $data=$this-> userRecord($id);
+ // dd($data);
   return view("user_event",$data);
 }
    function userRecord($id=null){
@@ -450,7 +442,13 @@ public function user_profile_event($id=null){
                      $user_data=User::where("id",$user_id)->first();
                      $user_name=   $user_data->name;
                      $user_email=   $user_data->email;
+                     $user_cover_photo=$user_data->cover_photo;
                      $data["city"]=$user_data->city;
+                     $data["users_events"]=DB::table('users_events')->where("user_id",$user_id)->get();
+                     $data["coverphoto"]=asset("assets/images/coverphoto/".$user_name."/".$user_cover_photo);
+                   /* dd($data[
+                      "coverphoto"
+                     ]);*/
                      $data["maritual_status"]=$user_data->maritual_status;
                      $user_join_date=date("M d,Y",strtotime($user_data->created_at));
                      $dateofbirth=date("F d,Y",strtotime($user_data->dateofbirth));
