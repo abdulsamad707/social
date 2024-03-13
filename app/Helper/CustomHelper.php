@@ -30,7 +30,9 @@ function TimeDiff($time1, $time2){
             $timediff = $minute . " min";
         }
     } else {
-        $timediff = $diff . "sec";
+
+        
+        $timediff = $diff . " sec";
     }
     
     return  $timediff;

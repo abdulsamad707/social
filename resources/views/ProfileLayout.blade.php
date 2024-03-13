@@ -19,7 +19,7 @@
                   <div>
                     <!-- Avatar -->
                     <div class="avatar avatar-xxl mt-n5 mb-3">
-                      <img class="avatar-img rounded-circle border border-white border-3" src="{{asset('assets/images/avatar/'.$profileimage)}}" alt="">
+                      <img class="avatar-img rounded-circle border border-white border-3" src="{{asset('assets/images/profilepic/'.$user_name."/".$profileimage)}}" alt="">
                     </div>
                   </div>
                   <div class="ms-sm-4 mt-sm-3">
@@ -33,23 +33,16 @@
                   </div>
                   <!-- Button -->
                   <div class="d-flex mt-3 justify-content-center ms-sm-auto">
-                    @if($user_id!=Auth::user()->id)
-                    @if(!in_array(Auth::user()->id,$my_friend_array_id))
+                    @if($user_id!=Auth::user()->id &&  $user_id!=null)
+                    @if(!in_array(Auth::user()->id,$my_friend_array_id)   )
                     <a class="btn btn-primary-soft me-2" href="{{url('addfriend/'.$user_id)}}" > <i class="bi bi-patch-plus pe-1"></i> Add Friend </a>
                     @else
-                    <a class="btn btn-danger-soft me-2" type="button">  Unfriend </a>
+                    <a class="btn btn-danger-soft me-2" href="{{url('unfriend/'.$user_id)}}">  Unfriend </a>
                     @endif
                     @else
                     <a class="btn btn-primary-soft me-2" href="{{url('edit/'.$user_id)}}" > <i class="bi bi-pencil-fill pe-1"></i> Edit Profile </a>
                     @endif
-                    <div class="dropdown">
-                      <!-- Card share action menu -->
-                      <button class="icon-md btn btn-light" type="button" id="profileAction2" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-three-dots"></i>
-                      </button>
-                      <!-- Card share action dropdown menu -->
-
-                    </div>
+                 
                   </div>
                 </div>
                 <!-- List profile -->
@@ -64,23 +57,21 @@
                 <!-- Nav profile pages -->
                
                 <ul class="nav nav-bottom-line align-items-center justify-content-center justify-content-md-start mb-0 border-0">
-                  @if(request()->path()=="user_profile/".$user_id)
+                  @if(request()->path()=="user_profile/".$user_id   || request()->path()=="user_profile"  )
                   <li class="nav-item"> <a class="nav-link active" href="{{url('user_profile/'.$user_id)}}"> Posts </a> </li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_about/'.$user_id)}}"> About </a> </li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_connections/'.$user_id)}}"> Connections <span class="badge bg-success bg-opacity-10 text-success small">{{$my_friend_count}}</span> </a> </li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_Video/'.$user_id)}}">Media</a> </li>
             
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_event/'.$user_id)}}"> Events</a> </li>
-                  @elseif(request()->path()=="user_profile_about/".$user_id)
+                  @elseif(request()->path()=="user_profile_about/".$user_id || request()->path()=="user_profile_about" )
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile/'.$user_id)}}"> Posts </a> </li>
                   <li class="nav-item"> <a class="nav-link active" href="{{url('user_profile_about/'.$user_id)}}"> About </a> </li>
-
-
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_connections/'.$user_id)}}"> Connections <span class="badge bg-success bg-opacity-10 text-success small">{{$my_friend_count}}</span> </a> </li>
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_Video/'.$user_id)}}">Media</a> </li>
             
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_event/'.$user_id)}}"> Events</a> </li>
-                  @elseif(request()->path()=="user_profile_connections/".$user_id)
+                  @elseif(request()->path()=="user_profile_connections/".$user_id ||request()->path()=="user_profile_connections")
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile/'.$user_id)}}"> Posts </a> </li>
                   <li class="nav-item"> <a class="nav-link " href="{{url('user_profile_about/'.$user_id)}}"> About </a> </li>
 
@@ -89,7 +80,7 @@
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_Video/'.$user_id)}}">Media</a> </li>
             
                   <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_event/'.$user_id)}}"> Events</a> </li>
-                @elseif(request()->path()=="user_profile_Video/".$user_id)
+                @elseif(request()->path()=="user_profile_Video/".$user_id||request()->path()=="user_profile_Video")
                 <li class="nav-item"> <a class="nav-link" href="{{url('user_profile/'.$user_id)}}"> Posts </a> </li>
                 <li class="nav-item"> <a class="nav-link " href="{{url('user_profile_about/'.$user_id)}}"> About </a> </li>
 
@@ -98,7 +89,7 @@
                 <li class="nav-item"> <a class="nav-link active" href="{{url('user_profile_Video/'.$user_id)}}"> Media</a> </li>
           
                 <li class="nav-item"> <a class="nav-link" href="{{url('user_profile_event/'.$user_id)}}"> Events</a> </li>
-                @elseif(request()->path()=="user_profile_event/".$user_id)
+                @elseif(request()->path()=="user_profile_event/".$user_id ||request()->path()=="user_profile_event" )
                 <li class="nav-item"> <a class="nav-link" href="{{url('user_profile/'.$user_id)}}"> Posts </a> </li>
                 <li class="nav-item"> <a class="nav-link " href="{{url('user_profile_about/'.$user_id)}}"> About </a> </li>
 
@@ -264,7 +255,7 @@
                         <div class="card-body p-2 pb-0">
                           <div class="avatar avatar-story avatar-xl">
                             @if(count($friend->user_detail)>0)
-                            <a href="{{url('user_profile/'.$friend->id)}}"><img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$friend->user_detail[0]->profileImage)}}" alt=""></a>
+                            <a href="{{url('user_profile/'.$friend->id)}}"><img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.$friend->name."/".$friend->user_detail[0]->profileImage)}}" alt=""></a>
                             @else
                             <a href="{{url('user_profile/'.$friend->id)}}"><img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/placeholder.jpg')}}" alt=""></a>
                             @endif
@@ -275,8 +266,9 @@
                      
                         <!-- Card footer -->
                         <div class="card-footer p-2 border-0">
-                          <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Send message"> <i class="bi bi-chat-left-text"></i> </button>
-                          <button class="btn btn-sm btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Remove friend"> <i class="bi bi-person-x"></i> </button>
+                         @if($user_id==null)
+                          <a class="btn btn-sm btn-danger" href="{{url('unfriend/'.$friend->id)}}"> <i class="bi bi-person-x"></i> </a>
+                          @endif
                         </div>
                       </div>
                       <!-- Friends item END -->

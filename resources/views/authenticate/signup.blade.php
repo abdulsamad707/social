@@ -471,7 +471,7 @@
               <span class="d-block">Already have an account? <a href="{{url('login')}}">Sign in here</a></span>
             </div>
             <!-- Form START -->
-            <form class="mt-4" action="{{url('userregister')}}" method="POST">
+            <form class="mt-4" action="{{url('userregister')}}" method="POST" enctype='multipart/form-data'>
               <!-- Email -->
               @csrf
               
@@ -487,7 +487,11 @@
                 <input type="text" name="email" class="form-control" placeholder="Enter email">
                 <small class="text-danger">@error("email"){{$message}}@enderror</small>
               </div>
-      
+              <div class="mb-3 input-group-lg">
+                <input type="file" name="profilepic" class="form-control" placeholder="Enter email">
+                <small class="text-danger">@error("email"){{$message}}@enderror</small>
+              </div>
+           
               <!-- New password -->
               <div class="mb-3 position-relative">
                 <!-- Input group -->

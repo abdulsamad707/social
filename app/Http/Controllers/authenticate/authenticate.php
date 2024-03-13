@@ -22,45 +22,98 @@ use Torann\GeoIP\Facades\GeoIP;
 use Stevebauman\Location\Facades\Location;
 class authenticate extends Controller
 {
-    public function register(signup $req){
-        $validated   =   $req->validated();
-        
-          if($validated["referalcode"]!=null){
-            $referalcode  =  $validated["referalcode"];
-            $referalCodeData=referal::where("referalCode",$referalcode)->first();
-            $from_referal_id=$referalCodeData->id;
-            $validated["from_referal_id"]=$from_referal_id;
-          
-          }
-        
-
-         $referal= referal::create([
-"referalCode"=>Str::random(6)
-                
-          ]);
-           $referal_id= $referal->id;
-           $validated["referal_id"]=$referal_id;
-           $mobile = ltrim($validated["mobile"], '0');
-           $validated["mobile"]=$mobile;
-           try{
-           $locationUrl="http://ip-api.com/json";
-
-           $locationUrl = Http::get($locationUrl);
-          $locationData= $locationUrl->json();
-             $locationData=json_decode(json_encode($locationData),true);
-              $countryCode=$locationData["countryCode"];
-              $country=$locationData["country"];
-              $city=$locationData["city"];  
-           }catch(\Exception $e){
-            $city="Karachi";
-           }     
-           $validated["city"]=$city;
-           User::create($validated);
-           $folderPath = public_path("assets/images/albums/".$validated["name"]);
-           File::makeDirectory($folderPath);  
-       unset($validated["referalcode"]);
-          return redirect(url("login"));
+  public function register(signup $req){
+    $validated = $req->validated();
+    
+    if($validated["referalcode"] != null){
+        $referalcode = $validated["referalcode"];
+        $referalCodeData = referal::where("referalCode", $referalcode)->first();
+        if ($referalCodeData) {
+            $from_referal_id = $referalCodeData->id;
+            $validated["from_referal_id"] = $from_referal_id;
+        }
     }
+
+    $referal = referal::create([
+        "referalCode" => Str::random(6)
+    ]);
+
+    $referal_id = $referal->id;
+    $validated["referal_id"] = $referal_id;
+    $mobile = ltrim($validated["mobile"], '0');
+    $validated["mobile"] = $mobile;
+
+    try {
+        $locationUrl = "http://ip-api.com/json";
+        $locationUrl = Http::get($locationUrl);
+        $locationData = $locationUrl->json();
+        $countryCode = $locationData["countryCode"];
+        $country = $locationData["country"];
+        $city = $locationData["city"];
+    } catch(\Exception $e) {
+        $city = "Karachi";
+    }
+
+    $validated["city"] = $city;
+
+    $userData = User::create($validated);
+     User::where("id",$userData->id)->update([
+
+      "city"=>$city
+     ]);
+    if ($req->hasFile('profilepic')) {
+        $file = $req->file('profilepic');
+        
+      
+        $folderPaths = public_path("assets/images/profilepic/".$validated["name"]);
+        if (!file_exists($folderPaths)) {
+            File::makeDirectory($folderPaths,0777,true,true);
+        }
+
+        $folderPaths = public_path("assets/images/albums/".$validated["name"]);
+        if (!file_exists($folderPaths)) {
+            File::makeDirectory($folderPaths,0777,true,true);
+        }
+
+
+        $extension = $file->getClientOriginalExtension();
+        $customName = $validated["name"].".".$extension;
+        $newFile=time().".".$extension;
+        
+   
+        try{
+          $file->move(public_path("assets/images/albums/".$validated["name"]), $customName);  
+          $sourcePath = public_path("assets/images/albums/".$validated["name"])."/".$customName;
+          $destinationPath = public_path("assets/images/profilepic/".$validated["name"]) ."/".$customName;
+  
+          // Copy the image from the source folder to the destination folder
+         File::copy($sourcePath, $destinationPath);
+
+          
+   
+         DB::table("user_details")->insert([
+          "profileImage"=>$customName,
+          "user_id"=>$userData->id
+         ]);
+        }
+        catch(\Exception $e){
+         return  $e->getMessage();
+        }
+    //   $file->move(public_path("assets/images/profilepic/".$validated["name"]), $customName);
+
+     
+      DB::table('users_photo')->insert([
+          "photos" => $customName,
+          "user_id" => $userData->id
+      ]);
+  
+    }
+
+    unset($validated["referalcode"]);
+
+   return redirect(url("login"));
+}
+
     public function logined(sigin $req){
 
 

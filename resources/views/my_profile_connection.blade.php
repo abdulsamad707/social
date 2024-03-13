@@ -38,8 +38,9 @@
       </div>
       <!-- Button -->
       <div class="ms-md-auto d-flex">
+        @if($user_id==null)
         <a class="btn btn-danger-soft btn-sm mb-0 me-2"> Remove </a>
-    
+         @endif
       </div>
     </div>
 

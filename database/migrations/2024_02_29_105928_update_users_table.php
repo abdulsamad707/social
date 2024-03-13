@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
          Schema::table('users', function (Blueprint $table) {
-            
+            if (!Schema::hasColumn('users', 'city')){
+             $table->string("city")->default("karachi");
+            }
             if (!Schema::hasColumn('users', 'referal_id')) {
                 $table->unsignedBigInteger('referal_id');
 

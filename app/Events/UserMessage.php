@@ -17,9 +17,10 @@ class UserMessage implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public $chatData;
+    public function __construct($chatData)
     {
-        //
+        $this->chatData=$chatData;
     }
 
     /**
@@ -33,4 +34,12 @@ class UserMessage implements ShouldBroadcast
             new PrivateChannel('user_message'),
         ];
     }
+    public function broadcastAs()
+    {
+      return "getmessage";
+    }
+    public function broadcastWith(){
+        return ["chat"=>$this->chatData];
+    }
+ 
 }

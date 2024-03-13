@@ -5,8 +5,11 @@
     <!-- Card header START -->
     <div class="card-header border-0 pb-0">
       <h5 class="card-title">Medias
+        @if($user_id==null)
       <a class="btn btn-primary-soft" href="#" data-bs-toggle="modal" data-bs-target="#modalCreateAlbum">
-         <i class="fa-solid fa-plus pe-1"></i> Create album</a></h5>
+         <i class="fa-solid fa-plus pe-1"></i> Create album</a>
+        @endif
+        </h5>
       <!-- Button modal -->
     </div>
     <!-- Card header END -->

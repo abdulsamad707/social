@@ -149,12 +149,12 @@
 			<!-- Nav right START -->
 			<ul class="nav flex-nowrap align-items-center ms-sm-3 list-unstyled">
 				<li class="nav-item ms-2">
-					<a class="nav-link bg-light icon-md btn btn-light p-0" href="messaging.html">
+					<a class="nav-link bg-light icon-md btn btn-light p-0" href="{{url('messaging')}}">
 						<i class="bi bi-chat-left-text-fill fs-6"> </i>
 					</a>
 				</li>
 				<li class="nav-item ms-2">
-					<a class="nav-link bg-light icon-md btn btn-light p-0" href="settings.html">
+					<a class="nav-link bg-light icon-md btn btn-light p-0" href="{{url('settings')}}">
 						<i class="bi bi-gear-fill fs-6"> </i>
 					</a>
 				</li>
@@ -170,66 +170,25 @@
 								<a class="small" href="#">Clear all</a>
 							</div>
 							<div class="card-body p-0">
-								<ul class="list-group list-group-flush list-unstyled p-2">
+								<ul class="list-group list-group-flush list-unstyled p-2" style="max-height: 300px; overflow-y: auto;">
 									<!-- Notif item -->
-									<li>
-										<div class="list-group-item list-group-item-action rounded badge-unread d-flex border-0 mb-1 p-3">
-											<div class="avatar text-center d-none d-sm-inline-block">
-												<img class="avatar-img rounded-circle" src="assets/images/avatar/01.jpg" alt="">
-											</div>
-											<div class="ms-sm-3">
-												<div class=" d-flex">
-												<p class="small mb-2"><b>Judy Nguyen</b> sent you a friend request.</p>
-												<p class="small ms-3 text-nowrap">Just now</p>
-											</div>
-											<div class="d-flex">
-												<button class="btn btn-sm py-1 btn-primary me-2">Accept </button>
-												<button class="btn btn-sm py-1 btn-danger-soft">Delete </button>
-											</div>
-										</div>
-									</div>
-									</li>
-									<!-- Notif item -->
-									<li>
-										<div class="list-group-item list-group-item-action rounded badge-unread d-flex border-0 mb-1 p-3 position-relative">
-											<div class="avatar text-center d-none d-sm-inline-block">
-												<img class="avatar-img rounded-circle" src="assets/images/avatar/02.jpg" alt="">
-											</div>
-											<div class="ms-sm-3 d-flex">
-												<div>
-													<p class="small mb-2">Wish <b>Amanda Reed</b> a happy birthday (Nov 12)</p>
-													<button class="btn btn-sm btn-outline-light py-1 me-2">Say happy birthday 🎂</button>
-												</div>
-												<p class="small ms-3">2min</p>
-											</div>
-										</div>
-									</li>
-									<!-- Notif item -->
+									
+									
+									@foreach($users_notifications as $users_notification)
 									<li>
 										<a href="#" class="list-group-item list-group-item-action rounded d-flex border-0 mb-1 p-3">
-											<div class="avatar text-center d-none d-sm-inline-block">
-												<div class="avatar-img rounded-circle bg-success"><span class="text-white position-absolute top-50 start-50 translate-middle fw-bold">WB</span></div>
-											</div>
+											
 											<div class="ms-sm-3">
 												<div class="d-flex">
-													<p class="small mb-2">Webestica has 15 like and 1 new activity</p>
-													<p class="small ms-3">1hr</p>
+													<p class="small mb-2">{{$users_notification->nofication}}</p>
+													<p class="small ms-3">{{TimeDiff($users_notification->created_at,now())}}</p>
 												</div>
 											</div>
 										</a>
 									</li>
+									@endforeach
 									<!-- Notif item -->
-									<li>
-										<a href="#" class="list-group-item list-group-item-action rounded d-flex border-0 p-3 mb-1">
-											<div class="avatar text-center d-none d-sm-inline-block">
-												<img class="avatar-img rounded-circle" src="assets/images/logo/12.svg" alt="">
-											</div>
-											<div class="ms-sm-3 d-flex">
-												<p class="small mb-2"><b>Bootstrap in the news:</b> The search giant’s parent company, Alphabet, just joined an exclusive club of tech stocks.</p>
-												<p class="small ms-3">4hr</p>
-											</div>
-										</a>
-									</li>
+								
 								</ul>
 							</div>
 							<div class="card-footer text-center">
@@ -249,21 +208,31 @@
 				<div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0" aria-labelledby="addperson">
 					<div class="card">
 						<div class="card-header d-flex justify-content-between align-items-center">
-							<h6 class="m-0">Friend Request <span class="badge bg-danger bg-opacity-10 text-danger ms-2">4 new</span></h6>
-							<a class="small" href="#">Clear all</a>
+							<h6 class="m-0">Friend Request <span class="badge bg-danger bg-opacity-10 text-danger ms-2">{{count($my_friends)}} new</span></h6>
+							
 						</div>
 						<div class="card-body p-0">
-							<ul class="list-group list-group-flush list-unstyled p-2">
+							<ul class="list-group list-group-flush list-unstyled p-2" style="max-height: 300px; overflow-y: auto;">
 								<!-- Notif item -->
+  
+	  @foreach($my_friends as $my_friend)
 								<li>
 									<div class="list-group-item list-group-item-action rounded badge-unread d-flex border-0 mb-1 p-3">
 										<div class="avatar text-center d-none d-sm-inline-block">
-											<img class="avatar-img rounded-circle" src="assets/images/avatar/01.jpg" alt="">
+
+      
+	  @if($my_friend->profileImage!=null)
+	<a href="{{url('user_profile/'.$my_friend->id)}}">	<img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.$my_friend->name."/".$my_friend->profileImage)}}" alt=""></a>
+@else
+<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/placeholder.jpg')}}" alt="">
+
+		@endif
+
 										</div>
 										<div class="ms-sm-3">
 											<div class=" d-flex">
-											<p class="small mb-2"><b>Judy Nguyen</b> sent you a friend request.</p>
-											<p class="small ms-3 text-nowrap">Just now</p>
+											<p class="small mb-2"><b>{{ $my_friend->name}}</b> sent you a friend request.</p>
+											
 										</div>
 										<div class="d-flex">
 											<button class="btn btn-sm py-1 btn-primary me-2">Accept </button>
@@ -272,7 +241,7 @@
 									</div>
 								</div>
 								</li>
-							
+							@endforeach
 						
 								<!-- Notif item -->
 						
@@ -288,7 +257,7 @@
 				<li class="nav-item ms-2 dropdown">
 					<a class="nav-link btn icon-md p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
             @if(count(Auth::user()->user_detail)>0)
-            <img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.Auth::user()->user_detail[0]->profileImage)}}" alt="avatar">
+            <img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.Auth::user()->name.'/'.Auth::user()->user_detail[0]->profileImage)}}" alt="avatar">
                @else  
                <img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/placeholder.jpg')}}" alt="avatar">
             @endif
@@ -300,7 +269,7 @@
 								<!-- Avatar -->
 								<div class="avatar me-3">
                   @if(count(Auth::user()->user_detail)>0)
-                  <img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.Auth::user()->user_detail[0]->profileImage)}}" alt="avatar">
+                  <img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.Auth::user()->name.'/'.Auth::user()->user_detail[0]->profileImage)}}" alt="avatar">
                      @else  
                      <img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/placeholder.jpg')}}" alt="avatar">
                   @endif
@@ -319,7 +288,7 @@
 							<a class="dropdown-item btn btn-primary-soft btn-sm my-2 text-center" href="{{url('user_profile')}}">View profile</a>
 						</li>
 						<!-- Links -->
-						<li><a class="dropdown-item" href="settings.html"><i class="bi bi-gear fa-fw me-2"></i>Settings & Privacy</a></li>
+						<li><a class="dropdown-item" href="{{url('settings')}}"><i class="bi bi-gear fa-fw me-2"></i>Settings & Privacy</a></li>
 						<li> 
 							<a class="dropdown-item" href="https://support.webestica.com/" target="_blank">
 								<i class="fa-fw bi bi-life-preserver me-2"></i>Support

@@ -6,7 +6,9 @@
     <div class="card-header d-sm-flex align-items-center justify-content-between border-0 pb-0">
       <h5 class="card-title mb-sm-0">Discover Events</h5>
       <!-- Button modal -->
+      @if($user_id==null)
       <a class="btn btn-primary-soft btn-sm" href="#"> <i class="fa-solid fa-plus pe-1"></i> Create events</a>
+      @endif
     </div>
     <!-- Card header END -->
     <!-- Card body START -->
@@ -22,7 +24,9 @@
       <div class="row">
         <div class="d-sm-flex align-items-center">
           <!-- Avatar -->
-
+          <div class="avatar avatar-xl">
+            <a href="#!"><img class="avatar-img rounded border border-white border-3" src="{{asset('assets/images/events/01.jpg')}}" alt=""></a>
+          </div>
           <div class="ms-sm-4 mt-2 mt-sm-0">
             <!-- Info -->
             <h5 class="mb-1"><a href="event-details.html"> Comedy on the green </a></h5>

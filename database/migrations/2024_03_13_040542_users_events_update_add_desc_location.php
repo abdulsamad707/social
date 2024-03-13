@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->text("user_image")->nullable();
-        });
+      Schema::table('users_events', function (Blueprint $table) {
+          $table->string("location")->default("karachi");
+          $table->string("description");
+      });
     }
 
     /**
@@ -21,8 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        //
     }
 };

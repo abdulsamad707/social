@@ -150,7 +150,7 @@ Header END -->
 										<div class="text-center">
 										<!-- Avatar -->
 										<div class="avatar avatar-lg mt-n5 mb-3">
-											<a href="#!"><img class="avatar-img rounded border border-white border-3" src="assets/images/avatar/{{$profileimage}}" alt=""></a>
+											<a href="#!"><img class="avatar-img rounded border border-white border-3" src="assets/images/profilepic/{{Auth::user()->name}}/{{$profileimage}}" alt=""></a>
 										</div>
 										<!-- Info -->
 										<h5 class="mb-0"> <a href="#!">{{Auth::user()->name}} </a> </h5>
@@ -274,7 +274,7 @@ Header END -->
 					<div class="d-flex mb-3">
 						<!-- Avatar -->
 						<div class="avatar avatar-xs me-2">
-							<a href="#"> <img class="avatar-img rounded-circle" src="assets/images/avatar/{{$profileimage}}" alt=""> </a>
+							<a href="#"> <img class="avatar-img rounded-circle" src="assets/images/profilepic/{{Auth::user()->name}}/{{$profileimage}}" alt=""> </a>
 						</div>
 						<!-- Post input -->
 						<form class="w-100">
@@ -329,7 +329,7 @@ Header END -->
 								
 									@if($user_post->user->user_detail!=null)
 									      @if(count($user_post->user->user_detail)>0)
-									<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/{{$user_post->user->user_detail[0]->profileImage}}" alt=""> </a>
+									<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/profilepic/{{$user_post->user->name}}/{{$user_post->user->user_detail[0]->profileImage}}" alt=""> </a>
 									      @else
 										  <a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/placeholder.jpg" alt=""> </a>
                                             @endif
@@ -435,7 +435,7 @@ Header END -->
 						<div class="d-flex mb-3">
 							<!-- Avatar -->
 							<div class="avatar avatar-xs me-2">
-								<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/avatar/{{$profileimage}}" alt=""> </a>
+								<a href="#!"> <img class="avatar-img rounded-circle" src="assets/images/profilepic/{{Auth::user()->name}}/{{$profileimage}}" alt=""> </a>
 							</div>
 							<!-- Comment box  -->
 						
@@ -457,7 +457,7 @@ Header END -->
     
 	@if($comment->profileImage!=null)
 										<a href="#!"><img class="avatar-img rounded-circle" 
-											src="assets/images/avatar/{{$comment->profileImage}}" alt=""></a>
+											src="assets/images/profilepic/{{$comment->name}}/{{$comment->profileImage}}" alt=""></a>
 										@else
 										<a href="#!"><img class="avatar-img rounded-circle" 
 											src="assets/images/avatar/placeholder.jpg" alt=""></a>
@@ -586,7 +586,7 @@ Header END -->
 							<div class="card-body p-2  pb-0">
 								<div class="avatar avatar-xl">
 									@if(count($to_be_friend->user_detail) > 0)
-									<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/avatar/{{$to_be_friend->user_detail[0]->profileImage}}" alt=""></a>
+									<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/profilepic/{{$to_be_friend->name}}/{{$to_be_friend->user_detail[0]->profileImage}}" alt=""></a>
 								    @else
 									<a href="#!"><img class="avatar-img rounded-circle" src="assets/images/avatar/placeholder.jpg" alt=""></a>
 									@endif
@@ -729,7 +729,7 @@ Header END -->
 								<div class="hstack gap-2 mb-3">
 									<!-- Avatar -->
 									<div class="avatar">
-										<a href="{{url('user_profile/'.$user->userid)}}"><img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$user->profileImage)}}" alt=""></a>
+										<a href="{{url('user_profile/'.$user->userid)}}"><img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.$user->name."/".$user->profileImage)}}" alt=""></a>
 									</div>
 									<!-- Title -->
 									<div class="overflow-hidden">
@@ -901,7 +901,7 @@ Header END -->
 					
 					<div class="avatar  {{	$status_online}}">
 						@if(count($my_friend_record->user_detail) > 0)
-						<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$my_friend_record->user_detail[0]->profileImage)}}" alt="">
+						<img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.$my_friend_record->name."/".$my_friend_record->user_detail[0]->profileImage)}}" alt="">
 					
 					@else
 					<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/placeholder.jpg')}}" alt="">
@@ -964,7 +964,7 @@ Header END -->
 							<div class="flex-shrink-0 avatar me-2">
 								@if(count($my_friend_record->user_detail) > 0)
 							
-								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$my_friend_record->user_detail[0]->profileImage)}}" alt="">
+								<img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.$my_friend_record->name."/".$my_friend_record->user_detail[0]->profileImage)}}" alt="">
 							     @else
 								 <img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/placeholder.jpg')}}" alt="">
 
@@ -1004,7 +1004,7 @@ Header END -->
 					<!-- Chat conversation START -->
 					<div class="chat-conversation-content custom-scrollbar h-200px" id="chats">
 						<!-- Chat time -->
-						<div class="text-center small my-2">Jul 16, 2022, 06:15 am</div>
+					
 						<!-- Chat message left -->
 						   
 						<div class="d-flex mb-1">
@@ -1029,50 +1029,13 @@ Header END -->
 							</div>
 						</div>
 						<!-- Chat message left -->
-						<div class="d-flex mb-1">
-							<div class="flex-shrink-0 avatar avatar-xs me-2">
-								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/01.jpg')}}" alt="">
-							</div>
-							<div class="flex-grow-1">
-								<div class="w-100">
-									<div class="d-flex flex-column align-items-start">
-										<div class="bg-light text-secondary p-2 px-3 rounded-2">Please find the attached</div>
-										<!-- Files START -->
-										<!-- Files END -->
-										<div class="small my-2">12:16 PM</div>
-									</div>
-								</div>
-							</div>
-						</div>
+					
 						<!-- Chat message left -->
 
-						<div class="d-flex mb-1">
-							<div class="flex-shrink-0 avatar avatar-xs me-2">
-								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/01.jpg')}}" alt="">
-							</div>
-							<div class="flex-grow-1">
-								<div class="w-100">
-									<div class="d-flex flex-column align-items-start">
-										<div class="bg-light text-secondary p-2 px-3 rounded-2">How promotion excellent curiosity😮</div>
-										<div class="small my-2">3:22 PM</div>
-									</div>
-								</div>
-							</div>
-						</div>
+						
 						<!-- Chat message right -->
 						
-						<div class="d-flex justify-content-end text-end mb-1">
-							<div class="w-100">
-								<div class="d-flex flex-column align-items-end">
-									<div class="bg-primary text-white p-2 px-3 rounded-2">And sir dare view.</div>
-									<!-- Images -->
-									<div class="d-flex my-2">
-										<div class="small text-secondary">5:35 PM</div>
-										<div class="small ms-2"><i class="fa-solid fa-check"></i></div>
-									</div>
-								</div>
-							</div>
-						</div>
+						
 						<!-- Chat time -->
 					
 						<!-- Chat Typing -->
@@ -1129,7 +1092,7 @@ Header END -->
 				 <div class="d-flex mb-3">
 					<!-- Avatar -->
 					<div class="avatar avatar-xs me-2">
-						<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$profileimage)}}" alt="">
+						<img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.Auth::user()->name."/".$profileimage)}}" alt="">
 					</div>
 					<!-- Feed box  -->
 					<form class="w-100">
@@ -1184,7 +1147,7 @@ Header END -->
 				<div class="d-flex mb-3">
 					<!-- Avatar -->
 					<div class="avatar avatar-xs me-2">
-						<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$profileimage)}}" alt="">
+						<img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.Auth::user()->name."/".$profileimage)}}" alt="">
 					</div>
 					<!-- Feed box  -->
 					<form class="w-100">
@@ -1234,7 +1197,7 @@ Header END -->
 			 <div class="d-flex mb-3">
 				<!-- Avatar -->
 				<div class="avatar avatar-xs me-2">
-					<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/'.$profileimage)}}" alt="">
+					<img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.Auth::user()->name."/".$profileimage)}}" alt="">
 				</div>
 				<!-- Feed box  -->
 				<form class="w-100">
@@ -1378,6 +1341,7 @@ JS libraries, plugins and custom scripts -->
   src="https://code.jquery.com/jquery-3.7.1.min.js"
   integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
   crossorigin="anonymous"></script>
+
   <script src="{{asset('js/app.js')}}"></script>
 <script src="assets/vendor/tiny-slider/dist/tiny-slider.js"></script>
 <script src="assets/vendor/OverlayScrollbars-master/js/OverlayScrollbars.min.js"></script>
@@ -1511,8 +1475,15 @@ JS libraries, plugins and custom scripts -->
 			console.log(res);
 		}
 	});
+
 });
- 
+Echo.channel('user_message')
+    .listen('.getmessage', (e) => {
+        console.log('Order Shipped!', e);
+
+	
+		
+    });
 
 </script>
 

@@ -19,13 +19,15 @@ class FrontController extends Controller
 
  public function chats (Request $req){
   try{
-social_chat::create([
+$chats=social_chat::create([
   "sender_id"=>Auth::user()->id,
   'receiver_id'=>$req->post("receiver_id"),
   "msg"=>$req->post("msg")
 
 ]);
-event(new UserMessage());
+
+event(new UserMessage($chats));
+return response()->json(["data"=>$chats]);
   }catch(\Exception $e){
     echo $e->getMessage();
   }
@@ -365,16 +367,29 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
     public function makeFolder (){
       $users=DB::table('users')->get();
       foreach($users as $user){
+        $folderPaths = public_path("assets/images/profilepic/".$user->name);
+        if (!file_exists($folderPaths)) {
+            File::makeDirectory($folderPaths,0777,true,true);
+        }
+       $userPhotoDta= DB::table('users_photo')->where("user_id",$user->id)->first();
+       $photos=   $userPhotoDta->photos;
+        $sourcePath = public_path("assets/images/albums/".$user->name)."/".$photos;
+        $destinationPath = public_path("assets/images/profilepic/".$user->name) ."/".$photos;
+        $userData= DB::table('user_details')->where("user_id",$user->id)->first();
+        if(!$userData){
+          DB::table('user_details')->insert([
+            "profileImage"=> $photos,
+            "user_id"=>$user->id
+          ]);
+        }else{
+          DB::table('user_details')->where("user_id",$user->id)->update([
+            "profileImage"=> $photos
+          ]);
+        }
 
-          DB::table('users_photo')->insert(
-            
-     
-         [
-          
-            "photos"=>"24.jpg","user_id"=>$user->id
-          
-         ]
-        );
+        // Copy the image from the source folder to the destination folder
+       File::copy($sourcePath, $destinationPath);
+         
       }
     // Create the directory if it doesn't exist
    
@@ -394,6 +409,10 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
 "friend_id"=>$id,
 "friend_ship_status"=>1
     ]);
+    $friend_id_data=DB::table('users')->where("id",$id)->first();
+    $nofication="$friend_id_data->name has sent you a friend request";
+   /* DB::insert('insert into users_notification (user_id,nofication,created_at) values (?, ?,?)', [Auth::user()->id, 
+    $nofication,date("Y-m-d H:i:s")]);*/
     return redirect()->back();
    }
    public function user_profile_connections($id=null){
@@ -477,8 +496,8 @@ public function user_profile_event($id=null){
    }
         }else{
             $profile_image="placeholder.jpg";
-            $profile_job=null;
-            $profile_bio=null;
+            $profile_job="web Developer";
+            $profile_bio="I am Web developer";
         }
         $data["profileimage"]=$profile_image;
         $data["job_title"]= $profile_job;
@@ -492,9 +511,9 @@ public function user_profile_event($id=null){
            $data["friends"]=0;
        }else{
         $data["friends"]=1;
-       }
-
-        $data["user_photos"]=DB::table('users_photo')->where("user_id",$user_id)->get();
+       }  
+       
+        $data["user_photos"]=DB::table('users_photo')->where("user_id",$user_id)->orderBy('photos')->get();
         $data["user_pages"]=DB::table("social_page_followers")->
        select("page_logo","page_name","social_pages.id as page_id") ->
         join("social_pages","social_pages.id","=","social_page_followers.social_page_id")->
@@ -510,6 +529,32 @@ public function user_profile_event($id=null){
       $data["my_friend_data"]=$my_friend_data;
         $data["my_friend_count"]=count($my_friend_data);
         $data["user_id"]=$id;
+        //events_attendees
+        //	event_id
+        //users_events
+        
         return $data;
+   }
+   public function unfriend($id){
+    $friend_id= $id;
+    $user_id=Auth::user()->id;
+    $dataFriend= DB::table('friendships')->where("user_id",$user_id)
+    ->where("friend_id",$friend_id)
+    ->orwhere("user_id",$friend_id)
+    ->where("friend_id",$user_id)
+    ->first();
+//  dd($dataFriend);
+ $friend_ship_id=$this->findFriendShipId($user_id,$friend_id);
+ 
+ DB::table('friendships')->where("id",$friend_ship_id)->delete();
+ return back();
+   }
+   public function findFriendShipId($user_1,$user_2){
+    $dataFriend= DB::table('friendships')->where("user_id",$user_1)
+    ->where("friend_id",$user_2)
+    ->orwhere("user_id",$user_2)
+    ->where("friend_id",$user_1)
+    ->first();
+    return $dataFriend->id;
    }
 }
