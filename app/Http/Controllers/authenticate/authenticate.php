@@ -290,4 +290,47 @@ class authenticate extends Controller
 
       return redirect(url('login'));
     }
+    public function settings(Request $req){
+ 
+      $user_name    = $req->post("name");
+      $job_title=$req->post("job_title");
+      $bio=$req->post("bio");
+      $email=$req->post("email");
+      $mobile=$req->post("mobile");
+      File::move(public_path('assets/images/albums/'.Auth::user()->name),public_path('assets/images/albums/'.$user_name));
+      File::move(public_path('assets/images/profilepic/'.Auth::user()->name),public_path('assets/images/profilepic/'.$user_name));
+      File::move(public_path('assets/images/coverphoto/'.Auth::user()->name),public_path('assets/images/coverphoto/'.$user_name));
+      if ($req->hasFile('profilepic')) {
+        $file = $req->file('profilepic');
+        $extension = $file->getClientOriginalExtension();
+        $customName = time().".".$extension;
+        $file->move(public_path("assets/images/profilepic/".$user_name), $customName);  
+     
+     
+       DB::table('user_details')->where("user_id",Auth::user()->id)->update([
+       
+        "profileImage"=>   $customName 
+       ]);
+      }         
+    
+      if ($req->hasFile('coverphoto')){
+        $file = $req->file('coverphoto');
+        $extension = $file->getClientOriginalExtension();
+        $customName = time().".".$extension;
+        $file->move(public_path("assets/images/coverphoto/".$user_name), $customName); 
+       DB::table('users')->where("id",Auth::user()->id)->update(["cover_photo"=>$customName]);
+
+      }
+      DB::table('user_details')->where("user_id",Auth::user()->id)->update([
+       
+        "job_title"=>     $job_title,
+        "bio"=>  $bio
+       ]);
+        DB::table('users')->where("id",Auth::user()->id)->update([
+           "name"=>$user_name,
+          "email"=>$email,
+          "mobile"=>$mobile
+         ]);
+         return back();
+    }
 }

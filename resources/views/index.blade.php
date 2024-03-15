@@ -341,7 +341,7 @@ Header END -->
 								<!-- Info -->
 								<div>
 									<div class="nav nav-divider">
-										<h6 class="nav-item card-title mb-0"> <a href="#!"> 
+										<h6 class="nav-item card-title mb-0"> <a href="{{url('user_profile/'.$user_post->user_id)}}"> 
 											@if($user_post->user_id!=null)
 											   @if(Auth::user()->id!==$user_post->user_id)
 											{{$user_post->user->name}}

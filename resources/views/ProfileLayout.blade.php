@@ -20,7 +20,9 @@
                   <div>
                     <!-- Avatar -->
                     <div class="avatar avatar-xxl mt-n5 mb-3">
+                      <a href="{{asset('assets/images/profilepic/'.$user_name.'/'.$profileimage)}}" data-title="{{$user_name}}" data-gallery="image-popup" data-glightbox="">
                       <img class="avatar-img rounded-circle border border-white border-3" src="{{asset('assets/images/profilepic/'.$user_name."/".$profileimage)}}" alt="">
+                      </a>
                     </div>
                   </div>
                   <div class="ms-sm-4 mt-sm-3">
@@ -41,7 +43,7 @@
                     <a class="btn btn-danger-soft me-2" href="{{url('unfriend/'.$user_id)}}">  Unfriend </a>
                     @endif
                     @else
-                    <a class="btn btn-primary-soft me-2" href="{{url('edit/'.$user_id)}}" > <i class="bi bi-pencil-fill pe-1"></i> Edit Profile </a>
+                    <a class="btn btn-primary-soft me-2" href="{{url('settings/')}}" > <i class="bi bi-pencil-fill pe-1"></i> Edit Profile </a>
                     @endif
                  
                   </div>

@@ -62,6 +62,9 @@ return  "dd";
         }
         $following_ids=DB::table("followings")->select("follower_id")->where("user_id",$user_id)->get();
         $follower_ids_array = $following_ids->pluck('follower_id')->toArray();
+
+
+
        $no_of_posts=DB::table("posts")->where("user_id",$user_id)->count();
     $no_of_followers =   DB::table("followers")->where("user_id",$user_id)->count("follower_id");
     $no_of_followings =   DB::table("followings")->where("user_id",$user_id)->count("follower_id");
@@ -300,23 +303,57 @@ $data["Humidity"]=$humidity."%";
     }
     public function user_profile($id=null){
       $data=$this-> userRecord($id);
-     //  dd($data);
+      if($id==null){
+        $id=Auth::user()->id;
+      }else{
+        $id=$id;
+      }
+      
+      $posts=   Post::withCount(['likes',"comments"])
+  ->with(["user","comments"=>function($query){
+    $query->select( "user_details.profileImage","comments.user_id","comments.post_id","comments.comment_content","users.name","comments.created_at");
+    $query->join("users","users.id","=","comments.user_id");
+    $query->leftJoin("user_details","user_details.user_id","=","comments.user_id");
+  },"likes"=>function($query)
+  {
+    $query->select("likes.user_id","likes.post_id","users.name");
+    $query->join("users","users.id","=","likes.user_id");
+  }
+  ])->where("posts.user_id",$id)->get();
+     $page_id=["1","3"];
+  $user_posts_page = Post::withCount(['likes'])
+  ->with(["social_page","likes"=>function($query)
+  {
+    $query->select("likes.user_id","likes.post_id","users.name");
+    $query->join("users","users.id","=","likes.user_id");
+  }
+  ])
+    
+  ->whereIn("social_page_id",$page_id)
+ 
+  // ->whereIn("social_page_id",$page_id)
+  ->get();
+
+     $data["user_posts"] =$posts;
+     $data["user_pages_posts"]=  $user_posts_page;
+      /// dd($data);
       return view("my_profile",$data);
     }
     public function generateText($prompt)
     {
 
-
+   
       $result = OpenAI::chat()->create([
         'model' => 'gpt-3.5-turbo',
         'messages' => [
             ['role' => 'user', 'content' => 'ai post about technology'],
         ],
     ]);
-     
+    return  $result["choices"][0]["message"]["content"];
+    
     
         
-        return  $result["choices"][0]["message"]["content"];
+      
     }
     public function post_ai(){
       try{
@@ -364,6 +401,84 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
       echo $e->getMessage();
     }
     }
+    public function settings(Request $req) {
+      try {
+          $user_name = $req->post("name");
+          $job_title = $req->post("job_title");
+          $bio = $req->post("bio");
+          $email = $req->post("email");
+          $mobile = $req->post("mobile");
+  
+          $loginUserData = DB::table('users')->where("id", Auth::user()->id)->first();
+  
+          // Check if user has changed username before moving files
+          if ($user_name !== $loginUserData->name) {
+              $albumsPath = public_path('assets/images/albums/');
+              $profilePicPath = public_path('assets/images/profilepic/');
+              $coverPhotoPath = public_path('assets/images/coverphoto/');
+  
+              // Move files only if source and destination paths are valid
+              if (File::exists($albumsPath . $loginUserData->name)) {
+                  File::move($albumsPath . $loginUserData->name, $albumsPath . $user_name,0777);
+              }
+              if (File::exists($profilePicPath . $loginUserData->name)) {
+                  File::move($profilePicPath . $loginUserData->name, $profilePicPath . $user_name,0777);
+              }
+              if (File::exists($coverPhotoPath . $loginUserData->name)) {
+                  File::move($coverPhotoPath . $loginUserData->name, $coverPhotoPath . $user_name,0777);
+              }
+          }
+          DB::table('users')->where("id", Auth::user()->id)->update([
+            "name" => $user_name
+          ]);
+          if($req->hasFile('profilepic') && $user_name !== $loginUserData->name){
+            return back()->with("status","You Can't Change Username & Upload Pic");
+          }
+          if ($req->hasFile('profilepic')) {
+              $profilePicFile = $req->file('profilepic');
+              $profilePicCustomName = time() . '.' . $profilePicFile->getClientOriginalExtension();
+              $profilePicPath = public_path('assets/images/profilepic/');
+              if (File::exists($profilePicPath.$user_name)) {
+              $profilePicFile->move(public_path("assets/images/profilepic/" .$user_name), $profilePicCustomName);
+              }else{
+                $profilePicFile->move(public_path("assets/images/profilepic/" .$user_name), $profilePicCustomName);
+              }
+              // Update profile image in database
+              DB::table('user_details')->where("user_id", Auth::user()->id)->update([
+                  "profileImage" => $profilePicCustomName
+              ]);
+          }
+  
+          if ($req->hasFile('coverphoto')) {
+              $coverPhotoFile = $req->file('coverphoto');
+              $coverPhotoCustomName = time() . '.' . $coverPhotoFile->getClientOriginalExtension();
+
+              $coverPhotoFile->move(public_path("assets/images/coverphoto/" . $user_name), $coverPhotoCustomName);
+              // Update cover photo in database
+              DB::table('users')->where("id", Auth::user()->id)->update(["cover_photo" => $coverPhotoCustomName]);
+          }
+  
+          // Update user details in database
+          DB::table('user_details')->where("user_id", Auth::user()->id)->update([
+              "job_title" => $job_title,
+              "bio" => $bio
+          ]);
+  
+          // Update user information in database
+          DB::table('users')->where("id", Auth::user()->id)->update([
+            "name" => $user_name,
+              "email" => $email,
+              "mobile" => $mobile
+          ]);
+  
+          return back()->with('success', 'Settings updated successfully');
+      } catch (\Exception $e) {
+          // Log or handle the exception
+        return back()->with("status","You Can't Change Username & Change profile pic at same time");
+      }
+  }
+  
+    
     public function makeFolder (){
       $users=DB::table('users')->get();
       foreach($users as $user){
@@ -404,6 +519,16 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
     $nofication="$friend_id_data->name has sent you a friend request";
    /* DB::insert('insert into users_notification (user_id,nofication,created_at) values (?, ?,?)', [Auth::user()->id, 
     $nofication,date("Y-m-d H:i:s")]);*/
+    DB::table("followings")->insert([
+      "follower_id"=>Auth::user()->id,
+      "user_id"=>$id,
+      "created_at"=>date("Y-m-d H:i:s")
+    ]);
+    DB::table("followings")->insert([
+      "follower_id"=>$id,
+      "user_id"=>Auth::user()->id,
+      "created_at"=>date("Y-m-d H:i:s")
+    ]);
     return redirect()->back();
    }
    public function user_profile_connections($id=null){
@@ -424,8 +549,15 @@ return view("user_profile_about",$data);
 
 
 }
+
 public function user_profile_event($id=null){
+  if($id==null){
+    $id=Auth::user()->id;
+  }else{
+    $id=$id;
+  }
   $data=$this-> userRecord($id);
+  $data["users_events"]=DB::table('users_events')->where("user_id",$id)->get();
  // dd($data);
   return view("user_event",$data);
 }
@@ -444,7 +576,7 @@ public function user_profile_event($id=null){
                      $user_email=   $user_data->email;
                      $user_cover_photo=$user_data->cover_photo;
                      $data["city"]=$user_data->city;
-                     $data["users_events"]=DB::table('users_events')->where("user_id",$user_id)->get();
+               
                      $data["coverphoto"]=asset("assets/images/coverphoto/".$user_name."/".$user_cover_photo);
                    /* dd($data[
                       "coverphoto"
@@ -541,7 +673,16 @@ public function user_profile_event($id=null){
     ->orwhere("user_id",$friend_id)
     ->where("friend_id",$user_id)
     ->first();
-//  dd($dataFriend);
+  $followings=   DB::table("followings")-> where("follower_id",$id)->
+    where("user_id",$user_id)
+  ->orwhere("follower_id",$user_id)
+  ->where("user_id",$id)
+  ->delete();
+   
+  
+
+
+  
  $friend_ship_id=$this->findFriendShipId($user_id,$friend_id);
  
  DB::table('friendships')->where("id",$friend_ship_id)->delete();

@@ -488,10 +488,12 @@
                 <small class="text-danger">@error("email"){{$message}}@enderror</small>
               </div>
               <div class="mb-3 input-group-lg">
+                <label>Profile Photo</label>
                 <input type="file" name="profilepic" class="form-control" placeholder="Enter email">
                 <small class="text-danger">@error("email"){{$message}}@enderror</small>
               </div>
               <div class="mb-3 input-group-lg">
+                <label>Cover Photo</label>
                 <input type="file" name="coverphoto" class="form-control" placeholder="Enter email">
                 <small class="text-danger">@error("email"){{$message}}@enderror</small>
               </div>
