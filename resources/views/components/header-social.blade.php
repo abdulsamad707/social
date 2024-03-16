@@ -167,11 +167,11 @@
 					<div class="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0" aria-labelledby="notifDropdown">
 						<div class="card">
 							<div class="card-header d-flex justify-content-between align-items-center">
-								<h6 class="m-0">Notifications <span class="badge bg-danger bg-opacity-10 text-danger ms-2">4 new</span></h6>
+								<h6 class="m-0">Notifications </h6>
 								<a class="small" href="#">Clear all</a>
 							</div>
 							<div class="card-body p-0">
-								<ul class="list-group list-group-flush list-unstyled p-2" style="max-height: 300px; overflow-y: auto;">
+								<ul class="list-group list-group-flush list-unstyled p-2" id="notification" style="max-height: 300px; overflow-y: auto;">
 									<!-- Notif item -->
 									
 									
@@ -182,7 +182,7 @@
 											<div class="ms-sm-3">
 												<div class="d-flex">
 													<p class="small mb-2">{{$users_notification->nofication}}</p>
-													<p class="small ms-3">{{TimeDiff($users_notification->created_at,now())}}</p>
+												
 												</div>
 											</div>
 										</a>

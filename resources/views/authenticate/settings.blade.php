@@ -271,7 +271,7 @@
                     <label class="form-check-label" for="deleteaccountCheck">Yes, I'd like to delete my account</label>
                   </div>
                   <a href="#" class="btn btn-success-soft btn-sm mb-2 mb-sm-0">Keep my account</a>
-                  <a href="#" class="btn btn-danger btn-sm mb-0">Delete my account</a>
+                  <a href="{{url('deleteaccount')}}" class="btn btn-danger btn-sm mb-0">Delete my account</a>
                   <!-- Delete END -->
                 </div>
               <!-- Card body END -->

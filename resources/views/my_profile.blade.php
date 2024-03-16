@@ -77,8 +77,11 @@
     <img class="card-img" src="{{asset('assets/images/post/'.$user_post->image)}}" alt="Post">
     @endif
     <!-- Card img -->
-    @if($user_post->image!=null)
-    <img class="card-img" src="{{asset('assets/images/post/'.$user_post->image)}}" alt="Post">
+
+    @if($user_post->video!=null)
+    <video class="player-html" controls crossorigin="anonymous">
+      <source src="{{asset('assets/images/videos/'.$user_post->video)}}" type="video/mp4">
+    </video>
     @endif
     <!-- Feed react START -->
     <ul class="nav nav-stack py-3 small">

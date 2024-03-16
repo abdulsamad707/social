@@ -1342,14 +1342,14 @@ JS libraries, plugins and custom scripts -->
   integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
   crossorigin="anonymous"></script>
 
-  <script src="{{asset('js/app.js')}}"></script>
+  <script src="{{asset('build/assets/app-Bm2JNsIg.js')}}"></script>
 <script src="assets/vendor/tiny-slider/dist/tiny-slider.js"></script>
 <script src="assets/vendor/OverlayScrollbars-master/js/OverlayScrollbars.min.js"></script>
 <script src="assets/vendor/choices.js/public/assets/scripts/choices.min.js"></script>
 <script src="assets/vendor/glightbox-master/dist/js/glightbox.min.js"></script>
 <script src="assets/vendor/flatpickr/dist/flatpickr.min.js"></script>
 <script src="assets/vendor/plyr/plyr.js"></script>
-<script src="assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
+
 <!--<script src="assets/vendor/zuck.js/dist/zuck.min.js"></script>-->
 <!--<script src="assets/js/zuck-stories.js"></script>-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
@@ -1484,6 +1484,52 @@ Echo.channel('user_message')
 	
 		
     });
+	Echo.channel('usernotification')
+
+.listen('NotificationUser', (e) => {
+  $("#notification").html("");
+  userId= {!! json_encode(Auth::user()->id) !!};
+console.log(e);
+var notifications=e.notifictaion.notifications;
+
+Html="";
+var totalCount=0;
+notifications.forEach(element => {
+var totalCount=+1;
+  if(element.user_id===userId){
+  console.log(element.created_at);
+   created_at= new Date(element.created_at);
+   console.log("notification Time"+created_at);
+ 
+   Html+="<li>";
+	Html+="<a href='#' class='list-group-item list-group-item-action rounded d-flex border-0 mb-1 p-3'>";
+	  Html+="<div class='ms-sm-3'>";
+		Html+="	<div class='d-flex'>";
+		  Html+="	<p class='small mb-2'>"+element.nofication+"</p>";
+											
+		  Html+="	</div>";
+		  Html+="	</div>";
+		  Html+="</a>";
+		  Html+="</li>";
+var today = new Date();
+console.log(today);
+// Calculate the time difference in milliseconds
+$("#notification").html(Html);
+noofnotifications=$("#notificta").text();
+noofnotifications=parseInt(noofnotifications)+1;
+console.log(noofnotifications);
+$("#notificta").text(noofnotifications);
+
+  }
+  console.log(totalCount);
+
+});
+
+
+
+
+	
+});
 
 </script>
 

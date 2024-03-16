@@ -42,6 +42,7 @@ Route::middleware(['isuserlogin'])->group(function () {
     Route::post("user_video",[FrontController::class,"user_video"]);
     Route::post("user_event",[FrontController::class,"user_event"]);
     Route::post("userpage",[FrontController::class,"userpage"]);
+    Route::get("deleteaccount",[FrontController::class,"deleteaccount"]);
 });
 Route::get('login', function () {
     return view('authenticate.signin');

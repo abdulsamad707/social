@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Events\NotificationUser;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Events\UserMessage;
 use OpenAI\Laravel\Facades\OpenAI;
 use Illuminate\Support\Facades\File;
+use App\Models\user_noftifictaion;
 class FrontController extends Controller
 {
 
@@ -407,6 +408,42 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
    // File::makeDirectory($folderPath);  
    /// print_r($postData); 
      DB::table('posts')->insert($postData);
+
+     $notify=Auth::user()->name." has a post";
+  
+     $userFrienddata=DB::table('friendships')->where("user_id",Auth::user()->id)
+     ->where("friend_id","!=",Auth::user()->id)
+     ->get();
+     $friend_ids= $userFrienddata->pluck("friend_id")->toArray();
+     $userFrienddatasend=DB::table('friendships')->where("friend_id",Auth::user()->id)
+     ->where("user_id","!=",Auth::user()->id)
+     ->get();
+     $friend_ids_second=   $userFrienddatasend->pluck("user_id")->toArray();
+     $friend_ids=array_unique(array_merge($friend_ids_second,$friend_ids));
+     if(count($friend_ids) > 0){
+          foreach($friend_ids as $friend_id){
+           if($friend_id!=Auth::user()->id){
+    DB::table('users_notification')->insert([
+       "nofication"=>$notify,
+       "user_id"=>$friend_id,
+       "created_at"=>date("Y-m-d H:i:s")
+           ]);
+         }
+         }
+         $notificationsUser=user_noftifictaion::all();
+         $notifys=[
+           "notifications"=> $notificationsUser,
+           "notification_count"=>count($notificationsUser)
+         ];
+   event(new NotificationUser($notifys));
+
+        }
+
+
+
+
+
+
     }catch(\Exception $e){
       echo $e->getMessage();
     }
@@ -422,7 +459,34 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
         "photos"=>    $profilePicCustomName,
         "user_id"=>Auth::user()->id
       ]);
-      return back();
+      $notify=Auth::user()->name." upload a photo";
+      $userFrienddata=DB::table('friendships')->where("user_id",Auth::user()->id)
+      ->where("friend_id","!=",Auth::user()->id)
+      ->get();
+      $friend_ids= $userFrienddata->pluck("friend_id")->toArray();
+      $userFrienddatasend=DB::table('friendships')->where("friend_id",Auth::user()->id)
+      ->where("user_id","!=",Auth::user()->id)
+      ->get();
+      $friend_ids_second= $userFrienddatasend->pluck("user_id")->toArray();
+      $friend_ids=array_unique(array_merge($friend_ids_second,$friend_ids));
+           foreach($friend_ids as $friend_id){
+            if($friend_id!=Auth::user()->id){
+     DB::table('users_notification')->insert([
+        "nofication"=>$notify,
+        "user_id"=>$friend_id,
+        "created_at"=>date("Y-m-d H:i:s")
+            ]);
+          }
+          }
+          $notificationsUser=user_noftifictaion::all();
+              $notifys=[
+                "notifications"=> $notificationsUser,
+                "notification_count"=>count(  $notificationsUser)
+              ];
+        event(new NotificationUser($notifys));
+        
+  
+     return back();
     }else{
       return back()->with("status","Please Add Photo");
     }
@@ -449,7 +513,34 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
 "end_time"=>$req->post("event_end_date"),
 "user_id"=>Auth::user()->id,
 "location"=>$req->post("event_location")
+
     ]);
+    $notify=Auth::user()->name." has Made A Event";
+    
+   $userFrienddata=DB::table('friendships')->where("user_id",Auth::user()->id)
+   ->where("friend_id","!=",Auth::user()->id)
+   ->get();
+   $friend_ids= $userFrienddata->pluck("friend_id")->toArray();
+   $userFrienddatasend=DB::table('friendships')->where("friend_id",Auth::user()->id)
+   ->where("user_id","!=",Auth::user()->id)
+   ->get();
+   $friend_ids_second= $userFrienddatasend->pluck("user_id")->toArray();
+   $friend_ids=array_unique(array_merge($friend_ids_second,$friend_ids));
+        foreach($friend_ids as $friend_id){
+         if($friend_id!=Auth::user()->id){
+  DB::table('users_notification')->insert([
+     "nofication"=>$notify,
+     "user_id"=>$friend_id,
+     "created_at"=>date("Y-m-d H:i:s")
+         ]);
+       }
+      }
+       $notificationsUser=user_noftifictaion::all();
+       $notifys=[
+         "notifications"=> $notificationsUser,
+         "notification_count"=>count(  $notificationsUser)
+       ];
+ event(new NotificationUser($notifys));
     return back();
    }
  function   userpage(Request $req) 
@@ -470,6 +561,32 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
 "social_page_id"=>  $page_id,
 "user_id"=>Auth::user()->id
    ]);
+   $notify=Auth::user()->name." has Made A Page";
+  
+   $userFrienddata=DB::table('friendships')->where("user_id",Auth::user()->id)
+   ->where("friend_id","!=",Auth::user()->id)
+   ->get();
+   $friend_ids= $userFrienddata->pluck("friend_id")->toArray();
+   $userFrienddatasend=DB::table('friendships')->where("friend_id",Auth::user()->id)
+   ->where("user_id","!=",Auth::user()->id)
+   ->get();
+   $friend_ids_second= $userFrienddata->pluck("user_id")->toArray();
+   $friend_ids=array_unique(array_merge($friend_ids_second,$friend_ids));
+        foreach($friend_ids as $friend_id){
+         if($friend_id!=Auth::user()->id){
+  DB::table('users_notification')->insert([
+     "nofication"=>$notify,
+     "user_id"=>$friend_id,
+     "created_at"=>date("Y-m-d H:i:s")
+         ]);
+       }
+       $notificationsUser=user_noftifictaion::all();
+       $notifys=[
+         "notifications"=> $notificationsUser,
+         "notification_count"=>count(  $notificationsUser)
+       ];
+ event(new NotificationUser($notifys));
+       }
   return back();
   }
    function user_video(Request $req){
@@ -491,6 +608,36 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
       "user_id"=>Auth::user()->id,
       "created_at"=>date("Y-m-d H:i:s")
     ]);
+
+
+
+    $notify=Auth::user()->name." has upload a video";
+  
+    $userFrienddata=DB::table('friendships')->where("user_id",Auth::user()->id)
+    ->where("friend_id","!=",Auth::user()->id)
+    ->get();
+    $friend_ids= $userFrienddata->pluck("friend_id")->toArray();
+    $userFrienddatasend=DB::table('friendships')->where("friend_id",Auth::user()->id)
+    ->where("user_id","!=",Auth::user()->id)
+    ->get();
+    $friend_ids_second= $userFrienddata->pluck("user_id")->toArray();
+    $friend_ids=array_unique(array_merge($friend_ids_second,$friend_ids));
+         foreach($friend_ids as $friend_id){
+          if($friend_id!=Auth::user()->id){
+   DB::table('users_notification')->insert([
+      "nofication"=>$notify,
+      "user_id"=>$friend_id,
+      "created_at"=>date("Y-m-d H:i:s")
+          ]);
+        }
+        }
+        $notificationsUser=user_noftifictaion::all();
+        $notifys=[
+          "notifications"=> $notificationsUser,
+          "notification_count"=>count(  $notificationsUser)
+        ];
+  event(new NotificationUser($notifys));
+
 return back();
    }
     public function settings(Request $req) {
@@ -789,5 +936,15 @@ public function user_profile_event($id=null){
     ->where("friend_id",$user_1)
     ->first();
     return $dataFriend->id;
+   }
+   public function deleteaccount(){
+    $frienddata=DB::table('friendships')->where("user_id",Auth::user()->id)
+    ->where("friend_id","!=",Auth::user()->id)
+    ->orwhere("user_id","!=",Auth::user()->id)
+    ->where("friend_id",Auth::user()->id)
+    ->delete();
+    $frienddata=DB::table('posts')->where("user_id",Auth::user()->id)->delete();
+           DB::table('users')->where("id",Auth::user()->id)->delete();
+
    }
 }
