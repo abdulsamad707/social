@@ -223,7 +223,7 @@
 
       
 	  @if($my_friend->profileImage!=null)
-	<a href="{{url('user_profile/'.$my_friend->id)}}">	<img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.$my_friend->name."/".$my_friend->profileImage)}}" alt=""></a>
+		<img class="avatar-img rounded-circle" src="{{asset('assets/images/profilepic/'.$my_friend->name."/".$my_friend->profileImage)}}" alt="">
 @else
 <img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/placeholder.jpg')}}" alt="">
 

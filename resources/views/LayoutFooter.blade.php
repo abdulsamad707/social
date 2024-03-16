@@ -273,7 +273,7 @@
 <script src="{{asset('assets/vendor/choices.js/public/assets/scripts/choices.min.js')}}"></script>
 <script src="{{asset('assets/vendor/glightbox-master/dist/js/glightbox.min.js')}}"></script>
 <script src="{{asset('assets/vendor/flatpickr/dist/flatpickr.min.js')}}"></script>
-
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
 <!-- Theme Functions -->
 <script src="{{asset('assets/js/functions.js')}}"></script>
 

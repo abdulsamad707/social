@@ -5,7 +5,7 @@
     <!-- Card header START -->
     <div class="card-header border-0 pb-0">
       <h5 class="card-title">Medias
-        @if($user_id==null)
+        @if($user_id==null || $user_id==Auth::user()->id)
       <a class="btn btn-primary-soft" href="#" data-bs-toggle="modal" data-bs-target="#modalCreateAlbum">
          <i class="fa-solid fa-plus pe-1"></i> Create album</a>
         @endif
@@ -65,45 +65,33 @@
             </div>
             <div class="modal-body">
               <!-- Form START -->
-              <form>
+              <form method="POST" action="{{url('user_video')}}" enctype='multipart/form-data'>
                 <!-- Album name -->
-                <div class="mb-3">
-                  <label class="form-label">Album name</label>
-                  <input type="email" class="form-control" placeholder="Add album name here">
-                </div>
+           @csrf
                 <!-- Select audience -->
-                <div class="mb-3">
-                  <label class="form-label">Select audience</label>
-                  <select class="form-select js-choice rounded" data-placeholder="false">
-                    <option value="PB">Public</option>
-                    <option value="FR">Friends</option>
-                    <option value="SF">Specific friends</option>
-                    <option value="OM">Only me</option>
-                    <option value="CM">Custom</option>
-                  </select>
-                </div>
+              </div>
                 <!-- Upload Photos or Videos -->
                 <div class="mb-3">
                   <!-- Dropzone photo START -->
-                  <label class="form-label">Upload Photos or Videos</label>
-                  <div class="dropzone dropzone-default card shadow-none" data-dropzone='{"maxFiles":2}'>
-                    <div class="dz-message">
-                      <input type="file">
-                      <i class="fa-solid fa-folder-open display-3"></i>
-                      <p>Drop image here or click to upload.</p>
-                    </div>
-                  </div>
+                  <label class="form-label">Video Cover Photo</label>
+            
                   <!-- Dropzone photo END -->
-                  </div>
-              </form>
+          <input type="file" name="videos_cover_photo" class="form-control">
+          <label class="form-label">Upload  Videos</label>
+            
+          <!-- Dropzone photo END -->
+  <input type="file" name="videos" class="form-control">
+  <label class="form-label">Video Duration</label>
+            <input type="text" name="duration" class="form-control" placeholder="Video Duration">
               <!-- Form END -->
             </div>
             <!-- Modal footer -->
             <div class="modal-footer">
-              <button type="button" class="btn btn-success-soft">Create now</button>
+              <button type="submit" class="btn btn-success-soft">Create now</button>
             </div>
+          </form>
           </div>
         </div>
       </div>
-  
+     
 @endsection

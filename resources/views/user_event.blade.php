@@ -6,8 +6,8 @@
     <div class="card-header d-sm-flex align-items-center justify-content-between border-0 pb-0">
       <h5 class="card-title mb-sm-0">Discover Events</h5>
       <!-- Button modal -->
-      @if($user_id==null)
-      <a class="btn btn-primary-soft btn-sm" href="#"> <i class="fa-solid fa-plus pe-1"></i> Create events</a>
+      @if($user_id==null || $user_id==Auth::user()->id)
+      <a class="btn btn-primary-soft btn-sm" href="#"  data-bs-toggle="modal" data-bs-target="#modalCreateAlbum"> <i class="fa-solid fa-plus pe-1"></i> Create events</a>
       @endif
     </div>
     <!-- Card header END -->
@@ -68,5 +68,68 @@
     </div>
  
     <!-- Card body END -->
+  </div>
+  <div class="modal fade" id="modalCreateAlbum" tabindex="-1" aria-labelledby="modalLabelCreateAlbum" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabelCreateAlbum">Create Event</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Form START -->
+          <form method="POST" action="{{url('user_event')}}" enctype='multipart/form-data'>
+            <!-- Album name -->
+       @csrf
+            <!-- Select audience -->
+          </div>
+            <!-- Upload Photos or Videos -->
+            <div class="mb-3">
+              <!-- Dropzone photo START -->
+              <label class="form-label">Event Image</label>
+        
+              <!-- Dropzone photo END -->
+      <input type="file" name="event_cover_photo" class="form-control">
+      <label class="form-label">Event Name</label>
+        
+      <!-- Dropzone photo END -->
+<input type="text" name="event_name" class="form-control" placeholder="Event Name">
+      <label class="form-label">Event Description</label>
+        
+      <!-- Dropzone photo END -->
+<input type="text" name="event_description" class="form-control" placeholder="Event Description">
+<label class="form-label">Event Date</label>
+        <input type="datetime-local" name="event_date" class="form-control" placeholder="Event Date">
+        <label class="form-label">Event Start Date</label>
+        <input type="datetime-local" name="event_start_date" class="form-control" placeholder="Event Start Date">
+        <label class="form-label">Event End Date</label>
+        <input type="datetime-local" name="event_end_date" class="form-control" placeholder="Event End Date">
+        <label class="form-label">Entry Fee Currency</label>
+        <input type="text" name="entry_fee_currency" class="form-control" placeholder="Entry Fee Currency">
+        <label class="form-label">Mode</label>
+        <select name="mode" class="form-control">
+          <option value="online">Online</option>
+          <option value="oncampus">On Campus</option>
+        </select>
+        <label class="form-label">Entry Fee</label>
+        <input type="text" name="entry_fee" class="form-control" placeholder="Entry Fee">
+	
+        <label class="form-label">Entry Type</label>
+        <select name="entry_type" class="form-control" >
+          <option value="entertainment">Entertainment</option>
+          <option value="trade">Trade</option>
+        </select>
+        <label class="form-label">Event Location </label>
+        <input type="text" name="event_location" class="form-control" placeholder="Enter Location">
+          <!-- Form END -->
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success-soft">Create Event</button>
+        </div>
+      </form>
+      </div>
+    </div>
   </div>
 @endsection

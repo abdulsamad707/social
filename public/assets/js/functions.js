@@ -75,7 +75,7 @@ var e = {
 				e.tinySlider(),
 				e.toolTipFunc(),
 				e.popOverFunc(),
-				e.videoPlyr(),
+			
 				e.lightBox(),
 				e.sidebarToggleStart(),
 				e.sidebarToggleEnd(),
@@ -377,28 +377,7 @@ var e = {
 		// END: Popover
     
     // START: 06 Video player
-    videoPlyr: function () {
-      var vdp = e.select('.player-wrapper');
-      if (e.isVariableDefined(vdp)) {
-        // youtube
-        const playerYoutube = Plyr.setup('.player-youtube', {});
-        window.player = playerYoutube;
-
-        // Vimeo
-        const playerVimeo = Plyr.setup('.player-vimeo', {});
-        window.player = playerVimeo;
-        
-        // HTML video
-        const playerHtmlvideo = Plyr.setup('.player-html', {
-          captions: {active: true}
-        });
-        window.player = playerHtmlvideo;
-
-        // HTML audio
-        const playerHtmlaudio = Plyr.setup('.player-audio', {});
-        window.player = playerHtmlaudio;
-      }
-    },
+   
     // END: Video player
 
 		// START: 07 GLightbox

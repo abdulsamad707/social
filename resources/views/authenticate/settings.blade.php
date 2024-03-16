@@ -197,28 +197,28 @@
                 <!-- Title START -->
                 <div class="card-body">
                   <!-- Settings START -->
-                  <form class="row g-3">
+                  <form class="row g-3" method="POST" action="{{url('change_password')}}">
                     <!-- Current password -->
+                    @csrf
                     <div class="col-12">
                       <label class="form-label">Current password</label>
-                      <input type="text" class="form-control" placeholder="">
+                      <input type="text" class="form-control" name="current_password" placeholder="">
                     </div>
                     <!-- New password -->
                     <div class="col-12">
                       <label class="form-label">New password</label>
                       <!-- Input group -->
                       <div class="input-group">
-                        <input class="form-control fakepassword" type="password" id="psw-input" placeholder="Enter new password">
+                        <input class="form-control" name="password" type="password" id="psw-input" placeholder="Enter new password">
                        
                       </div>
                       <!-- Pswmeter -->
-                      <div id="pswmeter" class="mt-2"></div>
-                      <div id="pswmeter-message" class="rounded mt-1"></div>
+                 
                     </div>
                     <!-- Confirm password -->
                     <div class="col-12">
                       <label class="form-label">Confirm password</label>
-                      <input type="text" class="form-control" placeholder="">
+                      <input type="text" name="password_confirmtion" class="form-control" placeholder="">
                     </div>
                     <!-- Button  -->
                     <div class="col-12 text-end">

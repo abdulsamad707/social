@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use Http;
+use Hash;
 use App\Models\User;
 use App\Models\Post;
 use App\Models\social_chat;
@@ -16,7 +17,16 @@ use Illuminate\Support\Facades\File;
 class FrontController extends Controller
 {
 
+public function change_password(Request $req){
+     $pasword= $req->post('password');
+    $pasword=Hash::make($pasword);
+    DB::table('users')->where("id",Auth::user()->id)->update([
+      "password"=>  $pasword
+    ]);
+    return back()->with('success', 'Settings updated successfully');
 
+    
+}
  public function chats (Request $req){
   try{
 $chats=social_chat::create([
@@ -401,6 +411,88 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
       echo $e->getMessage();
     }
     }
+  function   userphoto(Request $req){
+
+    
+    if ($req->hasFile('userphoto')) {
+      $profilePicFile = $req->file('userphoto');
+      $profilePicCustomName = time() . '.' . $profilePicFile->getClientOriginalExtension();
+      $profilePicFile ->move(public_path("assets/images/albums/".Auth::user()->name),    $profilePicCustomName);
+      DB::table('users_photo')->insert([
+        "photos"=>    $profilePicCustomName,
+        "user_id"=>Auth::user()->id
+      ]);
+      return back();
+    }else{
+      return back()->with("status","Please Add Photo");
+    }
+    }
+   function user_event(Request $req){
+  
+    if ($req->hasFile('event_cover_photo')) {
+      $profilePicFile = $req->file('event_cover_photo');
+ 
+      $profilePicCustomName = time() . '.' . $profilePicFile->getClientOriginalExtension();
+      $profilePicFile ->move(public_path("assets/images/events"),$profilePicCustomName);
+
+    }
+    DB::table('users_events')->insert([
+"event_name"=>$req->post("event_name"),
+"description"=>$req->post("event_description"),
+"event_image"=>$profilePicCustomName,
+"event_date"=>$req->post("event_date"),
+"entry_fee_currency"=>$req->post("entry_fee_currency"),
+"entry_fee"=>$req->post("entry_fee"),
+"event_type"=>$req->post("entry_type"),
+'mode'=>$req->post("mode"),
+"start_time"=>$req->post("event_start_date"),
+"end_time"=>$req->post("event_end_date"),
+"user_id"=>Auth::user()->id,
+"location"=>$req->post("event_location")
+    ]);
+    return back();
+   }
+ function   userpage(Request $req) 
+   {
+ 
+    if ($req->hasFile('page_logo')) {
+      $profilePicFile = $req->file('page_logo');
+       $profilePicCustomName = time() . '.' . $profilePicFile->getClientOriginalExtension();
+      $profilePicFile ->move(public_path("assets/images/logo"),$profilePicCustomName);
+    }
+  $page_id= DB::table('social_pages')->insertGetId([
+"page_name"=>$req->post("page_name"),
+"page_logo"=>   $profilePicCustomName,
+"owner_id"=>Auth::user()->id
+   ]
+   );
+   DB::table('social_page_followers')->insert([
+"social_page_id"=>  $page_id,
+"user_id"=>Auth::user()->id
+   ]);
+  return back();
+  }
+   function user_video(Request $req){
+ 
+    if ($req->hasFile('videos_cover_photo')) {
+      $profilePicFile = $req->file('videos_cover_photo');
+       $profilePicCustomName = time() . '.' . $profilePicFile->getClientOriginalExtension();
+      $profilePicFile ->move(public_path("assets/images/albums"),$profilePicCustomName);
+    }
+    if ($req->hasFile('videos')) {
+      $profilePicFile = $req->file('videos');
+      $profilePic= time() . '.' . $profilePicFile->getClientOriginalExtension();
+      $profilePicFile ->move(public_path("assets/images/videos"),$profilePic);
+    }
+    DB::table('users_video')->insert([
+      "videos_cover_photo"=> $profilePicCustomName,
+      "videos"=>   $profilePic,
+      "duration"=>$req->post("duration"),
+      "user_id"=>Auth::user()->id,
+      "created_at"=>date("Y-m-d H:i:s")
+    ]);
+return back();
+   }
     public function settings(Request $req) {
       try {
           $user_name = $req->post("name");
@@ -509,11 +601,13 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
 //} else {
    // echo "Folder does not exist.";
 //}
+
    public function addfriend($id){
     DB::table('friendships')->insert([
 "user_id"=>Auth::user()->id,
 "friend_id"=>$id,
-"friend_ship_status"=>1
+"friend_ship_status"=>1,
+"created_at"=>date("Y-m-d H:i:s")
     ]);
     $friend_id_data=DB::table('users')->where("id",$id)->first();
     $nofication="$friend_id_data->name has sent you a friend request";

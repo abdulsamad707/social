@@ -20,7 +20,7 @@
                   <div>
                     <!-- Avatar -->
                     <div class="avatar avatar-xxl mt-n5 mb-3">
-                      <a href="{{asset('assets/images/profilepic/'.$user_name.'/'.$profileimage)}}" data-title="{{$user_name}}" data-gallery="image-popup" data-glightbox="">
+                      <a href="{{asset('assets/images/profilepic/'.$user_name.'/'.$profileimage)}}"  data-gallery="image-popup" data-glightbox="">
                       <img class="avatar-img rounded-circle border border-white border-3" src="{{asset('assets/images/profilepic/'.$user_name."/".$profileimage)}}" alt="">
                       </a>
                     </div>
@@ -153,7 +153,13 @@
               <div class="card">
                 <!-- Card header START -->
                 <div class="card-header d-flex justify-content-between border-0">
-                  <h5 class="card-title">Pages</h5>
+                  <h5 class="card-title">Pages
+
+                    @if($user_id==null || $user_id==Auth::user()->id)
+                    <a class="btn btn-primary-soft" href="#" data-bs-toggle="modal" data-bs-target="#modalCreatePage">
+                       <i class="fa-solid fa-plus pe-1"></i> Create Page</a>
+                      @endif
+                  </h5>
              
                 </div>
                 <!-- Card header END -->
@@ -198,7 +204,16 @@
                 <!-- Card header START -->
                 <div class="card-header d-sm-flex justify-content-between border-0">
                
-                  <h5 class="card-title"> Photos <span class="badge bg-danger bg-opacity-10 text-danger">{{count($user_photos)}}</span></h5>
+                  <h5 class="card-title"> Photos <span class="badge bg-danger bg-opacity-10 text-danger">{{count($user_photos)}}</span>
+                  
+                  
+                  
+                    @if($user_id==null || $user_id==Auth::user()->id)
+                    <a class="btn btn-primary-soft" href="#" data-bs-toggle="modal" data-bs-target="#modalCreatePhotos">
+                       <i class="fa-solid fa-plus pe-1"></i> Create album</a>
+                      @endif
+                  
+                  </h5>
                  
                 </div>
                 <!-- Card header END -->
@@ -299,6 +314,75 @@
     <!-- Container END -->
   
   </main>
+  <div class="modal fade" id="modalCreatePhotos" tabindex="-1" aria-labelledby="modalLabelCreateAlbum" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabelCreateAlbum">Create Photo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Form START -->
+          <form  method="POST" action="{{url('userphoto')}}" enctype='multipart/form-data'>
+            <!-- Album name -->
+       @csrf
+            <!-- Select audience -->
+          </div>
+            <!-- Upload Photos or Videos -->
+            <div class="mb-3">
+              <!-- Dropzone photo START -->
+              <label class="form-label">Upload Photos </label>
+        
+              <!-- Dropzone photo END -->
+      <input type="file" name="userphoto">
+          
+          <!-- Form END -->
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success-soft">Create now</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
 
+  <div class="modal fade" id="modalCreatePage" tabindex="-1" aria-labelledby="modalLabelCreateAlbum" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabelCreateAlbum">Create Page</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Form START -->
+          <form  method="POST" action="{{url('userpage')}}" enctype='multipart/form-data'>
+            <!-- Album name -->
+       @csrf
+            <!-- Select audience -->
+          </div>
+            <!-- Upload Photos or Videos -->
+            <div class="mb-3">
+              <!-- Dropzone photo START -->
+              <label class="form-label">Page Logo </label>
+        
+              <!-- Dropzone photo END -->
+      <input type="file" name="page_logo" class="form-control">
+      <label class="form-label">Page Name </label>
+        
+      <!-- Dropzone photo END -->
+<input type="text" name="page_name" class="form-control">
+          <!-- Form END -->
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success-soft">Create now</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
 
 @include("LayoutFooter")

@@ -37,6 +37,11 @@ Route::middleware(['isuserlogin'])->group(function () {
     Route::get("unfriend/{id}",[FrontController::class,"unfriend"]);
     Route::view('settings', 'authenticate.settings');
     Route::post('settings', [FrontController::class,"settings"]);
+    Route::post("userphoto",[FrontController::class,"userphoto"]);
+    Route::post("change_password",[FrontController::class,"change_password"]);
+    Route::post("user_video",[FrontController::class,"user_video"]);
+    Route::post("user_event",[FrontController::class,"user_event"]);
+    Route::post("userpage",[FrontController::class,"userpage"]);
 });
 Route::get('login', function () {
     return view('authenticate.signin');

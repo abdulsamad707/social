@@ -35,7 +35,7 @@ class HeaderSocial extends Component
       ->get();
       $my_friend_id=$my_friend->pluck("friend_id")->toArray();
       $my_friend_id_two=$my_friend_two->pluck("user_id")->toArray();
-     $my_friend_ids=array_unique(array_merge($my_friend_id,$my_friend_id_two));
+     $my_friend_ids=array_unique(array_merge(  $my_friend_id));
 
       $data["my_friends"] = DB::table('users')
       ->select("name","profileImage","users.id")
