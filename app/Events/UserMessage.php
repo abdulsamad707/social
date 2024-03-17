@@ -31,13 +31,10 @@ class UserMessage implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('user_message'),
+            new Channel('user_message'),
         ];
     }
-    public function broadcastAs()
-    {
-      return "getmessage";
-    }
+
     public function broadcastWith(){
         return ["chat"=>$this->chatData];
     }

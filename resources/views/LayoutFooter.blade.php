@@ -266,6 +266,7 @@
     </div>
   </div>
   <!-- Modal create events END -->
+  
   <script src="{{asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
 
 <!-- Vendors -->
@@ -289,12 +290,13 @@
       userId= {!! json_encode(Auth::user()->id) !!};
  console.log(e);
    var notifications=e.notifictaion.notifications;
-
+  
    Html="";
    var totalCount=0;
    notifications.forEach(element => {
     var totalCount=+1;
       if(element.user_id===userId){
+     
       console.log(element.created_at);
        created_at= new Date(element.created_at);
        console.log("notification Time"+created_at);

@@ -399,7 +399,9 @@ Header END -->
 						<p>{{$user_post->content}}</p>
 						<!-- Card img -->
 						@if($user_post->image!=null)
-						<img class="card-img" src="assets/images/post/{{$user_post->image}}" alt="Post">
+						<a href="{{asset('assets/images/post/'.$user_post->image)}}" data-gallery="image-popup" data-glightbox="">
+						<img class="card-img" src="{{asset('assets/images/post/'.$user_post->image)}}" alt="Post">
+						</a>
 						@endif
 						<!-- Feed react START -->
 						<ul class="nav nav-stack py-3 small">
@@ -910,7 +912,7 @@ Header END -->
 					</div>
 					<!-- Info -->
 					<div class="overflow-hidden">
-						<a class="h6 mb-0 stretched-link" href="#!">{{$my_friend_record->name}} </a>
+						<a class="h6 mb-0 stretched-link selector" data-receiver_id="{{$my_friend_record->id}}" href="#!">{{$my_friend_record->name}} </a>
 
 					</div>
 					<!-- Chat time -->
@@ -950,10 +952,12 @@ Header END -->
 	<!-- Chat END -->
 
 	<!-- Chat START -->
+	
 	<div aria-live="polite" aria-atomic="true" class="position-relative">
 		<div class="toast-container toast-chat d-flex gap-3 align-items-end">
 
 			<!-- Chat toast START -->
+			<input type="hidden" id="receiver_id" value="">
 			@foreach($my_friend_records  as $my_friend_record)
 			<div id="chatToast{{$my_friend_record->id}}"   class="toast mb-0 bg-mode" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
 				<div class="toast-header bg-mode">
@@ -971,7 +975,7 @@ Header END -->
 								@endif
 							</div>
 							<div class="flex-grow-1">
-								<h6 class="mb-0 mt-1">{{$my_friend_record->name}}</h6>
+								<h6 class="mb-0 mt-1"><a href="{{url('user_profile/'.$my_friend_record->id)}}">    {{$my_friend_record->name}}</a></h6>
 								@if($my_friend_record->loginAt!=null)
 								<div class="small text-secondary"><i class="fa-solid fa-circle text-success me-1"></i>Online</div>
 								@endif
@@ -1006,11 +1010,50 @@ Header END -->
 						<!-- Chat time -->
 					
 						<!-- Chat message left -->
-						   
+						   <div id="chatcontainer{{$my_friend_record->id}}">
 						<div class="d-flex mb-1">
-							<div class="flex-shrink-0 avatar avatar-xs me-2">
-								<img class="avatar-img rounded-circle" src="{{asset('assets/images/avatar/01.jpg')}}" alt="">
+						
+							<div class="flex-grow-1">
+								<div class="w-100">
+									<div class="d-flex flex-column align-items-start">
+										<div class="bg-light text-secondary p-2 px-3 rounded-2">Applauded no discovery😊</div>
+										<div class="small my-2">6:15 AM</div>
+									</div>
+								</div>
 							</div>
+						</div>
+						<div class="d-flex mb-1">
+						
+							<div class="flex-grow-1">
+								<div class="w-100">
+									<div class="d-flex flex-column align-items-start">
+										<div class="bg-light text-secondary p-2 px-3 rounded-2">Applauded no discovery😊</div>
+										<div class="small my-2">6:15 AM</div>
+									</div>
+								</div>
+							</div>
+						</div>	<div class="d-flex mb-1">
+						
+							<div class="flex-grow-1">
+								<div class="w-100">
+									<div class="d-flex flex-column align-items-start">
+										<div class="bg-light text-secondary p-2 px-3 rounded-2">Applauded no discovery😊</div>
+										<div class="small my-2">6:15 AM</div>
+									</div>
+								</div>
+							</div>
+						</div>	<div class="d-flex mb-1">
+						
+							<div class="flex-grow-1">
+								<div class="w-100">
+									<div class="d-flex flex-column align-items-start">
+										<div class="bg-light text-secondary p-2 px-3 rounded-2">Applauded no discovery😊</div>
+										<div class="small my-2">6:15 AM</div>
+									</div>
+								</div>
+							</div>
+						</div>	<div class="d-flex mb-1">
+						
 							<div class="flex-grow-1">
 								<div class="w-100">
 									<div class="d-flex flex-column align-items-start">
@@ -1039,14 +1082,14 @@ Header END -->
 						<!-- Chat time -->
 					
 						<!-- Chat Typing -->
-						
+						   </div>
 					</div>
 					<!-- Chat conversation END -->
 					<!-- Chat bottom START -->
 					<div class="mt-2">
 						<!-- Chat textarea -->
-						<form id="chatform">
-						<input class="form-control mb-sm-0 mb-3" name="msg" value="" id="messageUser" placeholder="Type a message" >
+						<form id="chatform" data-receiver_id="{{$my_friend_record->id}}">
+						<input class="form-control mb-sm-0 mb-3" name="msg" value="" id="messageUser{{$my_friend_record->id}}" placeholder="Type a message" >
 						<!-- Button -->
 						<div class="d-sm-flex align-items-end mt-2">
 							<button class="btn btn-sm btn-danger-soft me-2"><i class="fa-solid fa-face-smile fs-6"></i></button>
@@ -1330,8 +1373,10 @@ Header END -->
 </div>
 <!-- Modal create events END -->
 
-<!-- =======================
-JS libraries, plugins and custom scripts -->
+<audio id="myAudio">
+	<source src="{{asset('assets/sound/sound.mp3')}}" type="audio/mpeg">
+	Your browser does not support the audio element.
+  </audio>
 
 <!-- Bootstrap JS -->
 <script src="assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -1350,16 +1395,21 @@ JS libraries, plugins and custom scripts -->
 <script src="assets/vendor/flatpickr/dist/flatpickr.min.js"></script>
 <script src="assets/vendor/plyr/plyr.js"></script>
 
+  
 <!--<script src="assets/vendor/zuck.js/dist/zuck.min.js"></script>-->
 <!--<script src="assets/js/zuck-stories.js"></script>-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
 <!-- Theme Functions -->
 <script src="assets/js/functions.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
 <script>
 	//posttextarea
-		//document.getElementById("message").value="hi";
+
+publicPatth	={!! json_encode(asset('sounds')) !!};
+	   console.log(publicPatth	);
+	   var audio = document.getElementById("myAudio");
+	 
+	   
 		$("#type").change(function(){
 			postType=$(this).val();
 			if(postType=="ai"){
@@ -1403,6 +1453,7 @@ JS libraries, plugins and custom scripts -->
 	}
 		}
    // $("#message").val();
+   receiver_id= $("#receiver_id").val();
    function photopost(){
   content=  $("#message_photo").val();
   console.log(content);
@@ -1461,37 +1512,187 @@ JS libraries, plugins and custom scripts -->
 	});
 
    }
+   userIdLogin= {!! json_encode(Auth::user()->id) !!};
+   $(document).on("click",".selector",function(){
+
+
+receiver_id=$(this).data('receiver_id');
+ loadChat();
+ $(".toast").hide();
+ $("#chatcontainer"+receiver_id).html('');
+$("#chatToast"+receiver_id).show();
+});
+function formatAMPM(date) {
+
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  var strTime = hours + ':' + minutes + ' ' + ampm;
+ 
+
+// Get the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+const dayOfWeek = date.getDay();
+
+// Create an array of three-letter day abbreviations
+const daysOfWeekAbbrev = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+// Get the three-letter abbreviation for the current day
+const month = date.getMonth();
+
+// Create an array of three-letter month abbreviations
+const monthsAbbrev = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// Get the three-letter abbreviation for the current month
+const threeLetterAbbreviationMonth = monthsAbbrev[month];
+const threeLetterAbbreviation = daysOfWeekAbbrev[dayOfWeek];
+  return date.getDate() +" "+threeLetterAbbreviationMonth +" " +date.getFullYear()+" "+ strTime;
+}
+function loadChat(){
+csrftoken=	$("input[name='_token']").val();
+console.log(csrftoken);
+ formData={
+	receiver_id:receiver_id,
+	sender_id:userIdLogin,
+	_token:csrftoken
+   }
+   $.ajax({
+	method:"post",
+		url:"{{url('chatsload')}}",
+		data:formData,
+		success:function(res){
+          console.log(res);
+		  let chats=res.data;
+		  let chats_length=chats.length;
+		  if(chats_length > 0){
+			   html="";
+			  for(i=0;i < chats_length; i++ ){
+                  if(chats[i].sender_id==userIdLogin){
+					html+="<div class='d-flex justify-content-end text-end mb-1'>";
+			html+="	<div class='w-100'>";
+				html+="	<div class='d-flex flex-column align-items-end'>";
+					html+="<div class='bg-primary text-white p-2 px-3 rounded-2'>"+chats[i].msg+"</div>";
+					html+="	<div class='small my-2'>"+formatAMPM(new Date(chats[i].created_at))+"</div>";
+					html+="</div>";
+					html+="	</div>";
+					html+="</div>";
+				  }else{
+					html+="<div class='d-flex mb-1'>";
+						html+="<div class='flex-grow-1'>";
+							html+="<div class='w-100'>";
+								html+="<div class='d-flex flex-column align-items-start'>";
+									html+="	<div class='bg-light text-secondary p-2 px-3 rounded-2'>"+chats[i].msg+"</div>";
+									html+="	<div class='small my-2'>"+formatAMPM(new Date(chats[i].created_at))+"</div>";
+									html+="	</div>";
+									html+="	</div>";
+									html+="</div>";
+									html+="</div>";
+				  }
+
+			  }
+			  $("#chatcontainer"+receiver_id).append(html);
+		  }
+
+		}
+   });
+   console.log(formData);
+}
    $(document).on("submit", "#chatform", function(e) {
     e.preventDefault(); // Prevent default form submission behavior
     
-    var formData = $(this).serialize(); // Serialize form data
+    var formData = $(this).serialize();
+	 // Serialize form data
+      
     
-    console.log(formData);
+	   $("#receiver_id").val($(this).data("receiver_id"));
+	
+    //console.log(formData);
+
     $.ajax({
 		method:"post",
 		url:"{{url('chats')}}",
 		data:formData,
 		success:function(res){
-			console.log(res);
+	   
+		  console.log(receiver_id);
+		msg=$("#messageUser"+receiver_id).val();
+         
+console.log(msg);
+		htmlsender="";
+		htmlsender+="<div class='d-flex justify-content-end text-end mb-1'>";
+			htmlsender+="	<div class='w-100'>";
+				htmlsender+="	<div class='d-flex flex-column align-items-end'>";
+					htmlsender+="<div class='bg-primary text-white p-2 px-3 rounded-2'>"+msg+"</div>";
+					htmlsender+="	<div class='small my-2'>"+formatAMPM(new Date())+"</div>";
+					htmlsender+="</div>";
+					htmlsender+="	</div>";
+					htmlsender+="</div>";
+					console.log(htmlsender);
+					$("#chatcontainer"+receiver_id).append(htmlsender);
+					$("#messageUser"+receiver_id).val('');
+	
 		}
 	});
 
 });
-Echo.channel('user_message')
-    .listen('.getmessage', (e) => {
-        console.log('Order Shipped!', e);
 
+
+Echo.channel('user_message')
+    .listen('UserMessage', (e) => {
+      console.log(e.chat);
 	
+	  console.log( "currentUser"+ userIdLogin);
+	  console.log("reciever_id"+   receiver_id);
+       html="";/*
+	   e.chat.forEach((item)=>{
+          console.log(item.sender_id);
+		 
+	    
+		if(item.receiver_id==userIdLogin && receiver_id==item.sender_id ){
+			
+		    html+="<div class='d-flex mb-1'>";
+						html+="<div class='flex-grow-1'>";
+							html+="<div class='w-100'>";
+								html+="<div class='d-flex flex-column align-items-start'>";
+									html+="	<div class='bg-light text-secondary p-2 px-3 rounded-2'>"+item.msg+"</div>";
+									html+="	<div class='small my-2'>6:15 AM</div>";
+									html+="	</div>";
+									html+="	</div>";
+									html+="</div>";
+									html+="</div>";
+									console.log(html);
+									$("#chatcontainer"+receiver_id).append(html);
+									
+		  }
 		
+		});*/
+		if(e.chat.receiver_id==userIdLogin && receiver_id==e.chat.sender_id){
+			audio.play();		
+			html+="<div class='d-flex mb-1'>";
+						html+="<div class='flex-grow-1'>";
+							html+="<div class='w-100'>";
+								html+="<div class='d-flex flex-column align-items-start'>";
+									html+="	<div class='bg-light text-secondary p-2 px-3 rounded-2'>"+e.chat.msg+"</div>";
+									html+="	<div class='small my-2'>"+formatAMPM(new Date(e.chat.created_at))+"</div>";
+									html+="	</div>";
+									html+="	</div>";
+									html+="</div>";
+									html+="</div>";
+									console.log(html);
+									$("#chatcontainer"+receiver_id).append(html);
+		  }
+
     });
 	Echo.channel('usernotification')
 
 .listen('NotificationUser', (e) => {
   $("#notification").html("");
+  audio.play();
   userId= {!! json_encode(Auth::user()->id) !!};
 console.log(e);
 var notifications=e.notifictaion.notifications;
-
 Html="";
 var totalCount=0;
 notifications.forEach(element => {

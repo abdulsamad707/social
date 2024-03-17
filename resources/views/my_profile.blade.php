@@ -3,8 +3,9 @@
 @section("pageContainer")
 
 <!-- Card feed item START -->
-
+@if(count($user_posts)>0)
 @foreach($user_posts as $user_post)
+
 <div class="card">
   <!-- Card header START -->
   <div class="card-header border-0 pb-0">
@@ -74,7 +75,10 @@
     </div>
     <p>{{$user_post->content}}</p>
     @if($user_post->image!=null)
-    <img class="card-img" src="{{asset('assets/images/post/'.$user_post->image)}}" alt="Post">
+    <a href="{{asset('assets/images/post/'.$user_post->image)}}" data-gallery="image-popup" data-glightbox="">
+      <img class="card-img" src="{{asset('assets/images/post/'.$user_post->image)}}" alt="Post">
+      </a>
+  
     @endif
     <!-- Card img -->
 
@@ -230,7 +234,16 @@
 </div>
 <!-- Card feed item END -->
 @endforeach
+@else
+<div class="card">
+  <!-- Card header START -->
+  <div class="card-header border-0 pb-0"></div>
+  <div class="card-body pb-0">
+    <p class="text-center">No Post</p>
+  </div>
+</div>
 
+@endif
         <!-- Connection item END -->
       
         <!-- Connection item END -->

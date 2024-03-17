@@ -28,22 +28,7 @@ public function change_password(Request $req){
 
     
 }
- public function chats (Request $req){
-  try{
-$chats=social_chat::create([
-  "sender_id"=>Auth::user()->id,
-  'receiver_id'=>$req->post("receiver_id"),
-  "msg"=>$req->post("msg")
 
-]);
-
-event(new UserMessage($chats));
-return response()->json(["data"=>$chats]);
-  }catch(\Exception $e){
-    echo $e->getMessage();
-  }
-return  "dd";
- }
     public function index(){
        
        
@@ -111,8 +96,7 @@ return  "dd";
   ->orderBy("created_at","desc")
   // ->orwhereIn("social_page_id",$page_id)
   ->get();
-
-
+   
   $user_posts_page = Post::withCount(['likes'])
   ->with(["social_page","likes"=>function($query)
   {
@@ -331,7 +315,12 @@ $data["Humidity"]=$humidity."%";
     $query->join("users","users.id","=","likes.user_id");
   }
   ])->where("posts.user_id",$id)->get();
-     $page_id=["1","3"];
+  $social_page_followers=DB::table("social_page_followers")->where("user_id",$id)->get();
+   $social_page_id=$social_page_followers->pluck("social_page_id")->toArray();
+$social_owner=DB::table("social_pages")->where("owner_id",$id)->get();
+   $social_page_oown_id=$social_owner->pluck("id")->toArray();
+    $page_id=array_unique(array_merge( $social_page_id, $social_page_oown_id));
+     
   $user_posts_page = Post::withCount(['likes'])
   ->with(["social_page","likes"=>function($query)
   {
@@ -666,6 +655,36 @@ return back();
               if (File::exists($coverPhotoPath . $loginUserData->name)) {
                   File::move($coverPhotoPath . $loginUserData->name, $coverPhotoPath . $user_name,0777);
               }
+
+              $notify=Auth::user()->name." has changed User Name To ".$user_name;
+  
+              $userFrienddata=DB::table('friendships')->where("user_id",Auth::user()->id)
+              ->where("friend_id","!=",Auth::user()->id)
+              ->get();
+              $friend_ids= $userFrienddata->pluck("friend_id")->toArray();
+              $userFrienddatasend=DB::table('friendships')->where("friend_id",Auth::user()->id)
+              ->where("user_id","!=",Auth::user()->id)
+              ->get();
+              $friend_ids_second= $userFrienddatasend->pluck("user_id")->toArray();
+              $friend_ids=array_unique(array_merge($friend_ids_second,$friend_ids));
+                   foreach($friend_ids as $friend_id){
+                    if($friend_id!=Auth::user()->id){
+             DB::table('users_notification')->insert([
+                "nofication"=>$notify,
+                "user_id"=>$friend_id,
+                "created_at"=>date("Y-m-d H:i:s")
+                    ]);
+                  }
+                  }
+                  $notificationsUser=user_noftifictaion::all();
+                  $notifys=[
+                    "notifications"=> $notificationsUser,
+                    "notification_count"=>count(  $notificationsUser)
+                  ];
+            event(new NotificationUser($notifys));
+
+
+
           }
           DB::table('users')->where("id", Auth::user()->id)->update([
             "name" => $user_name
@@ -828,6 +847,7 @@ public function user_profile_event($id=null){
         $user_details=DB::table("user_details")->where("user_id",$user_id)->first();
         $my_friends=DB::table('friendships')
         ->where("friend_id",$user_id)
+        
         ->get();
         $my_friend_ids= $my_friends->pluck("user_id");
         $my_friend_array_id=$my_friend_ids->toArray();
@@ -836,6 +856,7 @@ public function user_profile_event($id=null){
 
         $my_friends_second=DB::table('friendships')
         ->where("user_id",$user_id)
+     
         ->get();
         $my_friend_ids_second= $my_friends_second->pluck("friend_id");
         $my_friend_array_id_second=$my_friend_ids_second->toArray();
@@ -947,4 +968,40 @@ public function user_profile_event($id=null){
            DB::table('users')->where("id",Auth::user()->id)->delete();
 
    }
+   public function chats (Request $req){
+    try{
+  $chats=social_chat::create([
+    "sender_id"=>Auth::user()->id,
+    'receiver_id'=>$req->post("receiver_id"),
+    "msg"=>$req->post("msg")
+  
+  ]);
+  
+  event(new UserMessage($chats));
+  return response()->json(["data"=>$chats,"status"=>"success"]);
+    }catch(\Exception $e){
+      echo $e->getMessage();
+    }
+  return  "dd";
+   }
+  function chatsload(Request $req){
+  try{
+    $req->all();
+     "receiver_id". $receiver_id=$req->receiver_id;
+     "sender_id". $sender_id=$req->sender_id;
+$chats=social_chat::where(function($query) use ($req){
+    $query->where("sender_id",$req->sender_id)
+   ->orWhere("sender_id",$req->receiver_id);
+})->where(function($query) use ($req){
+  $query->where("receiver_id",$req->sender_id)
+  ->orWhere("receiver_id",$req->receiver_id);
+})->get();
+    
+    //receiver_id/
+    //sender_id
+    return response()->json(["status"=>"success","data"=>$chats]);
+  }catch(\Exception $e){
+    echo $e->getMessage();
+  }
+   }  
 }
