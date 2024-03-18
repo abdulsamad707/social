@@ -11,7 +11,9 @@ class social_chat extends Model
     protected $fillable = [
         "receiver_id",
         "sender_id",
-        "msg"
+        "msg",
+        "receiver_photo"
+     
     
     ];
 }

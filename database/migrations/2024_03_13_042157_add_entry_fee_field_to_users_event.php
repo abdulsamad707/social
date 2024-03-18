@@ -18,17 +18,10 @@ return new class extends Migration
               $table->string("mode");
               $table->string("entry_fee_currency");
               $table->string("event_type");
-       
+            
 
         });
-        Schema::create('event_rating', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string("ratings");
-            $table->foreign('event_id')->references('id')->on('users_events')->onDelete('cascade');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->timestamps();
-        });
+       
       
     }
 

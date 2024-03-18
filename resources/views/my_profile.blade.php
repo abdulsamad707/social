@@ -82,11 +82,7 @@
     @endif
     <!-- Card img -->
 
-    @if($user_post->video!=null)
-    <video class="player-html" controls crossorigin="anonymous">
-      <source src="{{asset('assets/images/videos/'.$user_post->video)}}" type="video/mp4">
-    </video>
-    @endif
+ 
     <!-- Feed react START -->
     <ul class="nav nav-stack py-3 small">
       <li class="nav-item">
@@ -110,8 +106,10 @@
       </div>
       <!-- Comment box  -->
     
-      <form class="input-group">
-        <textarea data-autoresize class="form-control me-2 bg-light rounded" rows="1" placeholder="Add a comment..."></textarea>
+      <form class="input-group" method="POST" action="{{url('postcomment')}}">
+        @csrf
+        <input type='hidden' name="post_id" value="{{$user_post->id}}">
+        <textarea name="comment_content" data-autoresize class="form-control me-2 bg-light rounded" rows="1" placeholder="Add a comment..."></textarea>
         <button class="btn btn-primary mb-0 rounded" type="submit">Post</button>
       </form>
     </div>

@@ -303,7 +303,19 @@ $data["Humidity"]=$humidity."%";
       }else{
         $id=$id;
       }
-      
+      $friend_one=DB::table('friendships')->where("user_id",Auth::user()->id)
+      ->where("friend_id","!=",Auth::user()->id)
+     
+      ->get();
+      $friend_id_one=$friend_one->pluck("friend_id")->toArray();
+      $friend_two=DB::table('friendships')->where("friend_id",Auth::user()->id)
+      ->where("user_id","!=",Auth::user()->id)
+     
+      ->get();
+      $friend_id_two=$friend_two->pluck("user_id")->toArray();
+  
+      $friend_id_array=array_unique(array_merge( $friend_id_two, $friend_id_one));
+    
       $posts=   Post::withCount(['likes',"comments"])
   ->with(["user","comments"=>function($query){
     $query->select( "user_details.profileImage","comments.user_id","comments.post_id","comments.comment_content","users.name","comments.created_at");
@@ -314,7 +326,9 @@ $data["Humidity"]=$humidity."%";
     $query->select("likes.user_id","likes.post_id","users.name");
     $query->join("users","users.id","=","likes.user_id");
   }
-  ])->where("posts.user_id",$id)->get();
+  ])->where("posts.user_id",$id)
+  ->orwhereIn("posts.user_id", $friend_id_array)
+  ->get();
   $social_page_followers=DB::table("social_page_followers")->where("user_id",$id)->get();
    $social_page_id=$social_page_followers->pluck("social_page_id")->toArray();
 $social_owner=DB::table("social_pages")->where("owner_id",$id)->get();
@@ -693,6 +707,34 @@ return back();
             return back()->with("status","You Can't Change Username & Upload Pic");
           }
           if ($req->hasFile('profilepic')) {
+            $notify=Auth::user()->name." has changed profile pic ";
+  
+            $userFrienddata=DB::table('friendships')->where("user_id",Auth::user()->id)
+            ->where("friend_id","!=",Auth::user()->id)
+            ->get();
+            $friend_ids= $userFrienddata->pluck("friend_id")->toArray();
+            $userFrienddatasend=DB::table('friendships')->where("friend_id",Auth::user()->id)
+            ->where("user_id","!=",Auth::user()->id)
+            ->get();
+            $friend_ids_second= $userFrienddatasend->pluck("user_id")->toArray();
+            $friend_ids=array_unique(array_merge($friend_ids_second,$friend_ids));
+                 foreach($friend_ids as $friend_id){
+                  if($friend_id!=Auth::user()->id){
+           DB::table('users_notification')->insert([
+              "nofication"=>$notify,
+              "user_id"=>$friend_id,
+              "created_at"=>date("Y-m-d H:i:s")
+                  ]);
+                }
+                }
+                $notificationsUser=user_noftifictaion::all();
+                $notifys=[
+                  "notifications"=> $notificationsUser,
+                  "notification_count"=>count(  $notificationsUser)
+                ];
+          event(new NotificationUser($notifys));
+
+
               $profilePicFile = $req->file('profilepic');
               $profilePicCustomName = time() . '.' . $profilePicFile->getClientOriginalExtension();
               $profilePicPath = public_path('assets/images/profilepic/');
@@ -970,11 +1012,16 @@ public function user_profile_event($id=null){
    }
    public function chats (Request $req){
     try{
+      $userData=DB::table('users')->where("id",Auth::user()->id)->first();
+      $username=$userData->name;
+      $userDataDetail=DB::table('user_details')->where("user_id",Auth::user()->id)->first();
+      $userProfileImage=    $userDataDetail->profileImage;
   $chats=social_chat::create([
     "sender_id"=>Auth::user()->id,
     'receiver_id'=>$req->post("receiver_id"),
-    "msg"=>$req->post("msg")
-  
+    "msg"=>$req->post("msg"),
+     "receiver_name"=>$username,
+     "receiver_photo"=>asset('assets/images/profilepic/'.$username."/".$userProfileImage)
   ]);
   
   event(new UserMessage($chats));
@@ -984,12 +1031,40 @@ public function user_profile_event($id=null){
     }
   return  "dd";
    }
+  function postcomment(Request $req){
+    $post_id=$req->post_id;
+    $post_data=DB::table('posts')->where("id",$post_id)->first();
+    $user_id=$post_data->user_id;
+    if(Auth::user()->id!=$user_id){
+    $notify=Auth::user()->name." has comment on your post";
+
+    DB::table('users_notification')->insert([
+      "nofication"=>$notify,
+      "user_id"=>$user_id,
+      "created_at"=>date("Y-m-d H:i:s")
+          ]);
+    }
+    DB::table('comments')->insert([
+       "comment_content" =>$req->comment_content,
+      "post_id"=> $post_id,
+      "user_id"=>Auth::user()->id,
+      "created_at"=>date("Y-m-d H:i:s")
+    ]);
+    $notificationsUser=user_noftifictaion::all();
+    $notifys=[
+      "notifications"=> $notificationsUser,
+      "notification_count"=>count(  $notificationsUser)
+    ];
+event(new NotificationUser($notifys));
+   return back();
+  }
   function chatsload(Request $req){
   try{
     $req->all();
      "receiver_id". $receiver_id=$req->receiver_id;
      "sender_id". $sender_id=$req->sender_id;
 $chats=social_chat::where(function($query) use ($req){
+     
     $query->where("sender_id",$req->sender_id)
    ->orWhere("sender_id",$req->receiver_id);
 })->where(function($query) use ($req){

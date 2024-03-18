@@ -191,7 +191,7 @@ Header END -->
 											<a class="nav-link" href="my-profile.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/home-outline-filled.svg" alt=""><span>Feed </span></a>
 										</li>
 										<li class="nav-item">
-											<a class="nav-link" href="{{url("user_profile")}}"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/person-outline-filled.svg" alt=""><span>Connections </span></a>
+											<a class="nav-link" href="{{url("user_profile_connections")}}"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/person-outline-filled.svg" alt=""><span>Connections </span></a>
 										</li>
 										<li class="nav-item">
 											<a class="nav-link" href="blog.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/earth-outline-filled.svg" alt=""><span>Latest News </span></a>
@@ -206,7 +206,7 @@ Header END -->
 											<a class="nav-link" href="notifications.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/notification-outlined-filled.svg" alt=""><span>Notifications </span></a>
 										</li>
 										<li class="nav-item">
-											<a class="nav-link" href="settings.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/cog-outline-filled.svg" alt=""><span>Settings </span></a>
+											<a class="nav-link" href="{{url('settings')}}"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/cog-outline-filled.svg" alt=""><span>Settings </span></a>
 										</li>
 									</ul>
 									<!-- Side Nav END -->
@@ -441,8 +441,10 @@ Header END -->
 							</div>
 							<!-- Comment box  -->
 						
-							<form class="input-group">
-								<textarea data-autoresize class="form-control me-2 bg-light rounded" rows="1" placeholder="Add a comment..."></textarea>
+							<form class="input-group" method="POST" action="{{url('postcomment')}}">
+								@csrf
+								<input type='hidden' name="post_id" value="{{$user_post->id}}">
+								<textarea name="comment_content" data-autoresize class="form-control me-2 bg-light rounded" rows="1" placeholder="Add a comment..."></textarea>
 								<button class="btn btn-primary mb-0 rounded" type="submit">Post</button>
 							</form>
 						</div>
@@ -1513,11 +1515,20 @@ publicPatth	={!! json_encode(asset('sounds')) !!};
 
    }
    userIdLogin= {!! json_encode(Auth::user()->id) !!};
+   function scrollChat(receiver_id){
+	$("#chatcontainer"+receiver_id).animate(
+		{
+			scrollTop:$("#chatcontainer"+receiver_id).offset().top+$("#chatcontainer"+receiver_id)[0].scrollHeight
+		}
+	);
+	
+   }
    $(document).on("click",".selector",function(){
 
 
 receiver_id=$(this).data('receiver_id');
  loadChat();
+ scrollChat(receiver_id);
  $(".toast").hide();
  $("#chatcontainer"+receiver_id).html('');
 $("#chatToast"+receiver_id).show();
@@ -1550,6 +1561,7 @@ const threeLetterAbbreviationMonth = monthsAbbrev[month];
 const threeLetterAbbreviation = daysOfWeekAbbrev[dayOfWeek];
   return date.getDate() +" "+threeLetterAbbreviationMonth +" " +date.getFullYear()+" "+ strTime;
 }
+
 function loadChat(){
 csrftoken=	$("input[name='_token']").val();
 console.log(csrftoken);
@@ -1580,6 +1592,10 @@ console.log(csrftoken);
 					html+="</div>";
 				  }else{
 					html+="<div class='d-flex mb-1'>";
+						html+="<div class='flex-shrink-0 avatar avatar-xs me-2'>";
+					html+="<a href='"+chats[i].receiver_photo+"' data-gallery='image-popup' data-glightbox=''>";
+					html+="<img class='avatar-img rounded-circle' src='"+chats[i].receiver_photo+"' alt=''>";
+					html+="</a></div>";
 						html+="<div class='flex-grow-1'>";
 							html+="<div class='w-100'>";
 								html+="<div class='d-flex flex-column align-items-start'>";
@@ -1593,6 +1609,7 @@ console.log(csrftoken);
 
 			  }
 			  $("#chatcontainer"+receiver_id).append(html);
+			  scrollChat(receiver_id);
 		  }
 
 		}
@@ -1642,7 +1659,7 @@ console.log(msg);
 Echo.channel('user_message')
     .listen('UserMessage', (e) => {
       console.log(e.chat);
-	
+	  scrollChat(receiver_id);
 	  console.log( "currentUser"+ userIdLogin);
 	  console.log("reciever_id"+   receiver_id);
        html="";/*
@@ -1668,9 +1685,14 @@ Echo.channel('user_message')
 		  }
 		
 		});*/
+		audio.play();	
 		if(e.chat.receiver_id==userIdLogin && receiver_id==e.chat.sender_id){
-			audio.play();		
+			
 			html+="<div class='d-flex mb-1'>";
+				html+="<div class='flex-shrink-0 avatar avatar-xs me-2'>";
+					html+="<a href='"+e.chat.receiver_photo+"' data-gallery='image-popup' data-glightbox=''>";
+					html+="<img class='avatar-img rounded-circle' src='"+e.chat.receiver_photo+"' alt=''>";
+					html+="</a></div>";
 						html+="<div class='flex-grow-1'>";
 							html+="<div class='w-100'>";
 								html+="<div class='d-flex flex-column align-items-start'>";
