@@ -744,6 +744,28 @@ return back();
                 $profilePicFile->move(public_path("assets/images/profilepic/" .$user_name), $profilePicCustomName);
               }
               // Update profile image in database
+              $chats_count=DB::table('social_chats')->where("sender_id", Auth::user()->id)->count();
+                if($chats_count > 0 ){
+                  $chats_count=DB::table('social_chats')->where("sender_id", Auth::user()->id)->update([
+               
+                    "receiver_photo"=>   asset('assets/images/profilepic/'.$user_name."/".$profilePicCustomName)
+                  ]);
+                }
+                $sourcePath = public_path("assets/images/profilepic/".$user_name)."/".$profilePicCustomName;
+                $destinationPath = public_path("assets/images/post") ."/".$profilePicCustomName;
+              DB::table('posts') ->insert(
+                [
+                  "content"=> Auth::user()->name ." Has changed Profile Picture",
+                  "user_id"=>Auth::user()->id,
+                  "visibility"=>"friends",
+                  "image"=>$profilePicCustomName,
+                  "created_at"=>date("Y-m-d H:i:s")
+                ]
+              ) ;
+                // Copy the image from the source folder to the destination folder
+
+
+               File::copy($sourcePath, $destinationPath);
               DB::table('user_details')->where("user_id", Auth::user()->id)->update([
                   "profileImage" => $profilePicCustomName
               ]);
