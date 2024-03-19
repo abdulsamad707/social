@@ -1,5 +1,9 @@
 <?php
+use App\Models\User;
 
+function post($post,$user_id){
+   return "post_id". $post."user_id".$user_id;
+}
 function TimeDiff($time1, $time2){
     $time1 = strtotime($time1);
     $time2 = strtotime($time2);

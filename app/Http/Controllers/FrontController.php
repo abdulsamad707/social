@@ -30,7 +30,7 @@ public function change_password(Request $req){
 }
 
     public function index(){
-       
+     
        
         $user_id=Auth::user()->id;
         $user_details=DB::table("user_details")->where("user_id",$user_id)->first();
@@ -78,7 +78,7 @@ public function change_password(Request $req){
    $post_user_ids=array_merge($friend_id,$follower_ids_array,$friend_id_two);
    $post_user_ids=array_unique($post_user_ids);
 
-    //  dd( $post_user_ids);
+    //  dd( $post_user_ids);t
   $user_posts = Post::withCount(['likes',"comments"])
   ->with(["user","comments"=>function($query){
     $query->select( "user_details.profileImage","comments.user_id","comments.post_id","comments.comment_content","users.name","comments.created_at");
@@ -1007,8 +1007,17 @@ public function user_profile_event($id=null){
     ->where("friend_id",Auth::user()->id)
     ->delete();
     $frienddata=DB::table('posts')->where("user_id",Auth::user()->id)->delete();
+      
+       
+           $folderPaths = public_path("assets/images/coverphoto/".Auth::user()->name);
+         File::deleteDirectory($folderPath);
+           $folderPaths = public_path("assets/images/profilepic/".Auth::user()->name);
+       File::deleteDirectory($folderPath);
+           $folderPaths = public_path("assets/images/albums/".Auth::user()->name);
+        File::deleteDirectory($folderPath);
+           // Delete the folder
+         
            DB::table('users')->where("id",Auth::user()->id)->delete();
-
    }
    public function chats (Request $req){
     try{
@@ -1016,20 +1025,53 @@ public function user_profile_event($id=null){
       $username=$userData->name;
       $userDataDetail=DB::table('user_details')->where("user_id",Auth::user()->id)->first();
       $userProfileImage=    $userDataDetail->profileImage;
+      if ($req->hasFile('chats_file') ) {
+        $filechats=$req->file('chats_file');
+      
+         $extension = $filechats->extension();
+        $customName=time().".".$extension;
+     
+        $filePath=asset('assets/chats/'.$customName);
+
+                          $filechats->move(public_path('assets/chats'),$customName);
+                     
+                          if($extension==="mp4"){
+                            $fileType='video';
+
+                          }else{
+                            $fileType="image";
+                          }
+                          
+                          
+          
+      }else{
+
+        $filePath=null;
+        $fileType=null;
+        
+  
+      }
+   
+
+     
   $chats=social_chat::create([
     "sender_id"=>Auth::user()->id,
     'receiver_id'=>$req->post("receiver_id"),
     "msg"=>$req->post("msg"),
-     "receiver_name"=>$username,
+    
+     "filechats"=>  $filePath,
+     "file_type"=>  $fileType,
      "receiver_photo"=>asset('assets/images/profilepic/'.$username."/".$userProfileImage)
   ]);
   
   event(new UserMessage($chats));
+  
   return response()->json(["data"=>$chats,"status"=>"success"]);
-    }catch(\Exception $e){
-      echo $e->getMessage();
+}
+    catch(\Exception $e){
+      return response()->json(["data"=>$e->getMessage(),"status"=>"error"]);
     }
-  return  "dd";
+  
    }
   function postcomment(Request $req){
     $post_id=$req->post_id;

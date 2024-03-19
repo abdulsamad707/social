@@ -12,7 +12,9 @@ class social_chat extends Model
         "receiver_id",
         "sender_id",
         "msg",
-        "receiver_photo"
+        "receiver_photo",
+        "filechats",
+        "file_type"
      
     
     ];

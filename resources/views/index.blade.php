@@ -406,7 +406,10 @@ Header END -->
 						<!-- Feed react START -->
 						<ul class="nav nav-stack py-3 small">
 							<li class="nav-item">
-
+                                @php
+         $liked=post($user_post->id,Auth::user()->id);
+		 echo $liked;
+								@endphp
 								<a class="nav-link active" href="#!" data-bs-container="body" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-custom-class="tooltip-text-start" @if($user_post->likes_count >0)
 									
 									data-bs-title="@foreach($user_post->likes as $like){{$like->name}}<br>@endforeach"
@@ -1008,7 +1011,7 @@ Header END -->
 				</div>
 				<div class="toast-body collapse show" id="collapseChat">
 					<!-- Chat conversation START -->
-					<div class="chat-conversation-content custom-scrollbar h-200px" id="chats">
+					<div class="chat-conversation-content custom-scrollbar h-200px" id="chats{{$my_friend_record->id}}">
 						<!-- Chat time -->
 					
 						<!-- Chat message left -->
@@ -1094,8 +1097,9 @@ Header END -->
 						<input class="form-control mb-sm-0 mb-3" name="msg" value="" id="messageUser{{$my_friend_record->id}}" placeholder="Type a message" >
 						<!-- Button -->
 						<div class="d-sm-flex align-items-end mt-2">
+							<input type="file" style="display: none;" data-id="{{$my_friend_record->id}}" id="fileselector{{$my_friend_record->id}}" onchange="selectChat('{{$my_friend_record->id}}')">
 							<button class="btn btn-sm btn-danger-soft me-2"><i class="fa-solid fa-face-smile fs-6"></i></button>
-							<button class="btn btn-sm btn-secondary-soft me-2"><i class="fa-solid fa-paperclip fs-6"></i></button>
+							<button class="btn btn-sm btn-secondary-soft me-2" onclick="selectFile('{{$my_friend_record->id}}')" id="filebtn{{$my_friend_record->id}}" type="button"><i class="fa-solid fa-paperclip fs-6"></i></button>
 							<button class="btn btn-sm btn-success-soft me-2"> Gif </button>
 							<input type="hidden" name="receiver_id" value="{{$my_friend_record->id}}">
 							<button class="btn btn-sm btn-primary ms-auto" id="sendBtn" type="submit"  > Send </button>
@@ -1514,25 +1518,112 @@ publicPatth	={!! json_encode(asset('sounds')) !!};
 	});
 
    }
+
    userIdLogin= {!! json_encode(Auth::user()->id) !!};
    function scrollChat(receiver_id){
-	$("#chatcontainer"+receiver_id).animate(
-		{
-			scrollTop:$("#chatcontainer"+receiver_id).offset().top+$("#chatcontainer"+receiver_id)[0].scrollHeight
-		}
-	);
-	
-   }
+	console.log($("#chatcontainer"+receiver_id).offset().top+$("#chatcontainer"+receiver_id)[0].scrollHeight);
+	console.log($("#chatcontainer"+receiver_id)[0].scrollHeight);
+    
+		$("#chatcontainer"+receiver_id).animate({
+          scrollTop:$("#chatcontainer"+receiver_id).offset().top+$("#chatcontainer"+receiver_id)[0].scrollHeight
+		});
+
+	  }
    $(document).on("click",".selector",function(){
 
 
 receiver_id=$(this).data('receiver_id');
  loadChat();
- scrollChat(receiver_id);
+
  $(".toast").hide();
  $("#chatcontainer"+receiver_id).html('');
 $("#chatToast"+receiver_id).show();
 });
+function selectFile(id){
+	const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+  
+    fileInput.style.display = 'none';
+
+    // Append the file input to the body
+    document.body.appendChild(fileInput);
+
+    // Trigger a click event on the file input
+    fileInput.click();
+
+    // Listen for the change event when a file is selected
+    fileInput.addEventListener('change', function(event,id)  {
+        const selectedFile = event.target.files[0];
+		token=  $("input[name='_token']").val();
+        console.log('Selected file:', selectedFile);
+		if(selectedFile.name!=""){
+		 if(selectedFile.size < 25 * 1024 * 1024 ){
+		var formData = new FormData();
+         formData.append('chats_file',selectedFile);
+		 formData.append("_token",token);
+		 formData.append("receiver_id",	receiver_id);
+
+		 console.log(formData);	
+		
+		$.ajax({
+      url: "{{url('chats')}}", 
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+	  
+      success: function(response) {
+		console.log(response);
+		   
+		if(response.status=="success"){
+	receiver_id=response.data.receiver_id;
+		console.log(receiver_id);
+		//window.location.href="/";
+     
+	 htmlsender="";
+		htmlsender+="<div class='d-flex justify-content-end text-end mb-1'>";
+			htmlsender+="	<div class='w-100'>";
+				htmlsender+="	<div class='d-flex flex-column align-items-end'>";
+					if(response.data.filechats!=null){
+
+						if(response.data.file_type==="video"){
+						htmlsender+="<video class='player-html' controls crossorigin='anonymous'>";
+							htmlsender+="<source  src='"+response.data.filechats+"' type='video/mp4'>";
+								htmlsender+="</video>";
+						}else{	
+					htmlsender+="<img class='img-fluid' src='"+response.data.filechats+"' alt=''>";
+						}
+					}
+					    if(response.data.msg!=null){
+					htmlsender+="<div class='bg-primary text-white p-2 px-3 rounded-2'>"+response.data.msg+"</div>";
+						}
+					htmlsender+="	<div class='small my-2'>"+formatAMPM(new Date())+"</div>";
+					htmlsender+="</div>";
+					htmlsender+="	</div>";
+					htmlsender+="</div>";
+				    console.log(htmlsender);
+					$("#chatcontainer"+receiver_id).append(	htmlsender);
+					scrollChat(receiver_id);
+		}else{
+			alert(response.data);
+		}
+      }
+       
+	});
+}else{
+alert("File size must be less then 25 mb");
+}
+		}else{
+			alert("must provide file");
+		}
+        // Remove the file input from the body
+        document.body.removeChild(fileInput);
+    });
+
+}
+ 
+
+
 function formatAMPM(date) {
 
   var hours = date.getHours();
@@ -1585,7 +1676,21 @@ console.log(csrftoken);
 					html+="<div class='d-flex justify-content-end text-end mb-1'>";
 			html+="	<div class='w-100'>";
 				html+="	<div class='d-flex flex-column align-items-end'>";
-					html+="<div class='bg-primary text-white p-2 px-3 rounded-2'>"+chats[i].msg+"</div>";
+
+					if(chats[i].filechats!=null){
+						if(chats[i].file_type==="video"){
+						html+="<video class='player-html' controls crossorigin='anonymous'>";
+							html+="<source  src='"+chats[i].filechats+"' type='video/mp4'>";
+								html+="</video>";
+							}else{
+					html+="<img class='img-fluid' src='"+chats[i].filechats+"' alt=''>";
+							}
+					}				
+				
+					
+					if(chats[i].msg!=null){
+					html+="<div class='bg-primary text-white p-2 px-3 rounded-2'>"+chats[i].msg+"</div>";			
+					}
 					html+="	<div class='small my-2'>"+formatAMPM(new Date(chats[i].created_at))+"</div>";
 					html+="</div>";
 					html+="	</div>";
@@ -1599,7 +1704,19 @@ console.log(csrftoken);
 						html+="<div class='flex-grow-1'>";
 							html+="<div class='w-100'>";
 								html+="<div class='d-flex flex-column align-items-start'>";
+									if(chats[i].filechats!=null){
+
+										if(chats[i].file_type==="video"){
+						html+="<video class='player-html' controls crossorigin='anonymous'>";
+							html+="<source  src='"+chats[i].filechats+"' type='video/mp4'>";
+								html+="</video>";
+							}else{
+					html+="<img class='img-fluid' src='"+chats[i].filechats+"' alt=''>";
+							}
+					}				
+					              if(chats[i].msg!=null){
 									html+="	<div class='bg-light text-secondary p-2 px-3 rounded-2'>"+chats[i].msg+"</div>";
+								  }
 									html+="	<div class='small my-2'>"+formatAMPM(new Date(chats[i].created_at))+"</div>";
 									html+="	</div>";
 									html+="	</div>";
@@ -1648,6 +1765,7 @@ console.log(msg);
 					htmlsender+="</div>";
 					console.log(htmlsender);
 					$("#chatcontainer"+receiver_id).append(htmlsender);
+					scrollChat(receiver_id);
 					$("#messageUser"+receiver_id).val('');
 	
 		}
@@ -1659,7 +1777,7 @@ console.log(msg);
 Echo.channel('user_message')
     .listen('UserMessage', (e) => {
       console.log(e.chat);
-	  scrollChat(receiver_id);
+	  
 	  console.log( "currentUser"+ userIdLogin);
 	  console.log("reciever_id"+   receiver_id);
        html="";/*
@@ -1696,7 +1814,18 @@ Echo.channel('user_message')
 						html+="<div class='flex-grow-1'>";
 							html+="<div class='w-100'>";
 								html+="<div class='d-flex flex-column align-items-start'>";
+									   if(e.chat.msg!=null){
 									html+="	<div class='bg-light text-secondary p-2 px-3 rounded-2'>"+e.chat.msg+"</div>";
+									   }  if(e.chat.filechats!=null){
+										if(e.chat.file_type==="video"){
+						html+="<video class='player-html' controls crossorigin='anonymous'>";
+							html+="<source  src='"+e.chat.filechats+"' type='video/mp4'>";
+								html+="</video>";
+							}else{
+								html+="<img class='img-fluid' src='"+e.chat.filechats+"' alt=''>";
+							}
+									 
+									   }
 									html+="	<div class='small my-2'>"+formatAMPM(new Date(e.chat.created_at))+"</div>";
 									html+="	</div>";
 									html+="	</div>";
@@ -1704,6 +1833,7 @@ Echo.channel('user_message')
 									html+="</div>";
 									console.log(html);
 									$("#chatcontainer"+receiver_id).append(html);
+									scrollChat(receiver_id);
 		  }
 
     });
