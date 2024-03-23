@@ -3,14 +3,8 @@
 /public/build
 /public/hot
 /public/storage
-/public/assets/images/albums
-/public/assets/images/coverphoto
-/public/assets/images/profilepic
-  /public/assets/images/events
-    /public/assets/images/logo
-     /public/assets/images/videos
-     /public/assets/images/avatar
-     /public/assets/post
+/public/assets/images
+/public/assets/chats
 
 /storage/*.key
 /vendor

@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\authenticate\authenticate;
 use App\Http\Controllers\FrontController;
+use Illuminate\Http\Request;
+use App\Models\social_chat;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -45,6 +47,10 @@ Route::middleware(['isuserlogin'])->group(function () {
     Route::get("deleteaccount",[FrontController::class,"deleteaccount"]);
     Route::post("chatsload",[FrontController::class,"chatsload"]);
     Route::post("postcomment",[FrontController::class,"postcomment"]);
+    Route::get("userfollower/{id}",[FrontController::class,"userfollower"]);
+    Route::get("events",[FrontController::class,"events"]);
+    Route::post("deletechat",[FrontController::class,"deletechat"]);
+ 
 });
 Route::get('login', function () {
     return view('authenticate.signin');

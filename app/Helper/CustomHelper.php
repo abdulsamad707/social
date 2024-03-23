@@ -1,6 +1,9 @@
 <?php
 use App\Models\User;
+use App\Models\events_attendee;
+function event_attendence($event_id){
 
+}
 function post($post,$user_id){
    return "post_id". $post."user_id".$user_id;
 }

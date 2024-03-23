@@ -11,10 +11,13 @@ use App\Models\User;
 use App\Models\Post;
 use App\Models\social_chat;
 use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 use App\Events\UserMessage;
 use OpenAI\Laravel\Facades\OpenAI;
+use App\Jobs\uploadvideo;
 use Illuminate\Support\Facades\File;
 use App\Models\user_noftifictaion;
+use App\Models\users_event;
 class FrontController extends Controller
 {
 
@@ -152,10 +155,11 @@ $my_friend_id=array_unique(array_merge($my_friend_two,$my_friend_id));
 
 
    //  dd();
-        $data["profileimage"]=$profile_image;
-        $data["job_title"]= $profile_job;
+ 
         $data["posts"]=$no_of_posts;
         $data["user_posts"]=$user_posts;
+        $data["profileimage"]=$profile_image;
+        $data["job_title"]= $profile_job;
         $data["bio"]=$profile_bio;
         $data["followers"]=$no_of_followers;
         $data["followings"]=$no_of_followings;
@@ -182,12 +186,31 @@ $my_friend_id=array_unique(array_merge($my_friend_two,$my_friend_id));
          // Fetch news from API if not found in cache
       
         });
-
+       try{
         $news= Http::get("https://newsapi.org/v2/everything?q=business&pageSize=10&from=".$from."&to=".$today."&sortBy=publishedAt&apiKey=678ef3c38bfd4689b825ca92dbfe9e6c");
         $news_data=$news->json();
         $news_data = json_decode(json_encode($news_data)); 
- $data["news"]=$news_data->articles;
+
+
+
+ foreach($news_data->articles as $new){
+DB::table('news')->insert([
+"url"=>$new->url,
+"author"=> $new->author,
+
+"title"=>$new->title,
+"publishedAt"=>$new->publishedAt,
   
+   
+"urlToImage"=>$new->urlToImage
+]
+);
+ }
+ $data["news"]=$news_data->articles;
+}catch(\Exception $e){
+$data["news"]=DB::table('news')->get();
+
+}
 //unset($news_data["source"]);
 //unset($news_data["source"]);
 //publishedAt
@@ -247,6 +270,8 @@ $my_friend_records=User::whereIn("users.id",$my_friend_id_find)
 //dd($my_friend_records->toArray());
     $data["my_friend_records"]=$my_friend_records;
     Cache::put('news',$news);
+
+    try{
     $locationUrl="http://ip-api.com/json";
     $locationUrl = Http::get($locationUrl);
    $locationData= $locationUrl->json();
@@ -254,6 +279,12 @@ $my_friend_records=User::whereIn("users.id",$my_friend_id_find)
        $countryCode=$locationData["countryCode"];
        $country=$locationData["country"];
        $city=$locationData["city"];
+    }catch(\Exception $e){
+      $countryCode="PK";
+      $country="Pakistan";
+      $city="Karachi";
+    }
+
    // dd($locationUrl->json());
     // Your API key from OpenWeatherMap
 $apiKey = 'ea5a30bfb37bbf5ee5752dec4842320f';
@@ -263,6 +294,7 @@ $apiKey = 'ea5a30bfb37bbf5ee5752dec4842320f';
 //$countryCode = 'GB';
 
 // API URL to fetch current weather data
+try{
 $url = "http://api.openweathermap.org/data/2.5/weather?q=$city,$countryCode&appid=$apiKey&units=metric";
 
 // Make the API request
@@ -279,13 +311,19 @@ if ($datas && $datas->cod == 200) {
     $windSpeed= $datas->wind->speed;
     $humidity = $datas->main->humidity;
     $description = $datas->weather[0]->description;
-    $sunset=date("h:i a",strtotime($datas->sys->sunrise));
+ 
     // Output the weather information
  
  
 } else {
     // Handle API error
     echo "Failed to fetch weather data. Please try again later.\n";
+}
+}catch(\Exception $e){
+  $temperature="37";
+  $humidity="11";
+  $description="Soon Rain";
+  $windSpeed="2";
 }
 $data["country"]=$country;
 $data["city"]=$city;
@@ -593,16 +631,24 @@ echo json_encode(["post_content"=>$postContent,"status"=>"success"]);
   return back();
   }
    function user_video(Request $req){
- 
-    if ($req->hasFile('videos_cover_photo')) {
-      $profilePicFile = $req->file('videos_cover_photo');
-       $profilePicCustomName = time() . '.' . $profilePicFile->getClientOriginalExtension();
-      $profilePicFile ->move(public_path("assets/images/albums"),$profilePicCustomName);
-    }
+
     if ($req->hasFile('videos')) {
       $profilePicFile = $req->file('videos');
       $profilePic= time() . '.' . $profilePicFile->getClientOriginalExtension();
-      $profilePicFile ->move(public_path("assets/images/videos"),$profilePic);
+    ///  
+          // dd($profilePicFile);
+          // die();
+  
+
+    $profilePicFile ->move(public_path("assets/images/videos"),$profilePic);
+    }
+     
+    if ($req->hasFile('videos_cover_photo')) {
+      $profilePicFile = $req->file('videos_cover_photo');
+      $profilePicCustomName = time() . '.' . $profilePicFile->getClientOriginalExtension();
+     $profilePicFile ->move(public_path("assets/images/albums"),$profilePicCustomName);
+    
+   
     }
     DB::table('users_video')->insert([
       "videos_cover_photo"=> $profilePicCustomName,
@@ -753,11 +799,13 @@ return back();
                 }
                 $sourcePath = public_path("assets/images/profilepic/".$user_name)."/".$profilePicCustomName;
                 $destinationPath = public_path("assets/images/post") ."/".$profilePicCustomName;
+  
               DB::table('posts') ->insert(
                 [
                   "content"=> Auth::user()->name ." Has changed Profile Picture",
                   "user_id"=>Auth::user()->id,
                   "visibility"=>"friends",
+                  "posttype"=>"profilechange",
                   "image"=>$profilePicCustomName,
                   "created_at"=>date("Y-m-d H:i:s")
                 ]
@@ -777,6 +825,21 @@ return back();
 
               $coverPhotoFile->move(public_path("assets/images/coverphoto/" . $user_name), $coverPhotoCustomName);
               // Update cover photo in database
+              $sourcePath = public_path("assets/images/coverphoto/".$user_name)."/".$coverPhotoCustomName;
+              $destinationPath = public_path("assets/images/post") ."/".$coverPhotoCustomName;
+              File::copy($sourcePath, $destinationPath);
+              DB::table('posts') ->insert(
+                [
+                  "content"=> Auth::user()->name ." Has changed Cover Photo",
+                  "user_id"=>Auth::user()->id,
+                  "visibility"=>"friends",
+                  "posttype"=>"coverchange",
+                  "image"=>    $coverPhotoCustomName,
+                  "created_at"=>date("Y-m-d H:i:s")
+                ]
+              ) ;
+
+
               DB::table('users')->where("id", Auth::user()->id)->update(["cover_photo" => $coverPhotoCustomName]);
           }
   
@@ -796,7 +859,7 @@ return back();
           return back()->with('success', 'Settings updated successfully');
       } catch (\Exception $e) {
           // Log or handle the exception
-        return back()->with("status","You Can't Change Username & Change profile pic at same time");
+        return back()->with("status",$e->getMessage());
       }
   }
   
@@ -804,19 +867,14 @@ return back();
     public function makeFolder (){
       $users=DB::table('users')->get();
       foreach($users as $user){
-        $folderPaths = public_path("assets/images/coverphoto/".$user->name);
-        if (!file_exists($folderPaths)) {
-            File::makeDirectory($folderPaths,0777,true,true);
-        }
-       $userPhotoDta= DB::table('users_photo')->where("user_id",$user->id)->first();
-       $photos=   $userPhotoDta->photos;
-        $sourcePath = public_path("assets/images/bg/".$user->name)."/".$photos;
-        $destinationPath = public_path("assets/images/coverphoto/".$user->name) .$user->name.".jpg";
-        $userData= DB::table('user_details')->where("user_id",$user->id)->first();
+    DB::table('events_attendees')->insert([
+      "event_id"=>3,
+      "user_id"=>$user->id,
+      "created_at"=>date("Y-m-d H:i:s")
+    ]);
+
    
-        DB::table('users')->where("id",$user->id)->update([
-          "cover_photo"=>"04.jpg"
-        ]);
+       
          
       }
     // Create the directory if it doesn't exist
@@ -881,7 +939,7 @@ public function user_profile_event($id=null){
     $id=$id;
   }
   $data=$this-> userRecord($id);
-  $data["users_events"]=DB::table('users_events')->where("user_id",$id)->get();
+  $data["users_events"]=users_event::withCount("attendesscount")->where("users_events.user_id",$id)->get();
  // dd($data);
   return view("user_event",$data);
 }
@@ -1074,8 +1132,8 @@ public function user_profile_event($id=null){
   
       }
    
-
-     
+ 
+   
   $chats=social_chat::create([
     "sender_id"=>Auth::user()->id,
     'receiver_id'=>$req->post("receiver_id"),
@@ -1089,6 +1147,9 @@ public function user_profile_event($id=null){
   event(new UserMessage($chats));
   
   return response()->json(["data"=>$chats,"status"=>"success"]);
+
+ 
+
 }
     catch(\Exception $e){
       return response()->json(["data"=>$e->getMessage(),"status"=>"error"]);
@@ -1142,5 +1203,54 @@ $chats=social_chat::where(function($query) use ($req){
   }catch(\Exception $e){
     echo $e->getMessage();
   }
-   }  
+   }
+  function events(){
+
+
+    $user_id=Auth::user()->id;
+
+  	$events_attendees=DB::table('events_attendees')->where("user_id",$user_id)->get();
+    $events_id=$events_attendees->pluck("event_id")->toArray();
+    $event_own_by_user=DB::table('users_events')->where("user_id",$user_id)->get();
+    $event_own_by_user_id=    $event_own_by_user->pluck("id")->toArray();
+$events_id=array_unique(array_merge($event_own_by_user_id,$events_id));
+    $users_event=users_event::withCount("attendesscount")
+    ->withAvg("avgcount","ratings")
+    ->whereIn("users_events.id",$events_id)
+    ->get();
+    $data["followers"]=DB::table("followers")->where("user_id",$user_id)->count();
+    $data["followings"]=DB::table('followings')->where("user_id",$user_id)->count();
+    
+
+    $data["user_events"]= $users_event;
+return  view("event",$data);
+   }
+   function userfollower($id){
+    DB::table('followers')->insert([
+      "follower_id"=>Auth::user()->id,
+      "user_id"=>$id,
+      "created_at"=>date("Y-m-d H:i:s")
+    ]);
+    DB::table('followings')->insert([
+     "user_id"=>Auth::user()->id,
+     "follower_id"=>$id,
+     "created_at"=>date("Y-m-d H:i:s")
+    ]);
+    return back();
+   }
+   function  deletechat(Request $req){
+   
+ $chat_data= social_chat::where("id",$req->chat_id)->first();
+
+ // Check if the file exists before attempting to delete it
+
+ 
+
+
+ social_chat::where("id",$req->chat_id)->update([
+"deleted_chats_at"=>date("Y-m-d H:i:s")
+ ]);
+    event(new \App\Events\UserChatDelete($chat_data));
+
+  }
 }

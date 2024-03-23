@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text("content");
             $table->text("image")->nullable();
             $table->text("video")->nullable();
+            $table->string("posttype")->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

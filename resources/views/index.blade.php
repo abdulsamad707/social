@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 	
@@ -89,7 +90,7 @@
 	<link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/flatpickr/dist/flatpickr.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/plyr/plyr.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/zuck.js/dist/zuck.min.css')}}">
-
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.css" integrity="sha512-vEia6TQGr3FqC6h55/NdU3QSM5XR6HSl5fW71QTKrgeER98LIMGwymBVM867C1XHIkYD9nMTfWK2A0xcodKHNA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<!-- Theme CSS -->
 	<link rel="stylesheet" type="text/css" href="{{asset('assets/css/style.css')}}">
 
@@ -140,110 +141,7 @@ Header END -->
 						</div>
 
 						<!-- Offcanvas body -->
-						<div class="offcanvas-body d-block px-2 px-lg-0">
-							<!-- Card START -->
-							<div class="card overflow-hidden">
-								<!-- Cover image -->
-								<div class="h-50px" style="background-image:url(assets/images/bg/01.jpg); background-position: center; background-size: cover; background-repeat: no-repeat;"></div>
-									<!-- Card body START -->
-									<div class="card-body pt-0">
-										<div class="text-center">
-										<!-- Avatar -->
-										<div class="avatar avatar-lg mt-n5 mb-3">
-											<a href="#!"><img class="avatar-img rounded border border-white border-3" src="assets/images/profilepic/{{Auth::user()->name}}/{{$profileimage}}" alt=""></a>
-										</div>
-										<!-- Info -->
-										<h5 class="mb-0"> <a href="#!">{{Auth::user()->name}} </a> </h5>
-										<small>{{$job_title}}</small>
-										<p class="mt-3">{{$bio}}</p>
-
-										<!-- User stat START -->
-										<div class="hstack gap-2 gap-xl-3 justify-content-center">
-											<!-- User stat item -->
-											<div>
-												<h6 class="mb-0">{{$posts}}</h6>
-												<small>Post</small>
-											</div>
-											<!-- Divider -->
-											<div class="vr"></div>
-											<!-- User stat item -->
-											<div>
-												<h6 class="mb-0">{{$followers}}</h6>
-												<small>Followers</small>
-											</div>
-											<!-- Divider -->
-											<div class="vr"></div>
-											<!-- User stat item -->
-											<div>
-												<h6 class="mb-0">{{$followings}}</h6>
-												<small>Following</small>
-											</div>
-										</div>
-										<!-- User stat END -->
-									</div>
-
-									<!-- Divider -->
-									<hr>
-
-									<!-- Side Nav START -->
-									<ul class="nav nav-link-secondary flex-column fw-bold gap-2">
-										<li class="nav-item">
-											<a class="nav-link" href="my-profile.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/home-outline-filled.svg" alt=""><span>Feed </span></a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link" href="{{url("user_profile_connections")}}"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/person-outline-filled.svg" alt=""><span>Connections </span></a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link" href="blog.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/earth-outline-filled.svg" alt=""><span>Latest News </span></a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link" href="events.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/calendar-outline-filled.svg" alt=""><span>Events </span></a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link" href="groups.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/chat-outline-filled.svg" alt=""><span>Groups </span></a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link" href="notifications.html"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/notification-outlined-filled.svg" alt=""><span>Notifications </span></a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link" href="{{url('settings')}}"> <img class="me-2 h-20px fa-fw" src="assets/images/icon/cog-outline-filled.svg" alt=""><span>Settings </span></a>
-										</li>
-									</ul>
-									<!-- Side Nav END -->
-								</div>
-								<!-- Card body END -->
-								<!-- Card footer -->
-								<div class="card-footer text-center py-2">
-									<a class="btn btn-link btn-sm" href="my-profile.html">View Profile </a>
-								</div>
-							</div>
-							<!-- Card END -->
-
-							<!-- Helper link START -->
-							<ul class="nav small mt-4 justify-content-center lh-1">
-								<li class="nav-item">
-									<a class="nav-link" href="my-profile-about.html">About</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="settings.html">Settings</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" target="_blank" href="https://support.webestica.com/login">Support </a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" target="_blank" href="docs/index.html">Docs </a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="help.html">Help</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="privacy-and-terms.html">Privacy & terms</a>
-								</li>
-							</ul>
-							<!-- Helper link END -->
-							<!-- Copyright -->
-							<p class="small text-center mt-1">©2023 <a class="text-reset" target="_blank" href="https://www.webestica.com/"> Webestica </a></p>
-						</div>
+						<x-sidearcomponent></x-sidearcomponent>
 					</div>
 				</nav>
 				<!-- Navbar END-->
@@ -399,8 +297,9 @@ Header END -->
 						<p>{{$user_post->content}}</p>
 						<!-- Card img -->
 						@if($user_post->image!=null)
+
 						<a href="{{asset('assets/images/post/'.$user_post->image)}}" data-gallery="image-popup" data-glightbox="">
-						<img class="card-img" src="{{asset('assets/images/post/'.$user_post->image)}}" alt="Post">
+						<img class="card-img" @if($user_post->posttype=="profilechange") style="border-radius: 100%; width:600px; height:600px; margin:auto; padding:auto;"@endif  src="{{asset('assets/images/post/'.$user_post->image)}}" alt="Post">
 						</a>
 						@endif
 						<!-- Feed react START -->
@@ -1408,6 +1307,7 @@ Header END -->
 <!-- Theme Functions -->
 <script src="assets/js/functions.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js" integrity="sha512-hkvXFLlESjeYENO4CNi69z3A1puvONQV5Uh+G4TUDayZxSLyic5Kba9hhuiNLbHqdnKNMk2PxXKm0v7KDnWkYA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 	//posttextarea
 
@@ -1533,11 +1433,12 @@ publicPatth	={!! json_encode(asset('sounds')) !!};
 
 
 receiver_id=$(this).data('receiver_id');
- loadChat();
 
+ $("#messageUser"+receiver_id).emojioneArea();
  $(".toast").hide();
  $("#chatcontainer"+receiver_id).html('');
 $("#chatToast"+receiver_id).show();
+loadChat();
 });
 function selectFile(id){
 	const fileInput = document.createElement('input');
@@ -1584,6 +1485,7 @@ function selectFile(id){
 		htmlsender+="<div class='d-flex justify-content-end text-end mb-1'>";
 			htmlsender+="	<div class='w-100'>";
 				htmlsender+="	<div class='d-flex flex-column align-items-end'>";
+					htmlsender+="<div id='senderimgbox"+response.data.id+"'>";
 					if(response.data.filechats!=null){
 
 						if(response.data.file_type==="video"){
@@ -1597,9 +1499,16 @@ function selectFile(id){
 					    if(response.data.msg!=null){
 					htmlsender+="<div class='bg-primary text-white p-2 px-3 rounded-2'>"+response.data.msg+"</div>";
 						}
+						htmlsender += `
+<div>
+  <i class='fa-solid fa-trash text-danger' onclick='deletechats(${response.data.id})'  aria-label='Delete chat'></i>
+</div>`;
+					
 					htmlsender+="	<div class='small my-2'>"+formatAMPM(new Date())+"</div>";
+				
 					htmlsender+="</div>";
-					htmlsender+="	</div>";
+					htmlsender+="</div>";
+					htmlsender+="</div>";
 					htmlsender+="</div>";
 				    console.log(htmlsender);
 					$("#chatcontainer"+receiver_id).append(	htmlsender);
@@ -1653,6 +1562,210 @@ const threeLetterAbbreviation = daysOfWeekAbbrev[dayOfWeek];
   return date.getDate() +" "+threeLetterAbbreviationMonth +" " +date.getFullYear()+" "+ strTime;
 }
 
+
+   $(document).on("submit", "#chatform", function(e) {
+    e.preventDefault(); // Prevent default form submission behavior
+    
+    var formData = $(this).serialize();
+	 // Serialize form data
+      
+    
+	   $("#receiver_id").val($(this).data("receiver_id"));
+	   msg=$("#messageUser"+receiver_id).val();
+
+	   if(msg!=""){
+    //console.log(formData);
+
+    $.ajax({
+		method:"post",
+		url:"{{url('chats')}}",
+		data:formData,
+		success:function(res){
+	   
+		  console.log(receiver_id);
+		msg=$("#messageUser"+receiver_id).val();
+          console.log(res);
+console.log(msg);
+		htmlsender="";
+		htmlsender+="<div class='d-flex justify-content-end text-end mb-1'>";
+			htmlsender+="	<div class='w-100'>";
+				htmlsender+="	<div class='d-flex flex-column align-items-end'>";
+				   htmlsender+="<div id='senderbox"+res.data.id+"'>";
+
+					htmlsender+="<div class='bg-primary text-white p-2 px-3 rounded-2'>"+msg+"</div>";
+					htmlsender += `
+<div>
+  <i class='fa-solid fa-trash text-danger' onclick='deletechats(${res.data.id})'  aria-label='Delete chat'></i>
+</div>`;
+					
+					htmlsender+="	<div class='small my-2'>"+formatAMPM(new Date())+"</div>";
+					htmlsender+="</div>";
+					htmlsender+="	</div>";
+					htmlsender+="</div>";
+					htmlsender+="</div>";
+					console.log(htmlsender);
+					$("#chatcontainer"+receiver_id).append(htmlsender);
+					scrollChat(receiver_id);
+					$("#messageUser"+receiver_id).html('');
+	
+		}
+ 	});
+}
+});
+
+
+Echo.channel('user_message')
+    .listen('UserMessage', (e) => {
+      console.log(e.chat);
+	  
+	  console.log( "currentUser"+ userIdLogin);
+	  console.log("reciever_id"+   receiver_id);
+       html="";/*
+	   e.chat.forEach((item)=>{
+          console.log(item.sender_id);
+		 
+	    
+		if(item.receiver_id==userIdLogin && receiver_id==item.sender_id ){
+			
+		    html+="<div class='d-flex mb-1'>";
+						html+="<div class='flex-grow-1'>";
+							html+="<div class='w-100'>";
+								html+="<div class='d-flex flex-column align-items-start'>";
+									html+="	<div class='bg-light text-secondary p-2 px-3 rounded-2'>"+item.msg+"</div>";
+									html+="	<div class='small my-2'>6:15 AM</div>";
+									html+="	</div>";
+									html+="	</div>";
+									html+="</div>";
+									html+="</div>";
+									console.log(html);
+									$("#chatcontainer"+receiver_id).append(html);
+									
+		  }
+		
+		});*/
+		if(e.chat.receiver_id==userIdLogin){
+		audio.play();	
+		}
+		if(e.chat.receiver_id==userIdLogin && receiver_id==e.chat.sender_id){
+			
+			html+="<div class='d-flex mb-1'>";
+				html+="<div class='flex-shrink-0 avatar avatar-xs me-2'>";
+					html+="<a href='"+e.chat.receiver_photo+"' data-gallery='image-popup' data-glightbox=''>";
+					html+="<img class='avatar-img rounded-circle' src='"+e.chat.receiver_photo+"' alt=''>";
+					html+="</a></div>";
+						html+="<div class='flex-grow-1'>";
+							html+="<div class='w-100'>";
+								html+="<div id='clientchat"+e.chat.id+"'>";
+								html+="<div class='d-flex flex-column align-items-start'>";
+									   if(e.chat.msg!=null){
+									html+="	<div class='bg-light text-secondary p-2 px-3 rounded-2'>"+e.chat.msg+"</div>";
+									   }  if(e.chat.filechats!=null){
+										if(e.chat.file_type==="video"){
+						html+="<video class='player-html' controls crossorigin='anonymous'>";
+							html+="<source  src='"+e.chat.filechats+"' type='video/mp4'>";
+								html+="</video>";
+							}else{
+								html+="<img class='img-fluid' src='"+e.chat.filechats+"' alt=''>";
+							}
+									 
+									   }
+									html+="	<div class='small my-2'>"+formatAMPM(new Date(e.chat.created_at))+"</div>";
+									html+="	</div>";
+									html+="</div>";
+									html+="	</div>";
+									html+="</div>";
+									html+="</div>";
+									console.log(html);
+									$("#chatcontainer"+receiver_id).append(html);
+									scrollChat(receiver_id);
+		  }
+
+    });
+	Echo.channel('usernotification')
+
+.listen('NotificationUser', (e) => {
+  $("#notification").html("");
+  audio.play();
+  userId= {!! json_encode(Auth::user()->id) !!};
+console.log(e);
+var notifications=e.notifictaion.notifications;
+Html="";
+var totalCount=0;
+notifications.forEach(element => {
+var totalCount=+1;
+  if(element.user_id===userId){
+  console.log(element.created_at);
+   created_at= new Date(element.created_at);
+   console.log("notification Time"+created_at);
+ 
+   Html+="<li>";
+	Html+="<a href='#' class='list-group-item list-group-item-action rounded d-flex border-0 mb-1 p-3'>";
+	  Html+="<div class='ms-sm-3'>";
+		Html+="	<div class='d-flex'>";
+		  Html+="	<p class='small mb-2'>"+element.nofication+"</p>";
+											
+		  Html+="	</div>";
+		  Html+="	</div>";
+		  Html+="</a>";
+		  Html+="</li>";
+var today = new Date();
+console.log(today);
+// Calculate the time difference in milliseconds
+$("#notification").html(Html);
+noofnotifications=$("#notificta").text();
+noofnotifications=parseInt(noofnotifications)+1;
+console.log(noofnotifications);
+$("#notificta").text(noofnotifications);
+
+  }
+  console.log(totalCount);
+
+});
+
+
+
+
+	
+});
+
+function deletechats(id){
+	alert();
+	csrftoken=	$("input[name='_token']").val();
+	chat_id=id;
+	formData={
+	chat_id:chat_id,
+	
+	_token:csrftoken
+   };
+   $.ajax({
+     method:"POST",
+    
+	 url:"{{url('deletechat')}}",
+	 data:formData,
+	 success:function(data){
+		console.log("deletechat");
+		console.log(data);
+	 }
+
+   });
+}
+Echo.channel("ChatDelete").listen("UserChatDelete",(data)=>{
+console.log("websocket");
+chat_id=data.chat_id.id;
+$("#senderimgbox"+data.chat_id.id).html("<div class='bg-primary text-white p-2 px-3 rounded-2'>You Deleted This Message</div>");
+$("#senderbox"+data.chat_id.id).html("<div class='bg-primary text-white p-2 px-3 rounded-2'>You Deleted This Message</div>");
+$("#sendercontainer"+data.chat_id.id).html("<div class='bg-primary text-white p-2 px-3 rounded-2'>You Deleted This Message</div>");
+var sendercontainer;
+console.log(data);
+
+html="	<div class='bg-light text-secondary p-2 px-3 rounded-2'>This Message Was Deleted</div>";
+$("#receiverchat"+data.chat_id.id).html(html);
+$("#clientchat"+data.chat_id.id).html(html);
+if(data.chat_id.receiver_id==userIdLogin){
+		audio.play();	
+}
+
+});
 function loadChat(){
 csrftoken=	$("input[name='_token']").val();
 console.log(csrftoken);
@@ -1733,157 +1846,98 @@ console.log(csrftoken);
    });
    console.log(formData);
 }
-   $(document).on("submit", "#chatform", function(e) {
-    e.preventDefault(); // Prevent default form submission behavior
-    
-    var formData = $(this).serialize();
-	 // Serialize form data
-      
-    
-	   $("#receiver_id").val($(this).data("receiver_id"));
-	
-    //console.log(formData);
-
+function loadChat() {
+    csrftoken = $("input[name='_token']").val();
+    console.log(csrftoken);
+    formData = {
+        receiver_id: receiver_id,
+        sender_id: userIdLogin,
+        _token: csrftoken
+    }
     $.ajax({
-		method:"post",
-		url:"{{url('chats')}}",
-		data:formData,
-		success:function(res){
-	   
-		  console.log(receiver_id);
-		msg=$("#messageUser"+receiver_id).val();
-         
-console.log(msg);
-		htmlsender="";
-		htmlsender+="<div class='d-flex justify-content-end text-end mb-1'>";
-			htmlsender+="	<div class='w-100'>";
-				htmlsender+="	<div class='d-flex flex-column align-items-end'>";
-					htmlsender+="<div class='bg-primary text-white p-2 px-3 rounded-2'>"+msg+"</div>";
-					htmlsender+="	<div class='small my-2'>"+formatAMPM(new Date())+"</div>";
-					htmlsender+="</div>";
-					htmlsender+="	</div>";
-					htmlsender+="</div>";
-					console.log(htmlsender);
-					$("#chatcontainer"+receiver_id).append(htmlsender);
-					scrollChat(receiver_id);
-					$("#messageUser"+receiver_id).val('');
-	
-		}
-	});
-
-});
+        method: "post",
+        url: "{{url('chatsload')}}",
+        data: formData,
+        success: function(res) {
+            console.log(res);
+            let chats = res.data;
+            let chats_length = chats.length;
+            if (chats_length > 0) {
+                html = "";
+                for (i = 0; i < chats_length; i++) {
+                    if (chats[i].sender_id == userIdLogin) {
+                        html += "<div class='d-flex justify-content-end text-end mb-1'>";
+                        html += "	<div class='w-100'>";
+                        html += "	<div class='d-flex flex-column align-items-end' id='sendercontainer"+chats[i].id +"'>";
+							if (chats[i].deleted_chats_at == null) {
+                        if (chats[i].filechats != null) {
+                            if (chats[i].file_type === "video") {
+                                html += "<video class='player-html' controls crossorigin='anonymous'>";
+                                html += "<source  src='" + chats[i].filechats + "' type='video/mp4'>";
+                                html += "</video>";
+                            } else {
+                                html += "<img class='img-fluid' src='" + chats[i].filechats + "' alt=''>";
+                            }
+                        }
 
 
-Echo.channel('user_message')
-    .listen('UserMessage', (e) => {
-      console.log(e.chat);
-	  
-	  console.log( "currentUser"+ userIdLogin);
-	  console.log("reciever_id"+   receiver_id);
-       html="";/*
-	   e.chat.forEach((item)=>{
-          console.log(item.sender_id);
-		 
-	    
-		if(item.receiver_id==userIdLogin && receiver_id==item.sender_id ){
-			
-		    html+="<div class='d-flex mb-1'>";
-						html+="<div class='flex-grow-1'>";
-							html+="<div class='w-100'>";
-								html+="<div class='d-flex flex-column align-items-start'>";
-									html+="	<div class='bg-light text-secondary p-2 px-3 rounded-2'>"+item.msg+"</div>";
-									html+="	<div class='small my-2'>6:15 AM</div>";
-									html+="	</div>";
-									html+="	</div>";
-									html+="</div>";
-									html+="</div>";
-									console.log(html);
-									$("#chatcontainer"+receiver_id).append(html);
-									
-		  }
-		
-		});*/
-		audio.play();	
-		if(e.chat.receiver_id==userIdLogin && receiver_id==e.chat.sender_id){
-			
-			html+="<div class='d-flex mb-1'>";
-				html+="<div class='flex-shrink-0 avatar avatar-xs me-2'>";
-					html+="<a href='"+e.chat.receiver_photo+"' data-gallery='image-popup' data-glightbox=''>";
-					html+="<img class='avatar-img rounded-circle' src='"+e.chat.receiver_photo+"' alt=''>";
-					html+="</a></div>";
-						html+="<div class='flex-grow-1'>";
-							html+="<div class='w-100'>";
-								html+="<div class='d-flex flex-column align-items-start'>";
-									   if(e.chat.msg!=null){
-									html+="	<div class='bg-light text-secondary p-2 px-3 rounded-2'>"+e.chat.msg+"</div>";
-									   }  if(e.chat.filechats!=null){
-										if(e.chat.file_type==="video"){
-						html+="<video class='player-html' controls crossorigin='anonymous'>";
-							html+="<source  src='"+e.chat.filechats+"' type='video/mp4'>";
-								html+="</video>";
+                        if (chats[i].msg != null) {
+                            html += "<div class='bg-primary text-white p-2 px-3 rounded-2'>" + chats[i].msg + "</div>";
+                        }
+                        html += "	<div class='small my-2'>" + formatAMPM(new Date(chats[i].created_at)) + "</div>";
+                        html += `
+<div>
+  <i class='fa-solid fa-trash text-danger' onclick='deletechats(${chats[i].id})' data-chats_id='${chats[i].id}' aria-label='Delete chat'></i>
+</div>`;
 							}else{
-								html+="<img class='img-fluid' src='"+e.chat.filechats+"' alt=''>";
+								html += "<div class='bg-primary text-white p-2 px-3 rounded-2'> You Deleted This Message</div>";
 							}
-									 
-									   }
-									html+="	<div class='small my-2'>"+formatAMPM(new Date(e.chat.created_at))+"</div>";
-									html+="	</div>";
-									html+="	</div>";
-									html+="</div>";
-									html+="</div>";
-									console.log(html);
-									$("#chatcontainer"+receiver_id).append(html);
-									scrollChat(receiver_id);
-		  }
 
+                        html += "</div>";
+                        html += "	</div>";
+                        html += "</div>";
+                    } else {
+                        html += "<div class='d-flex mb-1'>";
+                        html += "<div class='flex-shrink-0 avatar avatar-xs me-2'>";
+                        html += "<a href='" + chats[i].receiver_photo + "' data-gallery='image-popup' data-glightbox=''>";
+                        html += "<img class='avatar-img rounded-circle' src='" + chats[i].receiver_photo + "' alt=''>";
+                        html += "</a></div>";
+                        html += "<div class='flex-grow-1'>";
+                        html += "<div class='w-100'>";
+                        html += "<div class='d-flex flex-column align-items-start' id='receiverchat"+chats[i].id+"'>";
+							if (chats[i].deleted_chats_at == null) {
+                        if (chats[i].filechats != null) {
+
+                            if (chats[i].file_type === "video") {
+                                html += "<video class='player-html' controls crossorigin='anonymous'>";
+                                html += "<source  src='" + chats[i].filechats + "' type='video/mp4'>";
+                                html += "</video>";
+                            } else {
+                                html += "<img class='img-fluid' src='" + chats[i].filechats + "' alt=''>";
+                            }
+                        }
+                        if (chats[i].msg != null) {
+                            html += "	<div class='bg-light text-secondary p-2 px-3 rounded-2'>" + chats[i].msg + "</div>";
+                        }
+                        html += "	<div class='small my-2'>" + formatAMPM(new Date(chats[i].created_at)) + "</div>";
+					}else{
+						html += "	<div class='bg-light text-secondary p-2 px-3 rounded-2'>This Message Was Deleted</div>";
+					}
+                        html += "	</div>";
+                        html += "	</div>";
+                        html += "</div>";
+                        html += "</div>";
+                    }
+
+                }
+                $("#chatcontainer" + receiver_id).append(html);
+                scrollChat(receiver_id);
+            }
+
+        }
     });
-	Echo.channel('usernotification')
-
-.listen('NotificationUser', (e) => {
-  $("#notification").html("");
-  audio.play();
-  userId= {!! json_encode(Auth::user()->id) !!};
-console.log(e);
-var notifications=e.notifictaion.notifications;
-Html="";
-var totalCount=0;
-notifications.forEach(element => {
-var totalCount=+1;
-  if(element.user_id===userId){
-  console.log(element.created_at);
-   created_at= new Date(element.created_at);
-   console.log("notification Time"+created_at);
- 
-   Html+="<li>";
-	Html+="<a href='#' class='list-group-item list-group-item-action rounded d-flex border-0 mb-1 p-3'>";
-	  Html+="<div class='ms-sm-3'>";
-		Html+="	<div class='d-flex'>";
-		  Html+="	<p class='small mb-2'>"+element.nofication+"</p>";
-											
-		  Html+="	</div>";
-		  Html+="	</div>";
-		  Html+="</a>";
-		  Html+="</li>";
-var today = new Date();
-console.log(today);
-// Calculate the time difference in milliseconds
-$("#notification").html(Html);
-noofnotifications=$("#notificta").text();
-noofnotifications=parseInt(noofnotifications)+1;
-console.log(noofnotifications);
-$("#notificta").text(noofnotifications);
-
-  }
-  console.log(totalCount);
-
-});
-
-
-
-
-	
-});
-
+    console.log(formData);
+}
 </script>
 
 

@@ -141,7 +141,7 @@
 
 					<!-- Nav item 4 Mega menu -->
 					<li class="nav-item">
-						<a class="nav-link" href="my-profile-connections.html">My network</a>
+						<a class="nav-link" href="{{url('user_profile_connections')}}">My network</a>
 					</li>
 				</ul>
 			</div>

@@ -14,7 +14,8 @@ class social_chat extends Model
         "msg",
         "receiver_photo",
         "filechats",
-        "file_type"
+        "file_type",
+        "deleted_chats_at"
      
     
     ];

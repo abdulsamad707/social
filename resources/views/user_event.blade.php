@@ -39,7 +39,9 @@
               <li class="nav-item">
                 <i class="bi bi-geo-alt pe-1"></i>{{$users_event->location}}
               </li>
-            
+              <li class="nav-item">
+                <i class="bi bi-people pe-1"></i>{{$users_event->attendesscount_count}}
+              </li>
             </ul>
           </div>
           <!-- Button -->

@@ -24,7 +24,7 @@
         <div class="col-sm-6 col-md-4">
           <!-- Video START -->
           <div class="card p-0 shadow-none border-0 position-relative">
-            <!-- Video image -->
+            {{$user_video->id}}
             <div class="position-relative">
               <img class="rounded" src="{{asset('assets/images/albums/'.$user_video->videos_cover_photo)}}" alt="">
               <!-- Play icon -->
