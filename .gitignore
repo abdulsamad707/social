@@ -4,8 +4,8 @@
 /public/hot
 /public/storage
 /public/assets/images
-/public/assets/chats
-
+/public/assets/chats/
+/public/assets/images/videos
 /storage/*.key
 /vendor
 
