@@ -5,7 +5,7 @@
 <!-- Mirrored from social.webestica.com/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 28 Feb 2024 18:39:28 GMT -->
 <head>
 	<title>Social - Network, Community and Event Theme</title>
-
+@vite(["resoucrces/css/app.css","resoucrces/css/app.js"])
 	<!-- Meta Tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -1292,7 +1292,7 @@ Header END -->
   integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
   crossorigin="anonymous"></script>
 
-  <script src="{{asset('build/assets/app-Bm2JNsIg.js')}}"></script>
+  <script src="{{asset('js/app.js')}}"></script>
 <script src="assets/vendor/tiny-slider/dist/tiny-slider.js"></script>
 <script src="assets/vendor/OverlayScrollbars-master/js/OverlayScrollbars.min.js"></script>
 <script src="assets/vendor/choices.js/public/assets/scripts/choices.min.js"></script>
@@ -1614,10 +1614,11 @@ console.log(msg);
 });
 
 
-Echo.channel('user_message')
+window.Echo.channel('user_message')
     .listen('UserMessage', (e) => {
+		console.log("websocketrun");
       console.log(e.chat);
-	  
+	  audio.play();	
 	  console.log( "currentUser"+ userIdLogin);
 	  console.log("reciever_id"+   receiver_id);
        html="";/*
@@ -1749,7 +1750,7 @@ function deletechats(id){
 
    });
 }
-Echo.channel("ChatDelete").listen("UserChatDelete",(data)=>{
+window.Echo.channel("ChatDelete").listen("UserChatDelete",(data)=>{
 console.log("websocket");
 chat_id=data.chat_id.id;
 $("#senderimgbox"+data.chat_id.id).html("<div class='bg-primary text-white p-2 px-3 rounded-2'>You Deleted This Message</div>");

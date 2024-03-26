@@ -13,7 +13,7 @@ use App\Models\social_chat;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use App\Events\UserMessage;
-use OpenAI\Laravel\Facades\OpenAI;
+//use OpenAI\Laravel\Facades\OpenAI;
 use App\Jobs\uploadvideo;
 use Illuminate\Support\Facades\File;
 use App\Models\user_noftifictaion;
@@ -1204,9 +1204,42 @@ $chats=social_chat::where(function($query) use ($req){
     echo $e->getMessage();
   }
    }
+   function user_friends($user_id){
+    // Assuming DB is the database connection object
+
+    // Fetch friendships where the user_id is either the user_id or friend_id
+    $friendships = DB::table('friendships')
+        ->where('user_id', $user_id)
+        ->orWhere('friend_id', $user_id)
+        ->get();
+
+    // Initialize an array to store friend IDs
+    $friend_ids = [];
+
+    // Loop through the friendships and add friend IDs to the array
+    foreach ($friendships as $friendship) {
+        // Check if the user_id matches the provided user_id
+        if ($friendship->user_id == $user_id) {
+            $friend_ids[] = $friendship->friend_id;
+        } else {
+            // Otherwise, friend_id matches the provided user_id
+            $friend_ids[] = $friendship->user_id;
+        }
+    }
+
+    // Find the index of the user_id in the friend_ids array
+    $index = array_search($user_id, $friend_ids);
+
+    // Remove the user_id from the friend_ids array if found
+    if ($index !== false) {
+        array_splice($friend_ids, $index, 1);
+    }
+
+    // Return the remaining friend IDs
+    $friend_ids=array_unique($friend_ids);
+    return $friend_ids;
+}
   function events(){
-
-
     $user_id=Auth::user()->id;
 
   	$events_attendees=DB::table('events_attendees')->where("user_id",$user_id)->get();
@@ -1214,16 +1247,71 @@ $chats=social_chat::where(function($query) use ($req){
     $event_own_by_user=DB::table('users_events')->where("user_id",$user_id)->get();
     $event_own_by_user_id=    $event_own_by_user->pluck("id")->toArray();
 $events_id=array_unique(array_merge($event_own_by_user_id,$events_id));
-    $users_event=users_event::withCount("attendesscount")
+    $users_event=users_event
+     ::with(["attendesscount"=>function($query) use($user_id) {
+       $query->where("user_id","!=",$user_id);
+     }])
     ->withAvg("avgcount","ratings")
     ->whereIn("users_events.id",$events_id)
+ 
+    ->orderBy("event_date")
     ->get();
-    $data["followers"]=DB::table("followers")->where("user_id",$user_id)->count();
-    $data["followings"]=DB::table('followings')->where("user_id",$user_id)->count();
-    
+   $myFriends= $this->user_friends($user_id);
+   $events_friend_attendees=DB::table('events_attendees')->whereIn("user_id",$myFriends)->get();
+   $friend_events_id=  $events_friend_attendees->pluck("event_id")->toArray();
+   $event_own_by_friend=DB::table('users_events')->whereIn("user_id",$myFriends)->get();
+   $event_own_by_friend_id=    $event_own_by_friend->pluck("id")->toArray();
+$friend_events_id=array_unique(array_merge($event_own_by_friend_id,  $friend_events_id));
 
+
+   $users_friend_event=users_event::with("attendesscount")
+   ->withAvg("avgcount","ratings")
+   ->with("user")
+   ->whereIn("users_events.id",$friend_events_id)
+   ->orderBy("event_date")
+   ->get();
+   $startOfWeek = Carbon::now()->startOfWeek();
+ $endOfWeek = Carbon::now()->endOfWeek();
+         $event_this_week=users_event::with("attendesscount")
+         ->withAvg("avgcount","ratings")
+         ->with("user")
+         ->whereBetween("event_date",[ $startOfWeek, $endOfWeek])
+         
+    ->whereRaw("event_date > ?", [now()])
+         ->orderBy("event_date")
+         ->get();
+         $event_online=users_event::with("attendesscount")
+         ->withAvg("avgcount","ratings")
+         ->with("user")
+         ->where("mode","online")
+         
+
+         ->orderBy("event_date")
+         ->get();
+         $event_near_me = users_event::with("attendesscount")
+         ->withAvg("avgcount", "ratings")
+         ->with("user")
+         ->whereRaw("LOWER(location) = ?", [strtolower(Auth::user()->city)])
+         
+    ->whereRaw("event_date > ?", [now()])
+         ->orderBy("event_date")
+         ->get();
+     $data["friends_events"]= $users_friend_event;  
     $data["user_events"]= $users_event;
+    $data["events_hold_this_week"]=  $event_this_week;
+    $data["online_events"]= $event_online;
+    $data["near_by_events"]=$event_near_me;
+   
+    $data["upcomingEvents"]=users_event::withCount("attendesscount")
+    ->withAvg("avgcount", "ratings")
+  
+    ->whereRaw("event_date > ?", [now()])
+    ->orderBy("event_date")
+    ->get();
+ // return    $data;
 return  view("event",$data);
+
+ 
    }
    function userfollower($id){
     DB::table('followers')->insert([
@@ -1239,11 +1327,11 @@ return  view("event",$data);
     return back();
    }
    function  deletechat(Request $req){
-   
+ try{  
  $chat_data= social_chat::where("id",$req->chat_id)->first();
 
  // Check if the file exists before attempting to delete it
-
+ ///    unlink($chat_data->filechats);
  
 
 
@@ -1251,6 +1339,8 @@ return  view("event",$data);
 "deleted_chats_at"=>date("Y-m-d H:i:s")
  ]);
     event(new \App\Events\UserChatDelete($chat_data));
-
+}catch(\Exception $e){
+ echo  $e->getMessage();
+}
   }
 }

@@ -22,6 +22,14 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
+        Schema::create('comments', function (Blueprint $table) {
+            $table->id();
+            $table->text("comment_content")->nullable();
+            $table->unsignedBigInteger('post_id');
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
+            $table->timestamps();
+        });
+
     }
 
     /**

@@ -20,13 +20,12 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  import Pusher from 'pusher-js';
  window.Pusher = Pusher;
  window.Echo = new Echo({
-     broadcaster: 'pusher',
-     key: import.meta.env.VITE_PUSHER_APP_KEY,
-     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
-     wsHost: window.location.hostname,
-     wsPort: 6001,
-  
-     forceTLS: false,
-    
-     disableStats:true
- });
+    broadcaster: 'reverb',
+    key: import.meta.env.VITE_REVERB_APP_KEY,
+    wsHost: window.location.hostname,
+    wsPort: import.meta.env.VITE_REVERB_PORT,
+
+
+useTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'http') === 'http',
+   
+});

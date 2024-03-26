@@ -14,4 +14,7 @@ class users_event extends Model
    function avgcount(){
     return $this->hasMany(event_rating::class,"event_id");
    }
+   function user(){
+    return $this->belongsTo(User::class);
+   }
 }

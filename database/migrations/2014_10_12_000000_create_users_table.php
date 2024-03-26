@@ -19,8 +19,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->dateTime("loginAt")->nullable();
             $table->dateTime("logoutAt")->nullable();
-            
-     $table->dateTime("dateofbirth")->nullable();
+            $table->dateTime("dateofbirth")->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->string("cover_photo")->nullable();
